@@ -66,7 +66,12 @@ body {
 .page{
   font-size: 16px;
 }
-
+/*
+.col-md-12 #content{
+    font-size: 36px;
+    line-height: 2.0em;
+}
+*/
 .page, .post{
   line-height: 1.5em;
   font-family: 'Open Sans',"Helvetica Neue", "Helvetica","Microsoft YaHei", "WenQuanYi Micro Hei",Arial, sans-serif;
