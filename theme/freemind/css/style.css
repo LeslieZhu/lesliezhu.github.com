@@ -76,6 +76,16 @@ body {
     text-indent:60px; /* 2-word: 30px * 2 */
 }
 
+#content-reading .org-center p{
+    text-indent:0px; /* 2-word: 30px * 2 */
+}
+
+
+
+.org-center {
+    text-align: center;
+}
+
 .page, .post{
   line-height: 1.5em;
   font-family: 'Open Sans',"Helvetica Neue", "Helvetica","Microsoft YaHei", "WenQuanYi Micro Hei",Arial, sans-serif;
@@ -743,3 +753,5 @@ td {
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
+
