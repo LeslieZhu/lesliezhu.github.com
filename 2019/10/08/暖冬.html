@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
         <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
         <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         </head>
         
 
@@ -41,7 +42,7 @@
         <div class="collapse navbar-collapse nav-menu">
         
         <ul class="nav navbar-nav">
-        <li><a href="http://www.lesliezhu.com/minyi.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li>
+        <li><a href="http://www.lesliezhu.com/minyi.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-archive"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li>
         </ul>
         
         </div> <!-- navbar -->
@@ -152,7 +153,7 @@
         </li>
         <li class="post-copyright-license">
         <strong>版权声明： </strong>
-        本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+        原创文章，如需转载请注明文章作者和出处。谢谢！
         </li>
         </ul>
         </div>
@@ -169,6 +170,32 @@
             </center>
             </div>
             
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-a" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/alipay.jpg">
+                <span>支付宝打赏</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
             </div> <!-- my-page --></div> <!-- col-md -->
 
 
@@ -188,6 +215,18 @@
         <span>▲</span> 
         </a>
         
+        
+        <!-- donate script -->
+        <script type="text/javascript">
+        document.getElementById('reward').onclick = function() {
+        $('#reward-button').addClass('hidden');
+        $('#qr-code-image-w').show();
+        $('#qr-code-image-a').show();
+        }
+        </script>
+        <!-- /donate script -->
+        
+
         </body>
         </html>
         

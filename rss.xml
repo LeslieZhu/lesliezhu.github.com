@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <rss version="2.0">
+        <channel>
+
+        <title>YiLife</title>
+
+        <link>http://www.lesliezhu.com</link>
+
+        <description>
+           <![CDATA[士不可以不弘毅，任重而道远!]]>
+        </description>
+
+        <language>zh-CN</language>
+        <generator>OrgNote: A simple org-mode blog, write blog by org-mode in Emacs</generator>
+        <webMaster><![CDATA[吴羽舒]]></webMaster>
+        <ttl>120</ttl>
+        
+        <image>
+        <title><![CDATA[YiLife]]></title>
+        <url>http://www.lesliezhu.com/favicon.ico</url>
+        <link>http://www.lesliezhu.com</link>
+        </image>        
+        
+            <item>
+            <title> 暖冬 </title>
+            <link> http://www.lesliezhu.com/2019/10/08/暖冬.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2019/10/08/暖冬.html</guid>
+            <category><![CDATA[随笔]]></category>
+            <pubDate>2019-10-08 Tue</pubDate>
+            <comments>http://www.lesliezhu.com/2019/10/08/暖冬.html</comments>
+            </item>
+            
+        </channel>
+        </rss>
+        
