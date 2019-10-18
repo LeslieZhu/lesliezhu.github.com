@@ -2,7 +2,7 @@
         <rss version="2.0">
         <channel>
 
-        <title>YiLife</title>
+        <title>MinYiLife</title>
 
         <link>http://www.lesliezhu.com</link>
 
@@ -16,7 +16,7 @@
         <ttl>120</ttl>
         
         <image>
-        <title><![CDATA[YiLife]]></title>
+        <title><![CDATA[MinYiLife]]></title>
         <url>http://www.lesliezhu.com/favicon.ico</url>
         <link>http://www.lesliezhu.com</link>
         </image>        
