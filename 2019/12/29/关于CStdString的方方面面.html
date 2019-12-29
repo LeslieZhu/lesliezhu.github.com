@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>说明</title>
+        <title>Joe O'Leary's CStdString</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="pythonislandongmaildotcom">
         <meta name="description" content="Use OrgNote.">
@@ -89,7 +89,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>说明</h1>
+        <h1>Joe O'Leary's CStdString</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -98,34 +98,114 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        <a href="http://www.lesliezhu.com/about.html"><i class="说明"></i>说明</a>
-
+        标签: <a href="http://www.lesliezhu.com/tags/C++.html"><i class="C++"></i>C++</a>
+<span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
         
 <div id="content">
 
+<div class="outline-2" id="outline-container-org5c102a9">
+<h2 id="org5c102a9">CStdString</h2>
+<div class="outline-text-2" id="text-org5c102a9">
 <p>
-此博客 <code>MinYiLife</code> 主要写一些心情随笔和技术文章，博主是一位程序员，日常主要使用 <code>Python</code> 和 <code>C++</code> 进行软件开发.
+<code>Joe O'Leary CStdString</code> 其本身好像是VC++/MFC中的一部分，支持ansi、unicode:
 </p>
+<ul class="org-ul">
+<li>作者 <code>Joe O'Leary</code> 主页（已经无法打开）:<a href="http://www.joeo.net/">http://www.joeo.net/</a></li>
+<li><code>StdString.h</code> 说明页面（已经无法打开）:<a href="http://home.earthlink.net/~jmoleary/stdstring.htm">http://home.earthlink.net/~jmoleary/stdstring.htm</a></li>
+<li>作者2011写的文章 <a href="https://www.codeproject.com/Articles/1146/CString-clone-Using-Standard-C">CString-clone Using Standard C++</a> :</li>
+<li>别人整理的相关repo: <a href="https://github.com/lunakid/CStdString">https://github.com/lunakid/CStdString</a></li>
+</ul>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgb18b9b0">
+<h2 id="orgb18b9b0">StdString.h</h2>
+<div class="outline-text-2" id="text-orgb18b9b0">
 <p>
-此博客基于<a href="https://github.com/LeslieZhu/OrgNote">OrgNote</a>生成，它基于 <code>freemind</code> 主题定制，将 <code>org-mode</code> 文件在 <code>Emacs</code> 转换为网页文件基础上，再进行简单处理以适应此主题。
+<code>2011-12-05</code> 的版本（没找到更新版本）:
 </p>
-<p>
-这是一个为自己定制的博客工具，以满足自己的需求为主，功能相对简单，如果有兴趣使用可以直接安装:
-</p>
+<div class="source"><pre><span></span><span class="c1">//  FILE:  StdString.h</span>
+<span class="c1">//  AUTHOR:	Joe O&#39;Leary (with outside help noted in comments)</span>
+<span class="c1">//</span>
+<span class="c1">//		If you find any bugs in this code, please let me know:</span>
+<span class="c1">//</span>
+<span class="c1">//				jmoleary@earthlink.net</span>
+<span class="c1">//				http://www.joeo.net/stdstring.htm (a bit outdated)</span>
+<span class="c1">//</span>
+<span class="c1">//      The latest version of this code should always be available at the</span>
+<span class="c1">//      following link:</span>
+<span class="c1">//</span>
+<span class="c1">//              http://www.joeo.net/code/StdString.zip (Dec 6, 2003)</span>
+<span class="c1">//</span>
+<span class="c1">//</span>
+<span class="c1">//  REMARKS:</span>
+<span class="c1">//		This header file declares the CStdStr template.  This template derives</span>
+<span class="c1">//		the Standard C++ Library basic_string&lt;&gt; template and add to it the</span>
+<span class="c1">//		the following conveniences:</span>
+<span class="c1">//			- The full MFC CString set of functions (including implicit cast)</span>
+<span class="c1">//			- writing to/reading from COM IStream interfaces</span>
+<span class="c1">//			- Functional objects for use in STL algorithms</span>
+<span class="c1">//</span>
+<span class="c1">//		From this template, we intstantiate two classes:  CStdStringA and</span>
+<span class="c1">//		CStdStringW.  The name &quot;CStdString&quot; is just a #define of one of these,</span>
+<span class="c1">//		based upone the UNICODE macro setting</span>
+<span class="c1">//</span>
+<span class="c1">//		This header also declares our own version of the MFC/ATL UNICODE-MBCS</span>
+<span class="c1">//		conversion macros.  Our version looks exactly like the Microsoft&#39;s to</span>
+<span class="c1">//		facilitate portability.</span>
+</pre></div>
+
+</div>
+</div>
+<div class="outline-2" id="outline-container-org80d4f2d">
+<h2 id="org80d4f2d">别人的言论、评价</h2>
+<div class="outline-text-2" id="text-org80d4f2d">
 <pre class="example">
-$ pip install orgnote
+一个VC++中的StdString类源代码，可完善替代CString字符串类，支持ansi、unicode。实际在一些项目中用了一段，感觉非常棒，推荐给朋友们。
+</pre>
+<pre class="example">
+在实际工作中，std的string功能相对于MFC的CString来说，实在是相形见绌。
+
+CStdString类实现了CString的功能，支持跨平台。
 </pre>
 <p>
-支持 <code>Python2</code> 和 <code>Python3</code>, 如果遇到什么问题，可以<a href="https://github.com/LeslieZhu/OrgNote/issues">提交issue</a>以帮助改进。
+在 <a href="https://stackoverflow.com/questions/5437675/mixing-objc-and-c-with-c-template-classes-in-more-than-one-source?r=SearchResults">mixing-objc-and-c-with-c-template-classes-in-more-than-one-source</a> 上获取到这些信息:
 </p>
+<pre class="example">
+Joe's CStdString is in fact a derived class from std::string.
+
+Anyway, bad thing - good thing: CStdString has no own members. It's a straightforward wrapper for one/two byte instantiations of std::basic_string with the convenience of most features that MFC CString offers and a wide usability. I used it on Linux more than 10 years ago and on Win32 where I couldn't use MFC. Joe's work on it started 1998 with help of ~50 people within 7 years of development. I think they've managed the poorly side effects being in the template.
+</pre>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org6792f01">
+<h2 id="org6792f01">CString-clone Using Standard C++</h2>
+<div class="outline-text-2" id="text-org6792f01">
+<pre class="example">
+As much as I use and appreciate the Standard C++ Library, I've never liked its string template - basic_string&lt;&gt;. At times, it seems the designers went out of their way to make it difficult to use.
+
+On the other hand, I've always loved the ease of use of MFC's CString class. It checks for NULL pointers, implicitly converts to const TCHAR*, and has some very handy member functions (Format, Load, etc.) that make string programming a breeze. But of course, I don't want to use MFC anymore. In fact, I don't want to rely on any proprietary library because I want portability.
+</pre>
+<pre class="example">
+Go to Parent(I realize this response is over a year late. I don't appear to be being notified when people reply to this article)
+
+"Performance" is a fairly encompassing term. Most of the performance differences will come down to the performance of std::string vs CString. That depends upon your particular implementation of basic_string, over which I have no control
+
+For the performance of various CString-facade functions (e.g. format), well at this point I am long past comparing those or worrying about it. It is not going to make a difference in 99% of the cases. You would have to be doing some monster-level of string processing for it to matter.
+
+If that sounds like a bit of a dismissal, I suppose it is. This class is mostly meant to help people transition over from CString to std::string with a minimum of code-rewrite. To help you get off of MFC&gt; The idea is that you can get your code running right away and then start refactoring any important string processing code to use basic_string properly, in the most efficient way you see fit. This class is not meant to be used alongside CString. But if it must, well you can then always use CString instead. This class coexist well with it.
+
+-Joe
+</pre>
+</div>
+</div>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2019-12-29 Sun，共147字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2019-12-29 Sun，共148字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
