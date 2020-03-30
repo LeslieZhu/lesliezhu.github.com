@@ -22,28 +22,6 @@
         </image>        
         
             <item>
-            <title> 2020年春节 </title>
-            <link> http://www.lesliezhu.com/2020/02/02/2020春节纪要.html </link>
-            <author><![CDATA[吴羽舒]]></author>
-            <guid isPermaLink="true">http://www.lesliezhu.com/2020/02/02/2020春节纪要.html</guid>
-            <category><![CDATA[随笔]]></category>
-            <pubDate>2020-02-09 Sun</pubDate>
-            <description><![CDATA[]]></description>
-            <comments>http://www.lesliezhu.com/2020/02/02/2020春节纪要.html</comments>
-            </item>
-            
-            <item>
-            <title> 2019年总结 </title>
-            <link> http://www.lesliezhu.com/2019/09/18/2019年总结.html </link>
-            <author><![CDATA[吴羽舒]]></author>
-            <guid isPermaLink="true">http://www.lesliezhu.com/2019/09/18/2019年总结.html</guid>
-            <category><![CDATA[随笔]]></category>
-            <pubDate>2019-09-18 Wed</pubDate>
-            <description><![CDATA[]]></description>
-            <comments>http://www.lesliezhu.com/2019/09/18/2019年总结.html</comments>
-            </item>
-            
-            <item>
             <title> 关于CStdString </title>
             <link> http://www.lesliezhu.com/2019/12/29/关于CStdString的方方面面.html </link>
             <author><![CDATA[吴羽舒]]></author>
@@ -52,28 +30,6 @@
             <pubDate>2019-12-29 Sun</pubDate>
             <description><![CDATA[]]></description>
             <comments>http://www.lesliezhu.com/2019/12/29/关于CStdString的方方面面.html</comments>
-            </item>
-            
-            <item>
-            <title> 积雨云 </title>
-            <link> http://www.lesliezhu.com/2019/10/17/积雨云.html </link>
-            <author><![CDATA[吴羽舒]]></author>
-            <guid isPermaLink="true">http://www.lesliezhu.com/2019/10/17/积雨云.html</guid>
-            <category><![CDATA[随笔]]></category>
-            <pubDate>2019-10-17 Thu</pubDate>
-            <description><![CDATA[]]></description>
-            <comments>http://www.lesliezhu.com/2019/10/17/积雨云.html</comments>
-            </item>
-            
-            <item>
-            <title> 暖冬 </title>
-            <link> http://www.lesliezhu.com/2019/10/08/暖冬.html </link>
-            <author><![CDATA[吴羽舒]]></author>
-            <guid isPermaLink="true">http://www.lesliezhu.com/2019/10/08/暖冬.html</guid>
-            <category><![CDATA[随笔]]></category>
-            <pubDate>2019-10-08 Tue</pubDate>
-            <description><![CDATA[]]></description>
-            <comments>http://www.lesliezhu.com/2019/10/08/暖冬.html</comments>
             </item>
             
         </channel>
