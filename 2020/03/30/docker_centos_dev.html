@@ -1,0 +1,570 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>Docker创建CentOS C++开发环境</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="pythonislandongmaildotcom">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        </head>
+        
+
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>Docker创建CentOS C++开发环境</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-12">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/Docker.html"><i class="Docker"></i>Docker</a> , <a href="http://www.lesliezhu.com/tags/C++.html"><i class="C++"></i>C++</a>
+<span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        
+<div id="content">
+
+<div id="table-of-contents">
+<h2>目录</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgc3dcfc4">1. 前言</a></li>
+<li><a href="#orga65e58c">2. 镜像(image)</a></li>
+<li><a href="#org6097aef">3. 容器(container)</a></li>
+<li><a href="#org80f5c3d">4. 持久化数据(base on container id/name)</a></li>
+<li><a href="#orgb8d1c5d">5. 基于卷(volume)的持久化数据</a></li>
+<li><a href="#orgabeafcc">6. commit创建新镜像快照</a></li>
+<li><a href="#org07facd0">7. 挂载本地目录</a></li>
+<li><a href="#orge301050">8. 导出,导入,保存,加载</a></li>
+<li><a href="#orgfd8af51">9. 安装devtools-2</a></li>
+<li><a href="#org17d021a">10. 结语</a></li>
+</ul>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgc3dcfc4">
+<h2 id="orgc3dcfc4"><span class="section-number-2">1</span> 前言</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+之前使用Vagrant管理基于虚拟机的各种开发环境，如今换成Docker。换的原因主要是Docker的网络更快，使用更简单。
+</p>
+<p>
+先要安装Docker for Mac（DfM），然后启动docker作为守护进程(右上角状态栏会有docker图标)。
+</p>
+<p>
+查看docker版本信息:
+</p>
+<pre class="example">
+$ docker version
+
+Client: Docker Engine - Community
+ Version:           19.03.8
+ API version:       1.40
+ Go version:        go1.12.17
+ Git commit:        afacb8b
+ Built:             Wed Mar 11 01:21:11 2020
+ OS/Arch:           darwin/amd64
+ Experimental:      false
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          19.03.8
+  API version:      1.40 (minimum version 1.12)
+  Go version:       go1.12.17
+  Git commit:       afacb8b
+  Built:            Wed Mar 11 01:29:16 2020
+  OS/Arch:          linux/amd64
+  Experimental:     true
+ containerd:
+  Version:          v1.2.13
+  GitCommit:        7ad184331fa3e55e52b890ea95e65ba581ae3429
+ runc:
+  Version:          1.0.0-rc10
+  GitCommit:        dc9208a3303feef5b3839f4323d9beb36df0a9dd
+ docker-init:
+  Version:          0.18.0
+  GitCommit:        fec3683
+</pre>
+<p>
+各个安装组件信息:
+</p>
+<pre class="example">
+$ docker --version
+Docker version 19.03.8, build afacb8b
+
+$ docker-compose --version
+docker-compose version 1.25.4, build 8d51620a
+
+$ docker-compose --version
+docker-compose version 1.25.4, build 8d51620a
+</pre>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orga65e58c">
+<h2 id="orga65e58c"><span class="section-number-2">2</span> 镜像(image)</h2>
+<div class="outline-text-2" id="text-2">
+<pre class="example">
+$ docker image ls
+REPOSITORY                TAG                 IMAGE ID            CREATED             SIZE
+</pre>
+<pre class="example">
+$ docker search centos
+NAME                               DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED
+centos                             The official build of CentOS.                   5906                [OK]
+</pre>
+<pre class="example">
+$ docker image pull centos:centos6
+centos6: Pulling from library/centos
+ff50d722b382: Pull complete
+Digest: sha256:dec8f471302de43f4cfcf82f56d99a5227b5ea1aa6d02fa56344986e1f4610e7
+Status: Downloaded newer image for centos:centos6
+docker.io/library/centos:centos6
+
+$ docker image ls
+REPOSITORY                TAG                 IMAGE ID            CREATED             SIZE
+centos                    centos6             d0957ffdf8a2        12 months ago       194MB
+</pre>
+<p>
+获得此虚拟机镜像(CentOS 6)后，后续容器可以基于此镜像进行操作。
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org6097aef">
+<h2 id="org6097aef"><span class="section-number-2">3</span> 容器(container)</h2>
+<div class="outline-text-2" id="text-3">
+<pre class="example">
+$ docker container run -i -t centos:centos6 /bin/bash
+[root@8ba5db58d1bb /]# uname -a
+Linux 8ba5db58d1bb 4.19.76-linuxkit #1 SMP Thu Oct 17 19:31:58 UTC 2019 x86_64 x86_64 x86_64 GNU/Linux
+
+$ docker container ls
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+8ba5db58d1bb        centos:centos6       "/bin/bash"         3 minutes ago       Up 3 minutes                            jovial_wilson
+</pre>
+<p>
+按Ctrl-PQ组合键，退出容器的同时保持容器运行。 <code>-d</code> 则以守护进程形式启动容器, <code>-it</code> 是交互形式。
+</p>
+<p>
+重新进入正在运行的容器:
+</p>
+<pre class="example">
+$ docker container exec -it sharp_heyrovsky bash
+[root@2f86d1decff3 /]# uptime
+ 13:24:46 up  2:11,  0 users,  load average: 0.00, 0.04, 0.01
+</pre>
+<p>
+停止/删除容器:
+</p>
+<pre class="example">
+$ docker container stop  sharp_heyrovsk
+$ docker container rm  sharp_heyrovsk
+</pre>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org80f5c3d">
+<h2 id="org80f5c3d"><span class="section-number-2">4</span> 持久化数据(base on container id/name)</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Docker镜像是由松耦合的只读镜像层组成，一旦容器关闭，重新启动新的容器，新的容器是没有之前保存的文件的。
+</p>
+<pre class="example">
+$ docker image inspect centos:centos6  # 查看镜像信息
+</pre>
+<pre class="example">
+$ docker container exec -it sharp_heyrovsky bash
+Error response from daemon: Container 2f86d1decff3050b10919703f2a00167eed5bd46a90b1da3626048ff0b53c602 is not running
+</pre>
+<p>
+其实每个容器实例都有自己的id，可以根据id或者name重新启动之前的容器，对应的文件都保存在里面:
+</p>
+<pre class="example">
+$ docker container ls -a        # 查看多有历史容器实例的id等信息
+$ docker container start 5045721d1878
+$ docker container exec -it 5045721d1878 bash
+</pre>
+<p>
+在将容器实例删除之前，容器里面的数据是不会丢失的，但一旦容器实例被删除，随带着数据也就删除了。
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgb8d1c5d">
+<h2 id="orgb8d1c5d"><span class="section-number-2">5</span> 基于卷(volume)的持久化数据</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+不想数据随着容器的删除而消失，需要使用和容器解耦的Docker卷来进行持久化。
+</p>
+<p>
+创建卷:
+</p>
+<pre class="example">
+$ docker volume create devsrc
+devsrc
+
+$ docker volume ls
+DRIVER              VOLUME NAME
+local               devsrc
+
+$ docker volume inspect devsrc
+[
+    {
+        "CreatedAt": "2020-03-30T15:00:28Z",
+        "Driver": "local",
+        "Labels": {},
+        "Mountpoint": "/var/lib/docker/volumes/devsrc/_data",
+        "Name": "devsrc",
+        "Options": {},
+        "Scope": "local"
+    }
+]
+</pre>
+<p>
+创建容器并挂载卷:
+</p>
+<pre class="example">
+$ docker container run -d -i -t --name mydev --mount source=devsrc,target=/devsrc centos:centos6
+
+$ docker container ls
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+eee253808301        centos:centos6       "/bin/bash"         38 seconds ago      Up 38 seconds                           mydev
+
+$ docker container exec -it mydev bash
+
+$ [root@eee253808301 /]# ls -ld /devsrc
+drwxr-xr-x 2 root root 4096 Mar 30 15:00 /devsrc
+</pre>
+<p>
+同一个卷可以在不同的容器实例中同时被挂载，进行数据的交互，但要程序里面自己控制读写冲突。
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgabeafcc">
+<h2 id="orgabeafcc"><span class="section-number-2">6</span> commit创建新镜像快照</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+在Docker Hub获取的镜像是很小的，只有基本的操作系统部分，需要安装系列软件包等，安装后可以创建一个新的镜像，这样下次就可以直接使用这个镜像创建新的容器了。
+</p>
+<pre class="example">
+$ docker container stop mydev
+
+$ docker commit -m "c++ dev" mydev centos:mydev    # 还可以包含其他信息，如作者
+sha256:e315980591309fa8d10e7a23664e7f3aed35dd201978a7cb280699a7aa6e31bf
+
+$ docker image ls
+REPOSITORY                TAG                 IMAGE ID            CREATED             SIZE
+centos                    mydev               e31598059130        42 seconds ago      1.16GB
+centos                    centos6              470671670cac        2 months ago        237MB
+</pre>
+<p>
+可以看到新创建的镜像已经存在了，大小也增加了。还可以只是新增tag，而还是同一个镜像。
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org07facd0">
+<h2 id="org07facd0"><span class="section-number-2">7</span> 挂载本地目录</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+在创建一个容器的时候，可以挂载本地目录，但如果为已经存在的容器挂载本地目录，则可以先提交新的镜像，然后创建新的容器并挂载本地目录。
+</p>
+<pre class="example">
+$ docker container run -d -i -t --name mydev2 --user root -p 2200:22 --privileged=true --cap-add=SYS_PTRACE --cap-add=SYS_TIME --security-opt seccomp=unconfined -v /Users/MyDev/Code:/Code --mount source=devsrc,target=/devsrc centos:mydev /bin/bash
+
+$ docker container ls 
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS                  NAMES
+ae6dc97f1d0d        centos:mydev       "/bin/bash"         40 seconds ago      Up 38 seconds       0.0.0.0:2200-&gt;22/tcp    mydev2
+</pre>
+<p>
+这样宿主机和容器之间共享目录了。
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orge301050">
+<h2 id="orge301050"><span class="section-number-2">8</span> 导出,导入,保存,加载</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+打包容器:
+</p>
+<pre class="example">
+$ docker export --help
+
+Usage:	docker export [OPTIONS] CONTAINER
+
+Export a container's filesystem as a tar archive
+
+Options:
+  -o, --output string   Write to a file, instead of STDOUT
+
+$ docker export -o mydev.tar ae6dc97f1d0d
+</pre>
+<p>
+导入容器:
+</p>
+<pre class="example">
+$ docker import --help
+
+Usage:	docker import [OPTIONS] file|URL|- [REPOSITORY[:TAG]]
+
+Import the contents from a tarball to create a filesystem image
+
+Options:
+  -c, --change list       Apply Dockerfile instruction to the created image
+  -m, --message string    Set commit message for imported image
+      --platform string   Set platform if server is multi-platform capable
+</pre>
+<p>
+保存镜像:
+</p>
+<pre class="example">
+$ docker save --help
+
+Usage:	docker save [OPTIONS] IMAGE [IMAGE...]
+
+Save one or more images to a tar archive (streamed to STDOUT by default)
+
+Options:
+  -o, --output string   Write to a file, instead of STDOUT
+
+$ docker save -o mydev-centos.tar 470671670cac
+</pre>
+<p>
+加载镜像：
+</p>
+<pre class="example">
+$ docker load --help
+
+Usage:	docker load [OPTIONS]
+
+Load an image from a tar archive or STDIN
+
+Options:
+  -i, --input string   Read from tar archive file, instead of STDIN
+</pre>
+<ul class="org-ul">
+<li>导出的容器再导入，是没有之前的信息。</li>
+<li>保存的镜像再加载，是包含之前的信息。</li>
+</ul>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgfd8af51">
+<h2 id="orgfd8af51"><span class="section-number-2">9</span> 安装devtools-2</h2>
+<div class="outline-text-2" id="text-9">
+<pre class="example">
+$ wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo
+
+$ yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++ -y
+
+$  /opt/rh/devtoolset-2/root/usr/bin/g++ --version
+g++ (GCC) 4.8.2 20140120 (Red Hat 4.8.2-15)
+</pre>
+<p>
+临时编译前使用:
+</p>
+<pre class="example">
+export CC=/opt/rh/devtoolset-2/root/usr/bin/gcc
+export CPP=/opt/rh/devtoolset-2/root/usr/bin/cpp
+export CXX=/opt/rh/devtoolset-2/root/usr/bin/c++
+</pre>
+<p>
+针对特定gcc编译器版本编译。
+</p>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org17d021a">
+<h2 id="org17d021a"><span class="section-number-2">10</span> 结语</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+至此，基本满足目前自己的需求，够用了。
+</p>
+</div>
+</div>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2020-03-30 Mon，共750字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2020/03/30/docker_centos_dev.html" title="Docker创建CentOS C++开发环境">http://www.lesliezhu.com/2020/03/30/docker_centos_dev.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2020/02/02/2020春节纪要.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-a" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/alipay.jpg">
+                <span>支付宝打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+
+
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        
