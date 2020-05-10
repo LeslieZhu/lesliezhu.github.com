@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> 妈，我想要一本字典！ </title>
+            <link> http://www.lesliezhu.com/2020/05/10/I_want_a_dictionary.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2020/05/10/I_want_a_dictionary.html</guid>
+            <category><![CDATA[随笔]]></category>
+            <pubDate>2020-05-10 Sun</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2020/05/10/I_want_a_dictionary.html</comments>
+            </item>
+            
+            <item>
             <title> Docker创建CentOS C++开发环境 </title>
             <link> http://www.lesliezhu.com/2020/03/30/docker_centos_dev.html </link>
             <author><![CDATA[吴羽舒]]></author>
