@@ -1,0 +1,353 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>mt19937: C++11伪随机数产生器</title>
+        <meta name="author" content="LeslieZhu">
+        <meta name="email" content="minyilife@anywhere.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        </head>
+        
+
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://localhost:8090/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://localhost:8090/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://localhost:8090/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://localhost:8090/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://localhost:8090/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>mt19937: C++11伪随机数产生器</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-12">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://localhost:8090/tags/草稿.html"><i class="草稿"></i>草稿</a> , <a href="http://localhost:8090/tags/C++.html"><i class="C++"></i>C++</a>
+<span class='date'>文|<a href='http://localhost:8090/about.html'><i class='http://localhost:8090/about.html'></i>LeslieZhu</a></span>
+        </div>                                     <!-- slogan end -->
+        
+<div id="content">
+
+<div id="table-of-contents">
+<h2>目录</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orge17f38a">1. 前言</a></li>
+<li><a href="#orgdcbe99f">2. 举例:随机2个字符</a></li>
+<li><a href="#org7bc6f28">3. 举例: 随机5个数</a></li>
+<li><a href="#org4ff8d22">4. 举例：特定分布</a></li>
+</ul>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orge17f38a">
+<h2 id="orge17f38a"><span class="section-number-2">1</span> 前言</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li><a href="https://www.jianshu.com/p/6d9a7de995bb">https://www.jianshu.com/p/6d9a7de995bb</a></li>
+<li><a href="https://www.cplusplus.com/reference/random/mt19937/">https://www.cplusplus.com/reference/random/mt19937/</a></li>
+</ul>
+<p>
+std::mt19937是伪随机数产生器，用于产生高性能的随机数。 C++11引入。
+</p>
+<p>
+返回值为unsigned int。
+</p>
+<p>
+名称由来:
+</p>
+<pre class="example">
+mt是因为这个伪随机数产生器基于Mersenne Twister算法。
+
+19937是因为产生随的机数的周期长，可达到2^19937-1。
+</pre>
+<p>
+<code>std::mt19937</code> 接收一个unsigned int数作为种子。所以可以如下定义：
+</p>
+<div class="source"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">mt19937</span> <span class="n">mt_rand</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">random_device</span><span class="p">{}());</span>
+<span class="n">std</span><span class="o">::</span><span class="n">mt19937</span> <span class="n">mt_rand</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="n">std</span><span class="o">::</span><span class="n">mt19937</span> <span class="n">mt_rand</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">().</span><span class="n">time_since_epoch</span><span class="p">().</span><span class="n">count</span><span class="p">());</span>
+</pre></div>
+
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgdcbe99f">
+<h2 id="orgdcbe99f"><span class="section-number-2">2</span> 举例:随机2个字符</h2>
+<div class="outline-text-2" id="text-2">
+<div class="source"><pre><span></span><span class="kt">int</span> <span class="n">nChars</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="n">mt19937</span> <span class="n">generator</span><span class="p">{</span><span class="n">random_device</span><span class="p">{}()};</span>
+<span class="n">uniform_int_distribution</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">dist</span><span class="p">{</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="sc">&#39;z&#39;</span><span class="p">};</span>
+<span class="k">auto</span> <span class="n">randchar</span> <span class="o">=</span> <span class="p">[</span><span class="o">&amp;</span><span class="p">]</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">char</span> <span class="p">{</span> <span class="k">return</span> <span class="n">dist</span><span class="p">(</span><span class="n">generator</span><span class="p">);</span> <span class="p">};</span>
+
+<span class="k">auto</span> <span class="n">InStrPair</span> <span class="o">=</span> <span class="n">sequence</span><span class="o">&lt;</span><span class="n">stringIntPair</span><span class="o">&gt;::</span><span class="n">from_function</span><span class="p">(</span><span class="n">nRcds</span><span class="p">,</span> <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="kt">size_t</span> <span class="n">i</span><span class="p">){</span>
+    <span class="n">charSeq</span> <span class="n">rstr</span><span class="p">(</span><span class="n">nChars</span><span class="p">);</span>
+    <span class="n">generate_n</span><span class="p">(</span><span class="n">rstr</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">nChars</span><span class="p">,</span> <span class="n">randchar</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nf">stringIntPair</span><span class="p">(</span><span class="n">rstr</span><span class="p">,</span> <span class="n">i</span><span class="p">);</span> <span class="p">});</span>
+<span class="n">writeSequenceToFile</span><span class="p">(</span><span class="n">InStrPair</span><span class="p">,</span> <span class="s">&quot;junk.str&quot;</span><span class="p">);</span>
+</pre></div>
+
+</div>
+</div>
+<div class="outline-2" id="outline-container-org7bc6f28">
+<h2 id="org7bc6f28"><span class="section-number-2">3</span> 举例: 随机5个数</h2>
+<div class="outline-text-2" id="text-3">
+<div class="source"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;random&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">mt19937</span> <span class="n">rng</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">random_device</span><span class="p">{}());</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">rng</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>
+执行:
+</p>
+<pre class="example">
+➜  qq g++ -std=c++17 test.cpp
+
+➜  qq ./a.out
+1435953447
+3367477814
+3652554170
+3027033313
+3658963065
+</pre>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org4ff8d22">
+<h2 id="org4ff8d22"><span class="section-number-2">4</span> 举例：特定分布</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+分布有很多种，如均匀分布、正态分布等，可参考(<a href="https://zh.cppreference.com/w/cpp/numeric/random">https://zh.cppreference.com/w/cpp/numeric/random</a>)
+</p>
+<p>
+产生特定分布的随机数，需要使用分布函数
+</p>
+<p>
+正态分布:
+</p>
+<div class="source"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;random&gt;</span><span class="cp"></span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">mt19937</span> <span class="n">rng</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">random_device</span><span class="p">{}());</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">normal_distribution</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">nd</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">nd</span><span class="p">(</span><span class="n">rng</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>
+执行：
+</p>
+<pre class="example">
+8.80156
+5.78055
+4.99761
+7.6995
+1.21933
+</pre>
+</div>
+</div>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://localhost:8090/about.html" title="LeslieZhu">LeslieZhu</a> 」创作于2021-02-19 Fri，共174字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://localhost:8090/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://localhost:8090/notes/2021/02/19/mt19937.html" title="mt19937: C++11伪随机数产生器">http://localhost:8090/notes/2021/02/19/mt19937.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev"><a href="http://localhost:8090/notes/2021/04/07/how_to_access_github_faster.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://localhost:8090/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://localhost:8090/notes/2019/10/17/积雨云.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://localhost:8090//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-a" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://localhost:8090//images/alipay.jpg">
+                <span>支付宝打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://localhost:8090//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+
+
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 LeslieZhu
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        

@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>标签</title>
+        <title>Mac如何加速访问GitHub</title>
         <meta name="author" content="LeslieZhu">
         <meta name="email" content="minyilife@anywhere.com">
         <meta name="description" content="Use OrgNote.">
@@ -89,7 +89,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>标签</h1>
+        <h1>Mac如何加速访问GitHub</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -98,15 +98,105 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        <a href="http://www.lesliezhu.com/tags.html"><i class="标签"></i>标签</a>
-
+        标签: <a href="http://www.lesliezhu.com/tags/草稿.html"><i class="草稿"></i>草稿</a>
+<span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>LeslieZhu</a></span>
         </div>                                     <!-- slogan end -->
         
+<div id="content">
 
-        <div class="tag-cloud-tags" style="padding: 5px 15px">
-        <a href="http://www.lesliezhu.com/tags/草稿.html" style="font-size:1rem">草稿</a><a href="http://www.lesliezhu.com/tags/随笔.html" style="font-size:1rem">随笔</a>
+<div id="table-of-contents">
+<h2>目录</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org7b14029">1. 前言</a></li>
+</ul>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org7b14029">
+<h2 id="org7b14029"><span class="section-number-2">1</span> 前言</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+访问 <a href="http://tool.chinaz.com/dns?type=1&amp;host=github.com&amp;ip">http://tool.chinaz.com/dns?type=1&amp;host=github.com&amp;ip</a>= ，找对TTL比较低的IP写入hosts配置文件(/etc/hosts):
+</p>
+<pre class="example">
+192.30.255.112	github.com
+</pre>
+<p>
+执行:
+</p>
+<pre class="example">
+sudo killall -HUP mDNSResponder
+</pre>
+<p>
+重新打开浏览器，使用新的DNS设置。
+</p>
+</div>
+</div>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="LeslieZhu">LeslieZhu</a> 」创作于2021-04-07 Wed，共41字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/notes/2021/04/07/how_to_access_github_faster.html" title="Mac如何加速访问GitHub">http://www.lesliezhu.com/notes/2021/04/07/how_to_access_github_faster.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
         </div>
         
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/notes/2019/10/17/积雨云.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-a" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/alipay.jpg">
+                <span>支付宝打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+
 
         </div> <!-- row-fluid -->
         </div>
