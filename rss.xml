@@ -12,7 +12,7 @@
 
         <language>zh-CN</language>
         <generator>OrgNote: A simple org-mode blog, write blog by org-mode in Emacs</generator>
-        <webMaster><![CDATA[吴羽舒]]></webMaster>
+        <webMaster><![CDATA[LeslieZhu]]></webMaster>
         <ttl>120</ttl>
         
         <image>
@@ -22,20 +22,9 @@
         </image>        
         
             <item>
-            <title> 妈，我想要一本字典！ </title>
-            <link> http://www.lesliezhu.com/notes/2020/05/10/I_want_a_dictionary.html </link>
-            <author><![CDATA[吴羽舒]]></author>
-            <guid isPermaLink="true">http://www.lesliezhu.com/notes/2020/05/10/I_want_a_dictionary.html</guid>
-            <category><![CDATA[随笔]]></category>
-            <pubDate>2020-05-10 Sun</pubDate>
-            <description><![CDATA[]]></description>
-            <comments>http://www.lesliezhu.com/notes/2020/05/10/I_want_a_dictionary.html</comments>
-            </item>
-            
-            <item>
             <title> 积雨云 </title>
             <link> http://www.lesliezhu.com/notes/2019/10/17/积雨云.html </link>
-            <author><![CDATA[吴羽舒]]></author>
+            <author><![CDATA[LeslieZhu]]></author>
             <guid isPermaLink="true">http://www.lesliezhu.com/notes/2019/10/17/积雨云.html</guid>
             <category><![CDATA[随笔]]></category>
             <pubDate>2019-10-17 Thu</pubDate>

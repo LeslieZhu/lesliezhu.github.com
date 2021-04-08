@@ -1,0 +1,222 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <title>YiLife</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="YiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        </head>
+        
+
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">YiLife</a>
+        
+
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://localhost:8080/minyi.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://localhost:8080/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://localhost:8080/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li>
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>士不可以不弘毅，任重而道远!</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        主页君: 吴羽舒
+
+        </div>                                     <!-- slogan end -->
+        
+
+            <h3 class="title">
+            <a href="http://localhost:8080/2019/10/08/暖冬.html">暖冬</a>
+            <span class="date">2019-10-08 Tue </span>
+            </h3>
+            <div class="col-md-9"><div id="content-index">
+
+<p>
+那是一个暖冬的上午，吃过早饭，村妇们三三两两在墙角下晒太阳，聊着闲天。
+</p>
+<p>
+阿杏嫂是一个中年妇女，腰上围着围裙，刚忙完厨房的活出来倒泔水。
+</p>
+<p>
+看着邻居家门口坐着几个妇人在聊天，怏怏的走过去。
+</p>
+<p>
+见她正走过来，这厢有人给打招呼，一大早忙活什么呢？
+</p>
+<p>
+这正问着了，她看似漫不经心的说，今天我的一个远房外甥要来做客；又自顾自的说，说起这个外甥，也蛮长的话柄。
+
+            </p>
+            </div>
+            
+        <footer>
+        <div class="alignleft">
+        <a href="2019/10/08/暖冬.html#more" class="more-link">阅读全文</a>
+        </div>
+        <div class="clearfix"></div>
+        </footer>
+        
+                </div> <!-- col-md-9 -->
+                
+            <h3 class="title">
+            <a href="http://localhost:8080/2017/09/26/生祭.html">生祭</a>
+            <span class="date">2017-09-26 Tue </span>
+            </h3>
+            <div class="col-md-9"><div id="content-index">
+
+<p>
+那是清明节后不久，春意正浓，成片的桉树都发出了新芽。
+</p>
+<p>
+这片山几年前着火，所有的林木都烧个精光，之后就来了承包商要承包去种树。正好这个小县城的木工家具业很兴盛，村里也乐得促成此事。于是，数月之后，这片山都种上了桉树。
+</p>
+<p>
+明老头今年56岁，这天下午正蹲在一片桉树林里抽旱烟，他是为老父母选生祭坟位置来的。现在各个山头都是初长的桉树，风水真是一般，何况山已经承租出去了，再用来做生祭也不太现实。村里早有老人议论，桉树这种要命根子的树吸水特别厉害，埋不得人，会把子孙后代的风水吸走，是万万不可以的。
+</p>
+<p>
+但此时明老头倒不是为选生祭坟的位置发愁，而是做生祭也需要一笔不菲的钱。自己没有钱，好不容易租山30年一次性付清一万八千块钱发下来了，却被老父亲扣住要用来做生祭。
+</p>
+<p>
+“这钱就不分了，就用来做生祭！”
+
+            </p>
+            </div>
+            
+        <footer>
+        <div class="alignleft">
+        <a href="2017/09/26/生祭.html#more" class="more-link">阅读全文</a>
+        </div>
+        <div class="clearfix"></div>
+        </footer>
+        
+                </div> <!-- col-md-9 -->
+                
+        <div>
+        <center>
+        <div class="pagination">
+        <ul class="pagination">
+        <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>Newer</a></li>
+        <li><a href="http://localhost:8080/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+        <li class="next disabled"><a><i class="fa fa-arrow-circle-o-right"></i>Older</a></li>
+        </ul>
+        </div>
+        </center>
+        </div>
+        
+            
+        </div> <!-- mypage -->
+        </div> <!-- col-md-9 -->
+        
+
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>联系/反馈</h4>
+        <ul class="entry list-unstyled">
+        <li><a href='https://github.com/LeslieZhu/lesliezhu.github.com/issues'>提交issue</a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://localhost:8080/2019/10/08/暖冬.html"><i class="fa fa-file-o"></i>暖冬</a></li><li><a href="http://localhost:8080/2017/09/26/生祭.html"><i class="fa fa-file-o"></i>生祭</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://localhost:8080/tags/随笔.html">随笔<span>2</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://localhost:8080/tags/201910.html">201910<span>1</span></a></li><li><a href="http://localhost:8080/tags/201709.html">201709<span>1</span></a></li><li><a href="http://localhost:8080/archive.html">All<span>2</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="YiLife博客" target="_blank"><i class="fa fa-book"></i>YiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        </body>
+        </html>
+        
