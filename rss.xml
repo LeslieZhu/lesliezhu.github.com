@@ -12,7 +12,7 @@
 
         <language>zh-CN</language>
         <generator>OrgNote: A simple org-mode blog, write blog by org-mode in Emacs</generator>
-        <webMaster><![CDATA[LeslieZhu]]></webMaster>
+        <webMaster><![CDATA[吴羽舒]]></webMaster>
         <ttl>120</ttl>
         
         <image>
@@ -22,25 +22,25 @@
         </image>        
         
             <item>
-            <title> Mac如何加速访问GitHub </title>
-            <link> http://www.lesliezhu.com/notes/2021/04/07/how_to_access_github_faster.html </link>
-            <author><![CDATA[LeslieZhu]]></author>
-            <guid isPermaLink="true">http://www.lesliezhu.com/notes/2021/04/07/how_to_access_github_faster.html</guid>
-            <category><![CDATA[草稿]]></category>
-            <pubDate>2021-04-07 Wed</pubDate>
+            <title> 唐朝的20位皇帝 </title>
+            <link> http://www.lesliezhu.com/2022/06/19/TangChaoHuangDiJieShao.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/06/19/TangChaoHuangDiJieShao.html</guid>
+            <category><![CDATA[读史札记]]></category>
+            <pubDate>2022-06-19 Sun</pubDate>
             <description><![CDATA[]]></description>
-            <comments>http://www.lesliezhu.com/notes/2021/04/07/how_to_access_github_faster.html</comments>
+            <comments>http://www.lesliezhu.com/2022/06/19/TangChaoHuangDiJieShao.html</comments>
             </item>
             
             <item>
-            <title> 积雨云 </title>
-            <link> http://www.lesliezhu.com/notes/2019/10/17/积雨云.html </link>
-            <author><![CDATA[LeslieZhu]]></author>
-            <guid isPermaLink="true">http://www.lesliezhu.com/notes/2019/10/17/积雨云.html</guid>
-            <category><![CDATA[随笔]]></category>
-            <pubDate>2019-10-17 Thu</pubDate>
+            <title> 诗人崔颢的有文无行 </title>
+            <link> http://www.lesliezhu.com/2022/05/19/CuiHao.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/05/19/CuiHao.html</guid>
+            <category><![CDATA[读史札记]]></category>
+            <pubDate>2022-05-19 Thu</pubDate>
             <description><![CDATA[]]></description>
-            <comments>http://www.lesliezhu.com/notes/2019/10/17/积雨云.html</comments>
+            <comments>http://www.lesliezhu.com/2022/05/19/CuiHao.html</comments>
             </item>
             
         </channel>
