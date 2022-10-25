@@ -287,16 +287,16 @@
 <h2>目录</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgc2fd338">1. 前言</a></li>
-<li><a href="#orge7180f0">2. auto与列表初始化</a></li>
-<li><a href="#org3f57ea5">3. 空指针: nullptr</a></li>
-<li><a href="#org8b49108">4. 尽量不直接使用union</a></li>
-<li><a href="#orgbd9222f">5. 枚举优先使用enum class</a></li>
+<li><a href="#org4d0aa87">1. 前言</a></li>
+<li><a href="#orga940523">2. auto与列表初始化</a></li>
+<li><a href="#org05f3a51">3. 空指针: nullptr</a></li>
+<li><a href="#orgcc6bd08">4. 尽量不直接使用union</a></li>
+<li><a href="#org4ce47b6">5. 枚举优先使用enum class</a></li>
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgc2fd338">
-<h2 id="orgc2fd338"><span class="section-number-2">1</span> 前言</h2>
+<div class="outline-2" id="outline-container-org4d0aa87">
+<h2 id="org4d0aa87"><span class="section-number-2">1</span> 前言</h2>
 <div class="outline-text-2" id="text-1">
 <blockquote>
 <p>
@@ -311,8 +311,8 @@ $ g++ -std=c++17 file.cpp
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orge7180f0">
-<h2 id="orge7180f0"><span class="section-number-2">2</span> auto与列表初始化</h2>
+<div class="outline-2" id="outline-container-orga940523">
+<h2 id="orga940523"><span class="section-number-2">2</span> auto与列表初始化</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 变量优先使用通用的列表初始化形式 <code>{}</code> ，以避免在类型转换中丢失信息:
@@ -342,8 +342,8 @@ $ g++ -std=c++17 file.cpp
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org3f57ea5">
-<h2 id="org3f57ea5"><span class="section-number-2">3</span> 空指针: nullptr</h2>
+<div class="outline-2" id="outline-container-org05f3a51">
+<h2 id="org05f3a51"><span class="section-number-2">3</span> 空指针: nullptr</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 不再使用 <code>0</code> 或 <code>NULL</code> 表示空指针，使用 <code>nullptr</code> ，所有指针类型都共享同一个 <code>nullptr</code>.
@@ -372,8 +372,8 @@ $ g++ -std=c++17 file.cpp
 
 </div>
 </div>
-<div class="outline-2" id="outline-container-org8b49108">
-<h2 id="org8b49108"><span class="section-number-2">4</span> 尽量不直接使用union</h2>
+<div class="outline-2" id="outline-container-orgcc6bd08">
+<h2 id="orgcc6bd08"><span class="section-number-2">4</span> 尽量不直接使用union</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 比如有这样一个联合的定义:
@@ -416,8 +416,8 @@ $ g++ -std=c++17 file.cpp
 
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgbd9222f">
-<h2 id="orgbd9222f"><span class="section-number-2">5</span> 枚举优先使用enum class</h2>
+<div class="outline-2" id="outline-container-org4ce47b6">
+<h2 id="org4ce47b6"><span class="section-number-2">5</span> 枚举优先使用enum class</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 以往的enum中枚举值作用域与enum作用域一致，隐式转换为int类型值:
