@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> C++语言导学(5): 容器 </title>
+            <link> http://www.lesliezhu.com/2022/10/26/cpp_5.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/10/26/cpp_5.html</guid>
+            <category><![CDATA[C++学习与实践]]></category>
+            <pubDate>2022-10-26 Wed</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/10/26/cpp_5.html</comments>
+            </item>
+            
+            <item>
             <title> C++语言导学(4): pImpl习惯用法 </title>
             <link> http://www.lesliezhu.com/2022/10/26/cpp_4.html </link>
             <author><![CDATA[吴羽舒]]></author>
