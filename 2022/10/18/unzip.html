@@ -103,15 +103,12 @@
 <p>对于压缩文件如果压缩密码带有中文，可能会因为中文编码不一致而解压失败。</p>
 <p>一般Windows下使用GBK编码，我们可以先获取到对应的原始编码形式：</p>
 <div class="highlight"><pre><span></span>$ <span class="nb">echo</span> -n <span class="s2">"qq群12345678"</span> <span class="p">|</span> iconv -f utf-8 -t gbk
-
 qqȺ12345678
 </pre></div>
 <p>然后使用<code>unzip</code>解压时输入对应的编码密码就可以了。</p>
 <h2>查看网关</h2>
 <div class="highlight"><pre><span></span>$ route -n 
-
 $ ip route show
-
 $ netstat -r
 </pre></div>
 <h2>查看SSH端口</h2>
@@ -119,73 +116,45 @@ $ netstat -r
 </pre></div>
 <h2>Redis设置密码保护</h2>
 <div class="highlight"><pre><span></span>&gt; config get requirepass
-
 <span class="m">1</span><span class="o">)</span> <span class="s2">"requirepass"</span>
-
 <span class="m">2</span><span class="o">)</span> <span class="s2">""</span>
 
-
-
 &gt; config <span class="nb">set</span> requirepass <span class="m">1234</span>
-
 OK
 
-
-
 &gt; config get requirepass
-
 <span class="m">1</span><span class="o">)</span> <span class="s2">"requirepass"</span>
-
 <span class="m">2</span><span class="o">)</span> <span class="s2">"1234"</span>
 </pre></div>
 <h2>清理缓存(buff/cache)</h2>
 <div class="highlight"><pre><span></span>$ free -h
-
               total        used        free      shared  buff/cache   available
-
 Mem:           503G         31G         33G        206G        437G        264G
-
 Swap:          <span class="m">4</span>.0G        <span class="m">2</span>.5G        <span class="m">1</span>.5G
 
-
-
 $ <span class="nb">echo</span> <span class="m">1</span> &gt; /proc/sys/vm/drop_caches   <span class="c1"># 清除pagecache</span>
-
 $ <span class="nb">echo</span> <span class="m">2</span> &gt; /proc/sys/vm/drop_caches   <span class="c1"># 清除slab</span>
-
 $ <span class="nb">echo</span> <span class="m">3</span> &gt; /proc/sys/vm/drop_caches   <span class="c1"># 清除pagecache和slab</span>
 </pre></div>
 <h2>查看磁盘</h2>
 <div class="highlight"><pre><span></span>$ fdisk -l <span class="p">|</span> grep Disk
-
 $ lsblk
 </pre></div>
 <h2>产生随机密码</h2>
 <div class="highlight"><pre><span></span>$ yum install expect -y
 
-
-
     -l   生成密码的长度，默认是 <span class="m">9</span> 位，不同版本的默认长度可能是不一样的。
-
     -d  生成密码中包含数字的位数，默认是 <span class="m">2</span> 位。
-
     -c  生成密码中包含小写字母的位数，默认是 <span class="m">2</span> 位。
-
     -C  生成密码中包含大写字母的位数，默认是 <span class="m">2</span> 位。
-
     -s   生成密码中包含特殊字符的位数，默认是 <span class="m">1</span> 位。
 
-
-
 $ mkpasswd -l <span class="m">20</span> -d <span class="m">5</span> -c <span class="m">5</span> -C <span class="m">5</span> -s <span class="m">2</span>
-
-
 
 nmuS*Cv<span class="o">{</span>2n6BC3spK65p
 </pre></div>
 <h2>Shell脚本加密</h2>
 <div class="highlight"><pre><span></span>$ shc -f filename.sh -o filename
-
 $ shc -r -f filename.sh -o filename  <span class="c1"># 跨系统</span>
 </pre></div>
 </div>
