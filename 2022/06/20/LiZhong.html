@@ -17,7 +17,7 @@
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
         <meta property="og:site_name" content="MinYiLife"/>
-        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek">
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
         
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <meta property="og:image" content="undefined"/>
@@ -91,7 +91,7 @@
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
-        <div class="col-md-12">                            <!-- col-md-9/12 begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
         <div class="mypage">                        <!-- mypage begin -->
         
         <div class="slogan">                        <!-- slogan begin -->
@@ -131,7 +131,7 @@
         <strong>本文作者：</strong>「
         <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-06-20 Mon，共905字
         </li>
-        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li><strong>微信搜索：</strong> <span style='color:red'>「 MinYiLife 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
         <a href="http://www.lesliezhu.com/2022/06/20/LiZhong.html" title="唐高宗庶长子李忠的坎坷人生">http://www.lesliezhu.com/2022/06/20/LiZhong.html</a>
@@ -157,12 +157,12 @@
             
             <div class="post-reward">
             <input type="checkbox" name="reward" id="reward" hidden />
-            <label id="reward-button" class="reward-button" for="reward">点击关注公众号</label>
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
             <div class="qr-code">
             
-                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
-                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
-                <span>微信公众号</span>
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
                 </label>
                 
             </div>
@@ -177,6 +177,55 @@
             async>
             </script>
             </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2022/10/31/cpp_7.html"><i class="fa fa-file-o"></i>C++语言导学(7):函数对象(Function Object)</a></li><li><a href="http://www.lesliezhu.com/2022/10/26/cpp_6.html"><i class="fa fa-file-o"></i>C++语言导学(6): lambda表达式</a></li><li><a href="http://www.lesliezhu.com/2022/10/26/cpp_5.html"><i class="fa fa-file-o"></i>C++语言导学(5): 容器</a></li><li><a href="http://www.lesliezhu.com/2022/10/26/cpp_4.html"><i class="fa fa-file-o"></i>C++语言导学(4): pImpl习惯用法</a></li><li><a href="http://www.lesliezhu.com/2022/10/25/cpp_3.html"><i class="fa fa-file-o"></i>C++语言导学(3): RAII与智能指针</a></li><li><a href="http://www.lesliezhu.com/2022/10/23/cpp_2.html"><i class="fa fa-file-o"></i>C++语言导学(2): 模块化</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/读史札记.html">读史札记<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>2</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>1</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>15</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
         </div> <!-- row-fluid -->
         </div>
         </div>
