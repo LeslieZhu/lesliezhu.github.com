@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> C++语言导学(9):并发(上) </title>
+            <link> http://www.lesliezhu.com/2022/11/01/cpp_9.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/11/01/cpp_9.html</guid>
+            <category><![CDATA[C++学习与实践]]></category>
+            <pubDate>2022-11-01 Tue</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/11/01/cpp_9.html</comments>
+            </item>
+            
+            <item>
             <title> C++语言导学(8):模板 </title>
             <link> http://www.lesliezhu.com/2022/11/01/cpp_8.html </link>
             <author><![CDATA[吴羽舒]]></author>
