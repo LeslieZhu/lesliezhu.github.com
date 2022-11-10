@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> C++实现解释器(1):开篇 </title>
+            <link> http://www.lesliezhu.com/2022/11/10/writing_an_interpreter_in_cpp_1.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/11/10/writing_an_interpreter_in_cpp_1.html</guid>
+            <category><![CDATA[C++学习与实践]]></category>
+            <pubDate>2022-11-10 Thu</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/11/10/writing_an_interpreter_in_cpp_1.html</comments>
+            </item>
+            
+            <item>
             <title> C++语言导学(10):并发(下) </title>
             <link> http://www.lesliezhu.com/2022/11/04/cpp_10.html </link>
             <author><![CDATA[吴羽舒]]></author>
