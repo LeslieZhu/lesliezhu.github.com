@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> C++疑难杂症(1):小心std::variant中的bool类型值 </title>
+            <link> http://www.lesliezhu.com/2022/11/16/cpp_go_to_wrong_1.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/11/16/cpp_go_to_wrong_1.html</guid>
+            <category><![CDATA[BigData]]></category>
+            <pubDate>2022-11-16 Wed</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/11/16/cpp_go_to_wrong_1.html</comments>
+            </item>
+            
+            <item>
             <title> C++实现解释器(2):词法分析 </title>
             <link> http://www.lesliezhu.com/2022/11/11/writing_an_interpreter_in_cpp_2.html </link>
             <author><![CDATA[吴羽舒]]></author>
