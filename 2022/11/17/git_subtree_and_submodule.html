@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>MinYiLife</title>
+        <title>Git如何管理子模块和第三方模块？</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -31,10 +31,9 @@
         <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
-        <ORGNOTESTYLE>
+        <style></style>
         </head>
         
-
         <body>  
         <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         
@@ -49,7 +48,6 @@
     
         <a class="navbar-brand" href="/index.html">MinYiLife</a>
         
-
         <div class="collapse navbar-collapse nav-menu">
         
         <ul class="nav navbar-nav">
@@ -84,13 +82,12 @@
         </div> <!-- container -->
         </nav>
         
-
         <div class="clearfix"></div>
         <div class="container">
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>敏行如思，毅往无前！</h1>
+        <h1>Git如何管理子模块和第三方模块？</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -99,182 +96,114 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        主页君: 吴羽舒
-
+        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        
+        <div id='content'>
+<h2>引言</h2>
+<p><code>Git</code>是广泛使用的版本管理工具，对于子模块或第三方模块可以这样管理：</p>
+<ul>
+<li><code>submodule</code>: 第三方模块</li>
+<li><code>subtree</code>: 子模块，大项目团队内部互相协作</li>
+</ul>
+<h2>第三方模块(submodule)</h2>
+<p>既然是第三方模块，自然这个模块基本上是由别人开发完成，而自己只是作为这个模块的使用者，不会和自己的项目代码互动协作。</p>
+<p>比如为项目添加<code>gtest</code>作为第三方库:</p>
+<div class="highlight"><pre><span></span>$ git submodule add https://github.com/google/googletest.git ./third_party/googletest
 
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/11/17/git_subtree_and_submodule.html">Git如何管理子模块和第三方模块？</a>
-            <span class="date">2022-11-17 Thu </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/11/16/cpp_go_to_wrong_1.html">C++疑难杂症(1):小心std::variant中的bool类型值</a>
-            <span class="date">2022-11-16 Wed </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/11/11/writing_an_interpreter_in_cpp_2.html">C++实现解释器(2):词法分析</a>
-            <span class="date">2022-11-11 Fri </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/11/10/writing_an_interpreter_in_cpp_1.html">C++实现解释器(1):开篇</a>
-            <span class="date">2022-11-10 Thu </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/11/04/cpp_10.html">C++语言导学(10):并发(下)</a>
-            <span class="date">2022-11-04 Fri </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/11/01/cpp_9.html">C++语言导学(9):并发(上)</a>
-            <span class="date">2022-11-01 Tue </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/11/01/cpp_8.html">C++语言导学(8):模板</a>
-            <span class="date">2022-11-01 Tue </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/31/cpp_7.html">C++语言导学(7):函数对象(Function Object)</a>
-            <span class="date">2022-10-31 Mon </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/26/cpp_6.html">C++语言导学(6): lambda表达式</a>
-            <span class="date">2022-10-26 Wed </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/26/cpp_5.html">C++语言导学(5): 容器</a>
-            <span class="date">2022-10-26 Wed </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/26/cpp_4.html">C++语言导学(4): pImpl习惯用法</a>
-            <span class="date">2022-10-26 Wed </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/25/cpp_3.html">C++语言导学(3): RAII与智能指针</a>
-            <span class="date">2022-10-25 Tue </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/23/cpp_2.html">C++语言导学(2): 模块化</a>
-            <span class="date">2022-10-23 Sun </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/22/cpp_1.html">C++语言导学(1): 基础知识</a>
-            <span class="date">2022-10-22 Sat </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2020/05/10/I_want_a_dictionary.html">妈，我想要一本字典！</a>
-            <span class="date">2020-05-10 Sun </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2019/10/17/积雨云.html">积雨云</a>
-            <span class="date">2019-10-17 Thu </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/18/unzip.html">几个常用的Linux命令与问题</a>
-            <span class="date">2022-10-18 Tue </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/18/NanChaoGuShiRenWu_01.html">第一位田园诗人陶渊明</a>
-            <span class="date">2022-10-18 Tue </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/06/22/TangXuanZong.html">唐玄宗在位45年大事记</a>
-            <span class="date">2022-06-22 Wed </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/06/20/LiZhong.html">唐高宗庶长子李忠的坎坷人生</a>
-            <span class="date">2022-06-20 Mon </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/06/19/TangChaoHuangDiJieShao.html">唐朝的20位皇帝</a>
-            <span class="date">2022-06-19 Sun </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/05/19/CuiHao.html">诗人崔颢的有文无行</a>
-            <span class="date">2022-05-19 Thu </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-        <div>
-        <center>
-        <div class="pagination">
-        <ul class="pagination">
-        <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>Newer</a></li>
-        <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
-        <li class="next disabled"><a><i class="fa fa-arrow-circle-o-right"></i>Older</a></li>
+or
+
+$ git submodule add https://github.com/google/googletest.git ./third_party/
+</pre></div>
+<p>它会自动把gtest代码clone下来，但对于本地项目本身来说，只是添加一个第三方模块记录文件(<code>.gitmodules</code>)而已:</p>
+<div class="highlight"><pre><span></span><span class="o">[</span>submodule <span class="s2">"third_party/googletest"</span><span class="o">]</span>
+    <span class="nv">path</span> <span class="o">=</span> third_party/googletest
+    <span class="nv">url</span> <span class="o">=</span> https://github.com/google/googletest.git
+</pre></div>
+<p>保持本地项目和第三方模块之间的彼此独立, 后续拿到这个项目的时候自动获取依赖的第三方模块代码。</p>
+<h2>子模块(subtree)</h2>
+<blockquote>
+<p><a href="https://www.atlassian.com/git/tutorials/git-subtree">https://www.atlassian.com/git/tutorials/git-subtree</a></p>
+</blockquote>
+<p>如果随着项目变大，想将一些功能模块独立变成子项目或子模块。</p>
+<p>比如某个人或团队只需要维护一个功能模块，而不需要去接触庞大的整个项目，那么把这个功能模块以子模块形式分享出去是比较好的。</p>
+<p>如果只是想将一部分功能变成子模块，后续彼此隔离，不会互相更新，则可以这样:</p>
+<div class="highlight"><pre><span></span>$ <span class="nb">cd</span> project-dir/
+$ git subtree split -P Test -b v-Test <span class="c1"># 将Test目录及记录变成一个分支</span>
+$ git pull origin v-Test <span class="c1"># 另建立项目pull该分支即可</span>
+</pre></div>
+<p>但一般情况下，这个子项目是要和庞大的整个项目保持互动的，可能会一起维护子项目后续更新，则要换一种方式。</p>
+<p>比如有目录Test，想将它独立变成一个子项目并保持原有所有相关历史记录，可以:</p>
+<div class="highlight"><pre><span></span>$ git remote add mod-Test git@github.com:LeslieZhu/mod-Test.git
+$ git subtree push --prefix<span class="o">=</span>sub/Test mod-Test master            <span class="c1"># 推送该子项目相关更新</span>
+</pre></div>
+<p>如果后续还会共同维护子项目，则可以:</p>
+<div class="highlight"><pre><span></span>$ git subtree pull --prefix<span class="o">=</span>sub/Test mod-Test master            <span class="c1"># 拉取子项目相关更新和详细记录</span>
+$ git subtree pull --prefix<span class="o">=</span>sub/Test mod-Test master --squash   <span class="c1"># 拉取子项目相关更新但所有记录合并为一条</span>
+
+$ git subtree push --prefix<span class="o">=</span>sub/Test mod-Test master            <span class="c1"># 推送该子项目相关更新</span>
+</pre></div>
+<p>使用subtree方式不会在git中留下特殊记录文件，对于拿到这个项目的人来说，并不会知道还有子项目或父项目的存在，看到的只是一个实实在在的目录。</p>
+<h2>总结</h2>
+<p>第三方模块使用<code>submodule</code>，内部项目子模块使用<code>subtree</code>。</p>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-17 Thu，共570字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/11/17/git_subtree_and_submodule.html" title="Git如何管理子模块和第三方模块？">http://www.lesliezhu.com/2022/11/17/git_subtree_and_submodule.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
         </ul>
         </div>
-        </center>
-        </div>
         
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/11/16/cpp_go_to_wrong_1.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
             
-        </div> <!-- mypage -->
-        </div> <!-- col-md-12 -->
-        
-
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
         <div class="col-md-3">
         <div id="sidebar">
         
@@ -324,12 +253,10 @@
         </div> <!-- sidebar -->
         </div> <!-- col-md-3 -->
         
-
         </div> <!-- row-fluid -->
         </div>
         </div>
         
-
         <div class="container-narrow">
         <footer>
         <p>&copy; 2014 吴羽舒
