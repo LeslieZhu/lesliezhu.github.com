@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> Linux如何设置用户长时间不操作就自动登出? </title>
+            <link> http://www.lesliezhu.com/2022/11/20/TMOUT_env_variable_in_liunux.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/11/20/TMOUT_env_variable_in_liunux.html</guid>
+            <category><![CDATA[Linux操作与管理]]></category>
+            <pubDate>2022-11-20 Sun</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/11/20/TMOUT_env_variable_in_liunux.html</comments>
+            </item>
+            
+            <item>
             <title> Git如何管理子模块和第三方模块？ </title>
             <link> http://www.lesliezhu.com/2022/11/17/git_subtree_and_submodule.html </link>
             <author><![CDATA[吴羽舒]]></author>
