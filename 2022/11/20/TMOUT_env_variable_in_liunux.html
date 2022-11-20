@@ -150,20 +150,20 @@
  In an interactive shell, the value is interpreted as the number of seconds to wait for  input  after  issuing
  the primary prompt.  Bash terminates after waiting for that number of seconds if input does not arrive.</p>
 </blockquote>
-<p>以root用户新建<code>/etc/profile.d/timeout.sh</code>文件，用于定义变量<code>TMOUT</code>大于0，用户超时不操作自动退出登录:</p>
+<p>以<code>root</code>用户新建<code>/etc/profile.d/timeout.sh</code>文件，用于定义变量<code>TMOUT</code>大于0，用户超时不操作自动退出登录:</p>
 <div class="highlight"><pre><span></span><span class="c1"># cat /etc/profile.d/timeout.sh</span>
 
 <span class="nb">readonly</span> <span class="nv">TMOUT</span><span class="o">=</span><span class="m">600</span> <span class="c1"># 单位是秒(s)</span>
 <span class="nb">export</span> TMOUT
 </pre></div>
-<p>变量<code>TMOUT</code>的作用是在Shell超过一定时间无操作后自动退出登录。</p>
+<p>变量<code>TMOUT</code>的作用是在<code>Shell</code>超过一定时间无操作后自动退出登录。</p>
 <div class="highlight"><pre><span></span>$ <span class="nb">unset</span> TMOUT
 bash: unset: TMOUT: cannot unset: <span class="nb">readonly</span> variable
 
 $ <span class="nv">TMOUT</span><span class="o">=</span><span class="m">1000</span>
 bash: TMOUT: <span class="nb">readonly</span> variable
 </pre></div>
-<p>而<code>readonly</code>是不允许修改这个值，除非root用户修改配置文件并重新登录才可以修改生效。</p>
+<p>而<code>readonly</code>是不允许修改这个值，除非<code>root</code>用户修改配置文件并重新登录才可以修改生效。</p>
 <h2>总结</h2>
 <p>这样设置后，所有用户超过600秒不操作，登录的终端就自动退出登录了，在一定程度上增加了Linux系统的安全性。</p>
 </div>
