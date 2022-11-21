@@ -1,0 +1,498 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>Linux如何通过PAM管理授权?</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="minyilife@use-wechat.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        <style></style>
+        </head>
+        
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>Linux如何通过PAM管理授权?</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        <div id='content'>
+<h2>引言</h2>
+<blockquote>
+<p><a href="https://github.com/linux-pam/linux-pam">https://github.com/linux-pam/linux-pam</a></p>
+</blockquote>
+<p><code>PAM</code>指的是<code>Pluggable Authentication Modules</code>，以可插拔模块的形式来帮助Linux管理系统的授权。</p>
+<p><code>PAM</code>将系统授权相关的逻辑功能做成共享链接库(<code>/usr/lib64/security/</code>)的形式，然后其他需要授权操作的程序只需要调用这个共享库即可。</p>
+<p>对于管理员来说，正确的设置复杂授权等工作就变成了一个简单的管理配置文件的工作了。</p>
+<h2>/etc/pam.d/配置目录</h2>
+<p>常用的涉及到授权的命令都使用了<code>libpam</code>共享库，比如:</p>
+<div class="highlight"><pre><span></span>$ ldd /usr/bin/su
+    libpam.so.0 <span class="o">=</span>&gt; /lib64/libpam.so.0 <span class="o">(</span>0x00007fb74b974000<span class="o">)</span>
+    libpam_misc.so.0 <span class="o">=</span>&gt; /lib64/libpam_misc.so.0 <span class="o">(</span>0x00007fb74b770000<span class="o">)</span>
+    ......
+</pre></div>
+<p>系统对常见的一些需要授权操作服务场景(比如<code>su</code>)默认定义好了规则:</p>
+<div class="highlight"><pre><span></span>/etc/pam.d/chfn
+/etc/pam.d/chsh
+/etc/pam.d/config-util
+/etc/pam.d/fingerprint-auth
+/etc/pam.d/login
+/etc/pam.d/other
+/etc/pam.d/passwd
+/etc/pam.d/password-auth
+/etc/pam.d/polkit-1
+/etc/pam.d/postlogin
+/etc/pam.d/remote
+/etc/pam.d/runuser
+/etc/pam.d/runuser-l
+/etc/pam.d/smartcard-auth
+/etc/pam.d/su
+/etc/pam.d/su-l
+/etc/pam.d/system-auth
+/etc/pam.d/systemd-user
+</pre></div>
+<p>比如<code>su</code>命令对应的授权规则是:</p>
+<div class="highlight"><pre><span></span>$ cat /etc/pam.d/su
+
+<span class="c1">#%PAM-1.0</span>
+auth		sufficient	pam_rootok.so
+<span class="c1"># Uncomment the following line to implicitly trust users in the "wheel" group.</span>
+<span class="c1">#auth		sufficient	pam_wheel.so trust use_uid</span>
+<span class="c1"># Uncomment the following line to require a user to be in the "wheel" group.</span>
+<span class="c1">#auth		required	pam_wheel.so use_uid</span>
+auth		substack	system-auth
+auth		include		postlogin
+account		sufficient	pam_succeed_if.so <span class="nv">uid</span> <span class="o">=</span> <span class="m">0</span> use_uid quiet
+account		include		system-auth
+password	include		system-auth
+session		include		system-auth
+session		include		postlogin
+session		optional	pam_xauth.so
+</pre></div>
+<p>基本含义是根据规则，首先需要通过<code>pam_rootok.so</code>模块检验是否能够获得root身份，之后再叠加更加严格的规则。比如如果要求只有<code>wheel</code>用户组的用户可以使用<code>sudo</code>命令，则可以要求必须通过<code>pam_wheel.so</code>模块检验。</p>
+<p>如果是以上服务场景之外的, 其他程序想要获取到授权，则统统归到<code>/etc/pam.d/other</code>规则文件里面，其内容:</p>
+<div class="highlight"><pre><span></span>$ cat /etc/pam.d/other
+
+<span class="c1">#%PAM-1.0</span>
+auth     required       pam_deny.so
+account  required       pam_deny.so
+password required       pam_deny.so
+session  required       pam_deny.so
+</pre></div>
+<p>即系统默认自带的授权场景之外的其他授权行为一律拒绝。</p>
+<h2>授权规则语法</h2>
+<p>一般<code>Unix</code>系统里面是使用文件<code>/etc/pam.conf</code>来配置规则,其语法是:</p>
+<div class="highlight"><pre><span></span>[service name] module-type control-flag module-path [module-arguments]
+</pre></div>
+<p>但在<code>Linux</code>里面常见的做法是将每个<code>service name</code>以文件的形式单独存放到目录<code>/etc/pam.d/</code>中，并且要求文件名必须是小写:</p>
+<div class="highlight"><pre><span></span>module-type control-flag module-path [module-arguments]
+</pre></div>
+<p>其中<code>module-type</code>参数是<code>auth</code>,<code>account</code>,<code>session</code>,<code>password</code>.</p>
+<p>其中<code>control-flag</code>的含义如下：</p>
+<table>
+<thead>
+<tr>
+<th>Flag标志</th>
+<th>失败后是否停止</th>
+<th>成功后是否停止</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>binding</td>
+<td>No</td>
+<td>Yes</td>
+<td></td>
+</tr>
+<tr>
+<td>include</td>
+<td>-</td>
+<td>-</td>
+<td>包含其他服务规则进来</td>
+</tr>
+<tr>
+<td>optional</td>
+<td>No</td>
+<td>No</td>
+<td>认证失败也忽略，除非是唯一的规则</td>
+</tr>
+<tr>
+<td>required</td>
+<td>No</td>
+<td>No</td>
+<td>任何规则失败导致整体授权失败，但会全部执行完再返回错误</td>
+</tr>
+<tr>
+<td>requisite</td>
+<td>Yes</td>
+<td>No</td>
+<td>一旦规则失败立即返回错误，不执行后面其他规则验证</td>
+</tr>
+<tr>
+<td>sufficient</td>
+<td>No</td>
+<td>Yes</td>
+<td>只要通过当前模块认证就立马返回成功信息，即使前面有错误认证</td>
+</tr>
+</tbody>
+</table>
+<h2>自定义授权服务与规则</h2>
+<p>除非特殊情况，一般不应该去修改系统自带的授权服务规则文件，但可以自定义新的授权服务规则。</p>
+<p>比如这里创建一个叫<code>check</code>的服务配置文件<code>/etc/pam.d/check</code>:</p>
+<div class="highlight"><pre><span></span>auth       required     pam_unix_auth.so
+account    required     pam_unix_acct.so
+session    required     pam_limits.so    conf=/etc/security/limits.conf
+</pre></div>
+<p>现有一个程序调用这个授权服务:</p>
+<div class="highlight"><pre><span></span><span class="c1">// https://github.com/linux-pam/linux-pam/blob/master/examples/check_user.c</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;security/pam_appl.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;security/pam_misc.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+
+<span class="k">static</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pam_conv</span><span class="w"> </span><span class="n">conv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">misc_conv</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="nb">NULL</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">pam_handle_t</span><span class="w"> </span><span class="o">*</span><span class="n">pamh</span><span class="o">=</span><span class="nb">NULL</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">retval</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">user</span><span class="o">=</span><span class="s">"nobody"</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"Usage: check_user [username]</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 调用check授权服务</span>
+<span class="w">    </span><span class="n">retval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pam_start</span><span class="p">(</span><span class="s">"check"</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">conv</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pamh</span><span class="p">);</span><span class="w"> </span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="n">retval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pam_authenticate</span><span class="p">(</span><span class="n">pamh</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">    </span><span class="cm">/* is user really user? */</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="n">retval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pam_acct_mgmt</span><span class="p">(</span><span class="n">pamh</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">       </span><span class="cm">/* permitted access? */</span><span class="w"></span>
+
+<span class="w">    </span><span class="cm">/* This is where we have been authorized or not. */</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span><span class="w"> </span><span class="s">"Authenticated</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span><span class="w"> </span><span class="s">"Not Authenticated</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pam_end</span><span class="p">(</span><span class="n">pamh</span><span class="p">,</span><span class="n">retval</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">     </span><span class="cm">/* close Linux-PAM */</span><span class="w"></span>
+<span class="w">    </span><span class="n">pamh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"check_user: failed to release authenticator</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">0</span><span class="o">:</span><span class="mi">1</span><span class="w"> </span><span class="p">);</span><span class="w">       </span><span class="cm">/* indicate success */</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>这样新开发的程序就可以使用自定义的授权服务规则了:</p>
+<div class="highlight"><pre><span></span>$ yum install pam-devel
+
+$ gcc main.cpp  -lpam -lpam_misc -o check_user
+
+$ ./check_user
+Password:
+Not Authenticated
+
+$ ./check_user <span class="nb">test</span>
+Password:
+Authenticated
+
+$ ./check_user <span class="nb">test</span>
+Password:
+Not Authenticated
+</pre></div>
+<h2>pam_limits管理会话资源分配</h2>
+<p>日常接触较多的是会话资源管理，比如:</p>
+<div class="highlight"><pre><span></span>$ <span class="nb">ulimit</span> -a
+core file size          <span class="o">(</span>blocks, -c<span class="o">)</span> <span class="m">0</span>
+data seg size           <span class="o">(</span>kbytes, -d<span class="o">)</span> unlimited
+scheduling priority             <span class="o">(</span>-e<span class="o">)</span> <span class="m">0</span>
+file size               <span class="o">(</span>blocks, -f<span class="o">)</span> unlimited
+pending signals                 <span class="o">(</span>-i<span class="o">)</span> <span class="m">7475</span>
+max locked memory       <span class="o">(</span>kbytes, -l<span class="o">)</span> <span class="m">64</span>
+max memory size         <span class="o">(</span>kbytes, -m<span class="o">)</span> unlimited
+open files                      <span class="o">(</span>-n<span class="o">)</span> <span class="m">1048576</span>
+pipe size            <span class="o">(</span><span class="m">512</span> bytes, -p<span class="o">)</span> <span class="m">8</span>
+POSIX message queues     <span class="o">(</span>bytes, -q<span class="o">)</span> <span class="m">819200</span>
+real-time priority              <span class="o">(</span>-r<span class="o">)</span> <span class="m">0</span>
+stack size              <span class="o">(</span>kbytes, -s<span class="o">)</span> <span class="m">8192</span>
+cpu <span class="nb">time</span>               <span class="o">(</span>seconds, -t<span class="o">)</span> unlimited
+max user processes              <span class="o">(</span>-u<span class="o">)</span> unlimited
+virtual memory          <span class="o">(</span>kbytes, -v<span class="o">)</span> unlimited
+file locks                      <span class="o">(</span>-x<span class="o">)</span> unlimited
+</pre></div>
+<p>这是系统当前会话的资源限制情况，它其实检查这些资源限制是通过<code>pam_limits</code>模块进行的，这个模块默认是读取配置文件<code>/etc/security/limits.conf</code>,还会读取<code>/etc/security/limits.d/</code>目录下的配置文件。</p>
+<p>如果是临时修改会话资源限制，则使用<code>ulimit</code>命令:</p>
+<div class="highlight"><pre><span></span>$ <span class="nb">ulimit</span> -s
+<span class="m">10240</span>
+
+$ <span class="nb">ulimit</span> -s <span class="m">8192</span>
+
+$ <span class="nb">ulimit</span> -s
+<span class="m">8192</span>
+
+$ <span class="nb">ulimit</span> -s unlimited
+
+$ <span class="nb">ulimit</span> -s
+unlimited
+</pre></div>
+<p>如果是长期生效则修改配置文件<code>/etc/security/limits.conf</code>:</p>
+<div class="highlight"><pre><span></span>#&lt;domain&gt;        &lt;type&gt;  &lt;item&gt;        &lt;value&gt;
+testUser         hard    maxlogins     1      # 该用户只可以有1个登录会话
+@testGrp         hard    maxlogins     1      # 该用户组用户只可以有1个登录会话
+*                hard    maxsyslogins  10     # 系统最多10个会话同时在线
+testUser         hard    stack         10240  # 堆栈空间
+testUser         soft    core          2      # 最多使用2个核CPU资源
+testUser         hard    nofile        1024   # 最多打开1024个文件
+</pre></div>
+<h2>总结</h2>
+<p><code>PAM</code>是方便Linux管理授权和资源分配的机制，而其中<code>pamd_limits</code>是常用的管理会话资源的模块。</p>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-21 Mon，共820字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html" title="Linux如何通过PAM管理授权?">http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/11/20/TMOUT_env_variable_in_liunux.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html"><i class="fa fa-file-o"></i>Linux如何通过PAM管理授权?</a></li><li><a href="http://www.lesliezhu.com/2022/11/20/TMOUT_env_variable_in_liunux.html"><i class="fa fa-file-o"></i>Linux如何设置用户长时间不操作就自动登出?</a></li><li><a href="http://www.lesliezhu.com/2022/11/17/git_subtree_and_submodule.html"><i class="fa fa-file-o"></i>Git如何管理子模块和第三方模块？</a></li><li><a href="http://www.lesliezhu.com/2022/11/16/cpp_go_to_wrong_1.html"><i class="fa fa-file-o"></i>C++疑难杂症(1):小心std::variant中的bool类型值</a></li><li><a href="http://www.lesliezhu.com/2022/11/11/writing_an_interpreter_in_cpp_2.html"><i class="fa fa-file-o"></i>C++实现解释器(2):词法分析</a></li><li><a href="http://www.lesliezhu.com/2022/11/10/writing_an_interpreter_in_cpp_1.html"><i class="fa fa-file-o"></i>C++实现解释器(1):开篇</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/读史札记.html">读史札记<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>2</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>24</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        
