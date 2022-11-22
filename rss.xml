@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> Docker镜像里为什么Linux无法安装Man Pages？ </title>
+            <link> http://www.lesliezhu.com/2022/11/21/man_pages_missing.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/11/21/man_pages_missing.html</guid>
+            <category><![CDATA[Linux操作与管理]]></category>
+            <pubDate>2022-11-22 Tue</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/11/21/man_pages_missing.html</comments>
+            </item>
+            
+            <item>
             <title> Linux如何通过PAM管理授权? </title>
             <link> http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html </link>
             <author><![CDATA[吴羽舒]]></author>

@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>202205</title>
+        <title>Docker镜像里为什么Linux无法安装Man Pages？</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -31,10 +31,9 @@
         <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
-        <ORGNOTESTYLE>
+        <style></style>
         </head>
         
-
         <body>  
         <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         
@@ -49,7 +48,6 @@
     
         <a class="navbar-brand" href="/index.html">MinYiLife</a>
         
-
         <div class="collapse navbar-collapse nav-menu">
         
         <ul class="nav navbar-nav">
@@ -84,13 +82,12 @@
         </div> <!-- container -->
         </nav>
         
-
         <div class="clearfix"></div>
         <div class="container">
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>202205</h1>
+        <h1>Docker镜像里为什么Linux无法安装Man Pages？</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -99,24 +96,114 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        月份: <a href="http://www.lesliezhu.com/tags/202205.html"><i class="202205"></i>202205</a>
-
+        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        
+        <div id='content'>
+<h2>引言</h2>
+<p><code>Man Pages</code>是Linux系统常用的在线文档手册。</p>
+<p>常说在Linux里不需要记住软件命令的用法，只要会<code>找男人</code>就行了，指的就是查看这个<code>man pages</code>文档。</p>
+<p>Docker是比较常用的容器，常用于部署应用或作为开发环境，但一般的Docker镜像为了减少体积，不会带有<code>Man Pages</code>文档手册。</p>
+<p>有时候哪怕按照一般的做法使用<code>yum</code>安装了<code>man-pages</code>软件包，发现还是没有按预期安装文档，这是怎么回事呢？</p>
+<h2>man pages文档手册</h2>
+<p>一般情况下，这样安装<code>man-pages</code>软件包以下载文档手册的:</p>
+<div class="highlight"><pre><span></span>$ yum install man man-pages man-db
 
-        <!-- display as entry -->
-        <div class="entry">
-        <div class="row">
-        <div class="col-md-9">
-        <li><a href="http://www.lesliezhu.com/2022/05/19/CuiHao.html" target="_blank"><i class="fa fa-file-o"></i>诗人崔颢的有文无行</a></li>
-        </div>
-        </div>
-        </div>
-        
-        </div> <!-- mypage -->
-        </div> <!-- col-md-9 -->
-        
+$ mandb <span class="c1"># 更新man文档手册的索引信息</span>
 
+$ man strcpy <span class="c1"># 查看strcpy文档手册</span>
+</pre></div>
+<p>假设现在要查看<code>nlopt</code>相关的文档，但不知道哪个软件包包含有这份文档手册，则可以这样查看:</p>
+<div class="highlight"><pre><span></span>$ man nlopt
+No manual entry <span class="k">for</span> nlopt
+
+$ yum whatprovides */nlopt.*.gz
+
+NLopt-devel-2.4.2-2.el7.x86_64 : Development files <span class="k">for</span> NLopt
+Repo        : epel
+Matched from:
+Filename    : /usr/share/man/man3/nlopt.3.gz
+
+$ yum install NLopt-devel
+
+or
+
+$ yum reinstall NLopt-devel
+
+$ man -w nlopt <span class="c1"># 找到文档具体位置</span>
+/usr/share/man/man3/nlopt.3.gz
+
+$ man nlopt <span class="c1"># 查看文档</span>
+
+$ man <span class="m">3</span> nlopt
+</pre></div>
+<p>找到软件包名字后，安装软件就会有下载对应文档，进而可以通过<code>man</code>命令查看了。</p>
+<p>当然有的软件包提供的文档不是<code>man-page</code>格式，而是<code>info</code>格式，那就另当别论。</p>
+<h2>yum无法下载文档</h2>
+<p>前面讲到Docker镜像为了减少大小，一般是不会下载软件文档的，即使后面重新安装了软件，会发现软件虽然安装了但文档却没有下载，这是通过<code>/etc/yum.conf</code>来设置的:</p>
+<div class="highlight"><pre><span></span><span class="k">[main]</span><span class="w"></span>
+<span class="na">//...</span><span class="w"></span>
+<span class="na">tsflags</span><span class="o">=</span><span class="s">nodocs</span><span class="w"></span>
+</pre></div>
+<p>将这行配置注释后，使用<code>yum</code>安装软件时就会自动下载文档了；其实这个选项是传递给了<code>rpm</code>命令，参看: <a href="https://jsmith.fedorapeople.org/drafts/SMG/html/Software_Management_Guide/ch06s22.html">yum-plugin-tsflags</a></p>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-22 Tue，共385字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/11/21/man_pages_missing.html" title="Docker镜像里为什么Linux无法安装Man Pages？">http://www.lesliezhu.com/2022/11/21/man_pages_missing.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
         <div class="col-md-3">
         <div id="sidebar">
         
@@ -166,12 +253,10 @@
         </div> <!-- sidebar -->
         </div> <!-- col-md-3 -->
         
-
         </div> <!-- row-fluid -->
         </div>
         </div>
         
-
         <div class="container-narrow">
         <footer>
         <p>&copy; 2014 吴羽舒
