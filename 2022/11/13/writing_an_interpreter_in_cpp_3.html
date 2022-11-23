@@ -563,6 +563,11 @@
 <li>定义了每个词法单元对应的优先级</li>
 </ul>
 <p>那么，接下来就是交给递归，根据优先级递归调用就可以了。</p>
+<h2>shared_ptr从父类转换为子类</h2>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exp</span><span class="p">;</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="w"> </span><span class="n">stmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">synamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="p">(</span><span class="n">exp</span><span class="p">);</span><span class="w"></span>
+</pre></div>
 <h2>unique_ptr从父类转换为子类</h2>
 <div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exp</span><span class="p">;</span><span class="w"></span>
 
@@ -691,6 +696,7 @@ Woops! We ran into some monkey business here!
 <ul>
 <li>智能指针必须和移动语义一起使用，导致到处都是<code>std::move</code></li>
 <li>从父类智能指针(<code>unique_ptr</code>)转化为子类智能指针没有很直接的方法，导致代码冗余，测试用例代码很明显</li>
+<li>将在下一步<code>求值</code>的时候将<code>unique_ptr</code>换成<code>shared_ptr</code></li>
 </ul>
 </div>
         <hr>
@@ -698,7 +704,7 @@ Woops! We ran into some monkey business here!
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-23 Wed，共966字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-23 Wed，共987字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
