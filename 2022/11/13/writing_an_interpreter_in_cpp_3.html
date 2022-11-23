@@ -1,0 +1,848 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>C++实现解释器(3):语法分析与普拉特解析</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="minyilife@use-wechat.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        <style></style>
+        </head>
+        
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>C++实现解释器(3):语法分析与普拉特解析</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        <div id='content'>
+<blockquote>
+<p>参照《Writing An Interpreter In Go》，改用C++实现。</p>
+<p>项目源码: <a href="https://github.com/LeslieZhu/waiicpp">https://github.com/LeslieZhu/waiicpp</a></p>
+</blockquote>
+<h2>引言</h2>
+<p>本篇对应的源码位于目录: <code>src/02/</code></p>
+<div class="highlight"><pre><span></span>02
+ |token
+ | |token.hpp
+ |CMakeLists.txt
+ |test
+ | |lexer_test.hpp
+ | |parser_test.hpp
+ | |ast_test.hpp
+ | |main.cpp
+ |lexer
+ | |lexer.hpp
+ |repl
+ | |repl.hpp
+ |parser
+ | |parser.hpp
+ | |parser_tracing.hpp
+ |ast
+ | |ast.hpp
+ |main
+ | |monkey.cpp
+</pre></div>
+<p><code>语法分析器</code>将输入的内容转换为对应的数据结构，具体就是将词法分析器得到的一系列词法Token转换为对应的数据结构，形成<code>抽象语法树(AST)</code>。</p>
+<p>使用<code>yacc</code>、<code>bison</code>、<code>ANTLR</code>等语法分析器生成器工具，可以根据BNF或EBNF形式描述的语法构成，自动生成语法分析器。为了理解语法分析器的工作原理，不使用这些工具。</p>
+<p>这里准备编写的语法分析器是<code>递归下降语法分析器</code>，具体就是基于自上而下的运算符优先级分析法，其发明人是普拉特，又称<code>普拉特语法分析器</code>。</p>
+<h2>AST类型</h2>
+<p>AST节点可以分成两类：</p>
+<ul>
+<li><code>语句</code>：不产生值</li>
+<li><code>表达式</code>： 会产生值</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="c1">// The base Node interface</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Node</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Node</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">TokenLiteral</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">""</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">String</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">""</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">Good</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">        </span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="n">NodeType</span><span class="w"> </span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Base</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="c1">// All statement nodes implement this</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Statement</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Node</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Statement</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">StatementNode</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="n">NodeType</span><span class="w"> </span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Statement</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="c1">// All expression nodes implement this</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Expression</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Node</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Expression</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ExpressionNode</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">   </span><span class="k">virtual</span><span class="w"> </span><span class="n">NodeType</span><span class="w"> </span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Expression</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>它们作为其它节点的父类，除了<code>let</code>和<code>return</code>语句，其余都是表达式处理。</p>
+<h2>AST根节点</h2>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Program</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Statement</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">v_pStatements</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">TokenLiteral</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">v_pStatements</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">v_pStatements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">TokenLiteral</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">else</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">""</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">String</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">oss</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pStmt</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">v_pStatements</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">String</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">oss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">NodeType</span><span class="w"> </span><span class="nf">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Program</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>整个程序就是由这个根节点包含的一系列语句展开的，后续求值的时候就沿着根节点自上而下。</p>
+<h2>解析let语句</h2>
+<p>语法:</p>
+<div class="highlight"><pre><span></span>let &lt;标志符&gt; = &lt;表达式&gt;;
+</pre></div>
+<p>定义:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Identifier</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Expression</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">Token</span><span class="p">;</span><span class="w"> </span><span class="c1">// the token.IDENT token</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">Identifier</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">tok</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">literal</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Token</span><span class="p">(</span><span class="n">tok</span><span class="p">),</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="n">literal</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Identifier</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ExpressionNode</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">TokenLiteral</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Token</span><span class="p">.</span><span class="n">Literal</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">String</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Value</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">NodeType</span><span class="w"> </span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Identifier</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">LetStatement</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Statement</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">Token</span><span class="p">;</span><span class="w"> </span><span class="c1">// the token.LET token</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pName</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pValue</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">LetStatement</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">StatementNode</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">TokenLiteral</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Token</span><span class="p">.</span><span class="n">Literal</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">String</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">oss</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">TokenLiteral</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" "</span><span class="w"></span>
+<span class="w">            </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">pName</span><span class="o">-&gt;</span><span class="n">String</span><span class="p">()</span><span class="w"></span>
+<span class="w">            </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" = "</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pValue</span><span class="o">-&gt;</span><span class="n">Good</span><span class="p">())</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">pValue</span><span class="o">-&gt;</span><span class="n">String</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">";"</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">oss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">NodeType</span><span class="w"> </span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">LetStatement</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>这里将值也看着表达式，是为了后续更好的支持求值表达式，保持统一。</p>
+<h2>初步构造AST</h2>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Parser</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">lexer</span><span class="o">::</span><span class="n">Lexer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pLexer</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">errors</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">curToken</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">peekToken</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">nextToken</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">curToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">peekToken</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">peekToken</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pLexer</span><span class="o">-&gt;</span><span class="n">NextToken</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">curTokenIs</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">TokenType</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">curToken</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">t</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">expectPeek</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">TokenType</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">peekTokenIs</span><span class="p">(</span><span class="n">t</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">else</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">peekError</span><span class="p">(</span><span class="n">t</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Program</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ParseProgram</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Program</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pProgram</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Program</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">pProgram</span><span class="o">-&gt;</span><span class="n">v_pStatements</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">curTokenIs</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EndOF</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Statement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pStmt</span><span class="p">{</span><span class="n">parseStatement</span><span class="p">()};</span><span class="w"></span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pStmt</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="n">pProgram</span><span class="o">-&gt;</span><span class="n">v_pStatements</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">pStmt</span><span class="p">));</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">pProgram</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Statement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">parseStatement</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">curToken</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LET</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">parseLetStatement</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">curToken</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">RETURN</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">parseReturnStatement</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">else</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">parseExpressionStatement</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Parser</span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">lexer</span><span class="o">::</span><span class="n">Lexer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pLexer</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Parser</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pParser</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Parser</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">pParser</span><span class="o">-&gt;</span><span class="n">pLexer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">pLexer</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">pParser</span><span class="o">-&gt;</span><span class="n">errors</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// Read two tokens, so curToken and peekToken are both set</span>
+<span class="w">    </span><span class="n">pParser</span><span class="o">-&gt;</span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">pParser</span><span class="o">-&gt;</span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pParser</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>在ParseProgram中不断的判断下一个词法单元Token类型，从而在parseStatement中决定应该按照哪个语句语法要求来构建。</p>
+<p>解析Let语句:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">LetStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">parseLetStatement</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">LetStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pStmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">LetStatement</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">Token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curToken</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">expectPeek</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">IDENT</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">pName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="p">(</span><span class="n">curToken</span><span class="p">,</span><span class="w"> </span><span class="n">curToken</span><span class="p">.</span><span class="n">Literal</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">expectPeek</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ASSIGN</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">pValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parseExpression</span><span class="p">(</span><span class="n">LOWEST</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">peekTokenIs</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SEMICOLON</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pStmt</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>通过expectPeek不断试探下一个词法单元是否合规，然后递归调用。</p>
+<h2>解析return语句</h2>
+<p>语法:</p>
+<div class="highlight"><pre><span></span>return &lt;表达式&gt;;
+</pre></div>
+<p>定义:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">ReturnStatement</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Statement</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">Token</span><span class="p">;</span><span class="w"> </span><span class="c1">// the 'return' token</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pReturnValue</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">ReturnStatement</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">tok</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Token</span><span class="p">(</span><span class="n">tok</span><span class="p">),</span><span class="w"> </span><span class="n">pReturnValue</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ReturnStatement</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">StatementNode</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">TokenLiteral</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Token</span><span class="p">.</span><span class="n">Literal</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">String</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">oss</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">TokenLiteral</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" "</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pReturnValue</span><span class="o">-&gt;</span><span class="n">Good</span><span class="p">())</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">pReturnValue</span><span class="o">-&gt;</span><span class="n">String</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">";"</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">oss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">NodeType</span><span class="w"> </span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">ReturnStatement</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>解析return语法:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ReturnStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">parseReturnStatement</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ReturnStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pStmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ReturnStatement</span><span class="o">&gt;</span><span class="p">(</span><span class="n">curToken</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">pReturnValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parseExpression</span><span class="p">(</span><span class="n">LOWEST</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">peekTokenIs</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SEMICOLON</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pStmt</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>解析表达式: 自上而下的运算符优先级分析(普拉特解析)</h2>
+<p>在这个语言中，除了let和return是语句外，其余的都是表达式，所以解析表达式是关键。</p>
+<p>解析let和return语句是从左到右处理Token即可，但表达式还要考虑优先级等复杂情况。</p>
+<p>表达式定义:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">ExpressionStatement</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Statement</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">Token</span><span class="p">;</span><span class="w"> </span><span class="c1">// the first token of the expression</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pExpression</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">ExpressionStatement</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">tok</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Token</span><span class="p">(</span><span class="n">tok</span><span class="p">),</span><span class="w"> </span><span class="n">pExpression</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ExpressionStatement</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">StatementNode</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">TokenLiteral</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Token</span><span class="p">.</span><span class="n">Literal</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">String</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pExpression</span><span class="o">-&gt;</span><span class="n">Good</span><span class="p">())</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">pExpression</span><span class="o">-&gt;</span><span class="n">String</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="s">""</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">NodeType</span><span class="w"> </span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>普拉特解析法(自上而下解析法）与其它语法分析的主要区别在于，没有将解析函数与语法规则相关联，而是与单个词法单元相关联。这个方法的关键是，每个词法单元类型都具有两个与之关联的解析函数，具体取决于词法单元的位置，比如是中缀还是前缀。</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Parser</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">prefixParseFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">Parser</span><span class="o">::*</span><span class="p">)();</span><span class="w"></span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">infixParseFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">Parser</span><span class="o">::*</span><span class="p">)(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Expression</span><span class="o">&gt;</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">token</span><span class="o">::</span><span class="n">TokenType</span><span class="p">,</span><span class="w"> </span><span class="n">prefixParseFn</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prefixParseFns</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">token</span><span class="o">::</span><span class="n">TokenType</span><span class="p">,</span><span class="w"> </span><span class="n">infixParseFn</span><span class="o">&gt;</span><span class="w"> </span><span class="n">infixParseFns</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">registerPrefix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">TokenType</span><span class="w"> </span><span class="n">tokenType</span><span class="p">,</span><span class="w"> </span><span class="n">prefixParseFn</span><span class="w"> </span><span class="n">fn</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">prefixParseFns</span><span class="p">[</span><span class="n">tokenType</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">registerInfix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">TokenType</span><span class="w"> </span><span class="n">tokenType</span><span class="p">,</span><span class="w"> </span><span class="n">infixParseFn</span><span class="w"> </span><span class="n">fn</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">infixParseFns</span><span class="p">[</span><span class="n">tokenType</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>通过映射方式将词法单元和解析函数关联起来，每当遇到词法单元就调用对应的解析函数来生成AST节点。</p>
+<p>定义优先级:</p>
+<div class="highlight"><pre><span></span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Priority</span><span class="w"></span>
+<span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">     </span><span class="n">LOWEST</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">     </span><span class="n">EQUALS</span><span class="p">,</span><span class="w">      </span><span class="c1">// ==</span>
+<span class="w">     </span><span class="n">LESSGREATER</span><span class="p">,</span><span class="w"> </span><span class="c1">// &gt; or &lt;</span>
+<span class="w">     </span><span class="n">SUM</span><span class="p">,</span><span class="w">         </span><span class="c1">// +</span>
+<span class="w">     </span><span class="n">PRODUCT</span><span class="p">,</span><span class="w">     </span><span class="c1">// *</span>
+<span class="w">     </span><span class="n">PREFIX</span><span class="p">,</span><span class="w">      </span><span class="c1">// -X or !X</span>
+<span class="w">     </span><span class="n">CALL</span><span class="w">         </span><span class="c1">// myFunction(X)</span>
+<span class="w"> </span><span class="p">};</span><span class="w"></span>
+
+<span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">token</span><span class="o">::</span><span class="n">TokenType</span><span class="p">,</span><span class="w"> </span><span class="n">Priority</span><span class="o">&gt;</span><span class="w"> </span><span class="n">precedences</span><span class="p">{{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EQ</span><span class="p">,</span><span class="w"> </span><span class="n">Priority</span><span class="o">::</span><span class="n">EQUALS</span><span class="p">},</span><span class="w"></span>
+<span class="w">                                             </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">NOT_EQ</span><span class="p">,</span><span class="w"> </span><span class="n">Priority</span><span class="o">::</span><span class="n">EQUALS</span><span class="p">},</span><span class="w"></span>
+<span class="w">                                             </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LT</span><span class="p">,</span><span class="w"> </span><span class="n">Priority</span><span class="o">::</span><span class="n">LESSGREATER</span><span class="p">},</span><span class="w"></span>
+<span class="w">                                             </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">GT</span><span class="p">,</span><span class="w"> </span><span class="n">Priority</span><span class="o">::</span><span class="n">LESSGREATER</span><span class="p">},</span><span class="w"></span>
+<span class="w">                                             </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">PLUS</span><span class="p">,</span><span class="w"> </span><span class="n">Priority</span><span class="o">::</span><span class="n">SUM</span><span class="p">},</span><span class="w"></span>
+<span class="w">                                             </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">MINUS</span><span class="p">,</span><span class="w"> </span><span class="n">Priority</span><span class="o">::</span><span class="n">SUM</span><span class="p">},</span><span class="w"></span>
+<span class="w">                                             </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SLASH</span><span class="p">,</span><span class="w"> </span><span class="n">Priority</span><span class="o">::</span><span class="n">PRODUCT</span><span class="p">},</span><span class="w"></span>
+<span class="w">                                             </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ASTERISK</span><span class="p">,</span><span class="w"> </span><span class="n">Priority</span><span class="o">::</span><span class="n">PRODUCT</span><span class="p">},</span><span class="w"></span>
+<span class="w">                                             </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LPAREN</span><span class="p">,</span><span class="w"> </span><span class="n">Priority</span><span class="o">::</span><span class="n">CALL</span><span class="p">}};</span><span class="w"></span>
+</pre></div>
+<p>在创建语法分析器时注册所有词法单元对应的解析函数映射关系:</p>
+<div class="highlight"><pre><span></span><span class="n">pParser</span><span class="o">-&gt;</span><span class="n">prefixParseFns</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerPrefix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">IDENT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseIdentifier</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerPrefix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">INT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseIntegerLiteral</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerPrefix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">BANG</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parsePrefixExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerPrefix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">MINUS</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parsePrefixExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerPrefix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">TRUE</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseBoolean</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerPrefix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">FALSE</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseBoolean</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerPrefix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LPAREN</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseGroupedExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerPrefix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">IF</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseIfExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerPrefix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">FUNCTION</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseFunctionLiteral</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">infixParseFns</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerInfix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">PLUS</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseInfixExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerInfix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">MINUS</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseInfixExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerInfix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SLASH</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseInfixExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerInfix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ASTERISK</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseInfixExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerInfix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EQ</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseInfixExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerInfix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">NOT_EQ</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseInfixExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerInfix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseInfixExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerInfix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">GT</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseInfixExpression</span><span class="p">);</span><span class="w"></span>
+<span class="n">pParser</span><span class="o">-&gt;</span><span class="n">registerInfix</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LPAREN</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Parser</span><span class="o">::</span><span class="n">parseCallExpression</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+<p>解析整数对应函数:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">parseIntegerLiteral</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IntegerLiteral</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pLit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IntegerLiteral</span><span class="o">&gt;</span><span class="p">(</span><span class="n">curToken</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">try</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">stoll</span><span class="p">(</span><span class="n">curToken</span><span class="p">.</span><span class="n">Literal</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">pLit</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">catch</span><span class="w"> </span><span class="p">(...)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"could not parse "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">curToken</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" as integer"</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">errors</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pLit</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>普拉特解析的工作方式</h2>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">parseExpressionStatement</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pStmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="p">(</span><span class="n">curToken</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">pExpression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parseExpression</span><span class="p">(</span><span class="n">Priority</span><span class="o">::</span><span class="n">LOWEST</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">peekTokenIs</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SEMICOLON</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pStmt</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">parseExpression</span><span class="p">(</span><span class="n">Priority</span><span class="w"> </span><span class="n">precedence</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">prefixParseFn</span><span class="w"> </span><span class="n">prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prefixParseFns</span><span class="p">[</span><span class="n">curToken</span><span class="p">.</span><span class="n">Type</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">prefix</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">noPrefixParseFnError</span><span class="p">(</span><span class="n">curToken</span><span class="p">.</span><span class="n">Type</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">leftExp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;*</span><span class="p">(</span><span class="n">prefix</span><span class="p">))();</span><span class="w"></span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">peekTokenIs</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SEMICOLON</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">precedence</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">peekPrecedence</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">infixParseFn</span><span class="w"> </span><span class="n">infix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">infixParseFns</span><span class="p">[</span><span class="n">peekToken</span><span class="p">.</span><span class="n">Type</span><span class="p">];</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">infix</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">leftExp</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">leftExp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;*</span><span class="p">(</span><span class="n">infix</span><span class="p">))(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">leftExp</span><span class="p">));</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">leftExp</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>这里是关键部分，前面已经做好了两个工作:</p>
+<ul>
+<li>定义了每个词法单元Token对应的操作函数</li>
+<li>定义了每个词法单元对应的优先级</li>
+</ul>
+<p>那么，接下来就是交给递归，根据优先级递归调用就可以了。</p>
+<h2>unique_ptr从父类转换为子类</h2>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exp</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="w"> </span><span class="o">*&gt;</span><span class="p">(</span><span class="n">exp</span><span class="p">.</span><span class="n">release</span><span class="p">());</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="w"> </span><span class="n">stmt</span><span class="p">(</span><span class="n">x</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+<p>需要先释放父类智能指针并转换为子类普通指针，然后再转换为子类智能指针。</p>
+<h2>测试用例</h2>
+<div class="highlight"><pre><span></span>$ ./test_monkey
+<span class="o">[==========]</span> Running <span class="m">16</span> tests from <span class="m">16</span> <span class="nb">test</span> suites.
+<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment set-up.
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken
+<span class="o">[</span> RUN      <span class="o">]</span> TestNextToken.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestNextToken.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestString
+<span class="o">[</span> RUN      <span class="o">]</span> TestString.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestString.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestString <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestLetStatements
+<span class="o">[</span> RUN      <span class="o">]</span> TestLetStatements.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestLetStatements.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestLetStatements <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestReturnStatements
+<span class="o">[</span> RUN      <span class="o">]</span> TestReturnStatements.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestReturnStatements.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestReturnStatements <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIdentifierExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestIdentifierExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestIdentifierExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIdentifierExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIntegerLiteralExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestIntegerLiteralExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestIntegerLiteralExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIntegerLiteralExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestParsingPrefixExpressions
+<span class="o">[</span> RUN      <span class="o">]</span> TestParsingPrefixExpressions.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestParsingPrefixExpressions.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestParsingPrefixExpressions <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestParsingInfixExpressions
+<span class="o">[</span> RUN      <span class="o">]</span> TestParsingInfixExpressions.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestParsingInfixExpressions.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestParsingInfixExpressions <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestOperatorPrecedenceParsing
+<span class="o">[</span> RUN      <span class="o">]</span> TestOperatorPrecedenceParsing.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestOperatorPrecedenceParsing.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestOperatorPrecedenceParsing <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestBooleanExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestBooleanExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestBooleanExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestBooleanExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIfExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestIfExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestIfExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIfExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIfElseExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestIfElseExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestIfElseExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIfElseExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestFunctionLiteralParsing
+<span class="o">[</span> RUN      <span class="o">]</span> TestFunctionLiteralParsing.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestFunctionLiteralParsing.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestFunctionLiteralParsing <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestFunctionParameterParsing
+<span class="o">[</span> RUN      <span class="o">]</span> TestFunctionParameterParsing.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestFunctionParameterParsing.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestFunctionParameterParsing <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestCallExpressionParsing
+<span class="o">[</span> RUN      <span class="o">]</span> TestCallExpressionParsing.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestCallExpressionParsing.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestCallExpressionParsing <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestCallExpressionParameterParsing
+<span class="o">[</span> RUN      <span class="o">]</span> TestCallExpressionParameterParsing.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestCallExpressionParameterParsing.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestCallExpressionParameterParsing <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment tear-down
+<span class="o">[==========]</span> <span class="m">16</span> tests from <span class="m">16</span> <span class="nb">test</span> suites ran. <span class="o">(</span><span class="m">7</span> ms total<span class="o">)</span>
+<span class="o">[</span>  PASSED  <span class="o">]</span> <span class="m">16</span> tests.
+</pre></div>
+<p>本来写好测试用例后<code>Clang</code>编译器已经测试通过，后来换成<code>GCC</code>编译器竟然出现问题，一番查看发现是隐式类型转换引起的。</p>
+<h2>REPL</h2>
+<div class="highlight"><pre><span></span>$ ./monkey
+Hello lesliezhu! This is the Monkey-CPP programming language!
+Feel free to <span class="nb">type</span> <span class="k">in</span> commands
+&gt;&gt; <span class="nb">let</span> <span class="nv">x</span> <span class="o">=</span> <span class="m">1</span> * <span class="m">2</span> * <span class="m">3</span> * <span class="m">4</span> * <span class="m">5</span>
+<span class="nb">let</span> <span class="nv">x</span> <span class="o">=</span> <span class="o">((((</span><span class="m">1</span> * <span class="m">2</span><span class="o">)</span> * <span class="m">3</span><span class="o">)</span> * <span class="m">4</span><span class="o">)</span> * <span class="m">5</span><span class="o">)</span><span class="p">;</span>
+&gt;&gt; x * y  / <span class="m">2</span> + <span class="m">3</span> * <span class="m">8</span> - <span class="m">123</span>
+<span class="o">((((</span>x * y<span class="o">)</span> / <span class="m">2</span><span class="o">)</span> + <span class="o">(</span><span class="m">3</span> * <span class="m">8</span><span class="o">))</span> - <span class="m">123</span><span class="o">)</span>
+&gt;&gt; <span class="nb">let</span> x <span class="m">12</span> * <span class="m">3</span>
+
+   .--.  .-<span class="s2">"     "</span>-.  .--.
+  / .. <span class="se">\/</span>  .-. .-.  <span class="se">\/</span> .. <span class="se">\</span>
+ <span class="p">|</span> <span class="p">|</span>  <span class="s1">'|  /   Y   \  |'</span>  <span class="p">|</span> <span class="p">|</span>
+ <span class="p">|</span> <span class="se">\ </span>  <span class="se">\ </span> <span class="se">\ </span><span class="m">0</span> <span class="p">|</span> <span class="m">0</span> /  /   / <span class="p">|</span>
+  <span class="se">\ </span><span class="s1">'- ,\.-"""""""-./, -'</span> /
+   <span class="s1">''</span>-<span class="s1">' /_   ^ ^   _\ '</span>-<span class="s1">''</span>
+       <span class="p">|</span>  <span class="se">\.</span>_   _./  <span class="p">|</span>
+       <span class="se">\ </span>  <span class="se">\ </span><span class="s1">'~'</span> /   /
+        <span class="s1">'._ '</span>-<span class="o">=</span>-<span class="s1">' _.'</span>
+           <span class="s1">'-----'</span>
+
+Woops! We ran into some monkey business here!
+ parser errors:
+    expected next token to <span class="nv">be</span> <span class="o">=</span>, got INT instead
+&gt;&gt;
+</pre></div>
+<h2>总结</h2>
+<p>因为这次要求代码里面不出现<code>new</code>和<code>delete</code>，全部使用智能指针来实现，导致遇到两个不大不小的问题：</p>
+<ul>
+<li>智能指针必须和移动语义一起使用，导致到处都是<code>std::move</code></li>
+<li>从父类智能指针(<code>unique_ptr</code>)转化为子类智能指针没有很直接的方法，导致代码冗余，测试用例代码很明显</li>
+</ul>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-23 Wed，共966字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html" title="C++实现解释器(3):语法分析与普拉特解析">http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/11/21/man_pages_missing.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html"><i class="fa fa-file-o"></i>C++实现解释器(3):语法分析与普拉特解析</a></li><li><a href="http://www.lesliezhu.com/2022/11/21/man_pages_missing.html"><i class="fa fa-file-o"></i>Docker镜像里为什么Linux无法安装Man Pages？</a></li><li><a href="http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html"><i class="fa fa-file-o"></i>Linux如何通过PAM管理授权?</a></li><li><a href="http://www.lesliezhu.com/2022/11/20/TMOUT_env_variable_in_liunux.html"><i class="fa fa-file-o"></i>Linux如何设置用户长时间不操作就自动登出?</a></li><li><a href="http://www.lesliezhu.com/2022/11/17/git_subtree_and_submodule.html"><i class="fa fa-file-o"></i>Git如何管理子模块和第三方模块？</a></li><li><a href="http://www.lesliezhu.com/2022/11/16/cpp_go_to_wrong_1.html"><i class="fa fa-file-o"></i>C++疑难杂症(1):小心std::variant中的bool类型值</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/读史札记.html">读史札记<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>2</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>26</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        
