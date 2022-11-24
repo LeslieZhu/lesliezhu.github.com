@@ -1,0 +1,1015 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>C++实现解释器(4):求值</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="minyilife@use-wechat.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        <style></style>
+        </head>
+        
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>C++实现解释器(4):求值</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a> , <a href="http://www.lesliezhu.com/tags/解释器与编译器.html"><i class="解释器与编译器"></i>解释器与编译器</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        <div id='content'>
+<blockquote>
+<p>参照《Writing An Interpreter In Go》，改用C++实现。</p>
+<p>项目源码: <a href="https://github.com/LeslieZhu/waiicpp">https://github.com/LeslieZhu/waiicpp</a></p>
+</blockquote>
+<h2>引言</h2>
+<p>本篇对应的源码位于目录: <code>src/03/</code></p>
+<div class="highlight"><pre><span></span>03
+ |token
+ | |token.hpp
+ |evaluator
+ | |evaluator.hpp
+ |CMakeLists.txt
+ |test
+ | |lexer_test.hpp
+ | |parser_test.hpp
+ | |evaluator_test.hpp
+ | |ast_test.hpp
+ | |main.cpp
+ |lexer
+ | |lexer.hpp
+ |repl
+ | |repl.hpp
+ |objects
+ | |objects.hpp
+ | |environment.hpp
+ |parser
+ | |parser.hpp
+ | |parser_tracing.hpp
+ |ast
+ | |ast.hpp
+ |main
+ | |monkey.cpp
+</pre></div>
+<p><code>求值(Evaluation)</code>是解释器处理源代码过程的最后一步，求值过程决定了一门编程语言的解释方式。</p>
+<h2>求值策略</h2>
+<p>解释执行AST是最直观、最传统的方式，具体就是遍历AST访问每个节点并执行该节点语义；以这种方式工作的解释器叫做<code>树遍历解释器</code>。</p>
+<p>有时在求值步骤之前，会进行优化或转换为<code>中间表示(IR)</code>，还有的会先将AST转换为<code>字节码</code>以提高解释性能和移植性。</p>
+<p>如果在执行之前，虚拟机即时将字节码编译为机器码执行，而不是直接执行字节码指定操作，就是<code>JIT(Just in Time)解释器/编译器</code>。</p>
+<p>递归求值AST的树遍历解释器可能是所有求值策略中最慢的一种，但其易于构建、扩展和归纳，并且能使用宿主语言的地方就能使用(嵌入)。</p>
+<p><code>Ruby</code>解释器在1.8版本及之前就是一个树遍历解释器，从1.9版本切换到虚拟机架构，在虚拟机中执行字节码，性能大幅提高。</p>
+<p><code>Lua</code>编程语言在发布12年后出现了<code>LuaJIT</code>，将紧凑的字节码编译为高度优化的机器码，有时能获得接近50倍的提速。</p>
+<p>许多解释器刚开始都很小也很简单，但有很大的改进余地；其实求值器实际上就是一个叫<code>eval</code>的函数，对AST求值。</p>
+<h2>对象系统</h2>
+<p><code>对象系统</code>就是代码执行后的值如何在宿主语言中表示，又叫<code>值系统</code>或<code>对象表示方法</code>。</p>
+<p>先不关心执行速度和内存消耗，从最简单实现出发，所有的值都使用基类<code>Object</code>表示，具体类型的值就是它的子类:</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">objects</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ObjectType</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">Null</span><span class="p">,</span><span class="w"></span>
+<span class="w">    	</span><span class="n">ERROR</span><span class="p">,</span><span class="w"></span>
+<span class="w">    	</span><span class="n">INTEGER</span><span class="p">,</span><span class="w"></span>
+<span class="w">    	</span><span class="n">BOOLEAN</span><span class="p">,</span><span class="w"></span>
+<span class="w">    	</span><span class="n">RETURN_VALUE</span><span class="p">,</span><span class="w"></span>
+<span class="w">    	</span><span class="n">FUNCTION</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Object</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Object</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    	</span><span class="k">virtual</span><span class="w"> </span><span class="n">ObjectType</span><span class="w"> </span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">Null</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    	</span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Inspect</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">""</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    	</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">TypeStr</span><span class="p">()</span><span class="w"></span>
+<span class="w">    	</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">Type</span><span class="p">())</span><span class="w"></span>
+<span class="w">    		</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="k">case</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">Null</span><span class="o">:</span><span class="w"></span>
+<span class="w">    			</span><span class="k">return</span><span class="w"> </span><span class="s">"Null"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    		</span><span class="k">case</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">ERROR</span><span class="o">:</span><span class="w"></span>
+<span class="w">    			</span><span class="k">return</span><span class="w"> </span><span class="s">"ERROR"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    		</span><span class="k">case</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">INTEGER</span><span class="o">:</span><span class="w"></span>
+<span class="w">    			</span><span class="k">return</span><span class="w"> </span><span class="s">"INTEGER"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    		</span><span class="k">case</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">BOOLEAN</span><span class="o">:</span><span class="w"></span>
+<span class="w">    			</span><span class="k">return</span><span class="w"> </span><span class="s">"BOOLEAN"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    		</span><span class="k">case</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">RETURN_VALUE</span><span class="o">:</span><span class="w"></span>
+<span class="w">    			</span><span class="k">return</span><span class="w"> </span><span class="s">"RETURN_VALUE"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    		</span><span class="k">case</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">FUNCTION</span><span class="o">:</span><span class="w"></span>
+<span class="w">    			</span><span class="k">return</span><span class="w"> </span><span class="s">"FUNCTION"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    		</span><span class="k">default</span><span class="o">:</span><span class="w"></span>
+<span class="w">    			</span><span class="k">return</span><span class="w"> </span><span class="s">"BadType"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    		</span><span class="p">}</span><span class="w"></span>
+<span class="w">    	</span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>比如整数的值:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Integer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Object</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">Integer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="n">Integer</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Value</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Integer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ObjectType</span><span class="w"> </span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">INTEGER</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Inspect</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">oss</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">oss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>这个Integer对象里面包含一个宿主语言真实的整数值，等于加了一层包裹，具体使用的时候进行解包。</p>
+<p>其中空值<code>null</code>是这样表示的：</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Null</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Object</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Null</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Null</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ObjectType</span><span class="w"> </span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">Null</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Inspect</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">"null"</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<h2>符号表或作用域环境</h2>
+<p>对于<code>let</code>语句定义的标志符，实际上是用一个将字符串和对象关联起来的哈希映射来表示的:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Environment</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">store</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Environment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">outer</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="o">~</span><span class="n">Environment</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    	</span><span class="n">store</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"></span>
+<span class="w">    	</span><span class="n">outer</span><span class="p">.</span><span class="n">reset</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Get</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">auto</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">store</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w"></span>
+<span class="w">    	</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fit</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">store</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"></span>
+<span class="w">    	</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="k">return</span><span class="w"> </span><span class="n">fit</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="p">}</span><span class="w"></span>
+<span class="w">    	</span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">outer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    	</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="k">return</span><span class="w"> </span><span class="n">outer</span><span class="o">-&gt;</span><span class="n">Get</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w"></span>
+<span class="w">    	</span><span class="p">}</span><span class="w"></span>
+<span class="w">    	</span><span class="k">else</span><span class="w"></span>
+<span class="w">    	</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Set</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">auto</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">store</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w"></span>
+<span class="w">    	</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fit</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">store</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"></span>
+<span class="w">    	</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="n">fit</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">.</span><span class="n">reset</span><span class="p">();</span><span class="w"></span>
+<span class="w">    		</span><span class="n">fit</span><span class="o">-&gt;</span><span class="n">second</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="p">}</span><span class="w"></span>
+<span class="w">    	</span><span class="k">else</span><span class="w"></span>
+<span class="w">    	</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="n">store</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_pair</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="p">));</span><span class="w"></span>
+<span class="w">    	</span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>值得注意的每个环境里面包含一个小环境<code>outer</code>，这个也被叫做<code>外部作用域环境</code>，层层嵌套，就是先局部作用域环境查找，如果找不到就从外层作用域环境查找，一层层向上查找，起到一个作用域优先级的效果。</p>
+<h2>遍历AST</h2>
+<p>最核心的是这个叫<code>Eval</code>的函数，它根据每个AST节点的类型执行具体的解释方法:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Environment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">env</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Statements</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Program</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Program</span><span class="o">&gt;</span><span class="w"> </span><span class="n">program</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Program</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">evalProgram</span><span class="p">(</span><span class="n">program</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// else if</span>
+<span class="w">    </span><span class="c1">// ...</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>它总是从根节点开始, 执行时将当前的符号表环境带入:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">evalProgram</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Program</span><span class="o">&gt;</span><span class="w"> </span><span class="n">program</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                             </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Environment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">env</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stmt</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">program</span><span class="o">-&gt;</span><span class="n">v_pStatements</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">stmt</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    	</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    	</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="k">continue</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    	</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">RETURN_VALUE</span><span class="p">)</span><span class="w"></span>
+<span class="w">    	</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">ReturnValue</span><span class="o">&gt;</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="p">}</span><span class="w"></span>
+<span class="w">    	</span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">ERROR</span><span class="p">)</span><span class="w"></span>
+<span class="w">    	</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>它做的事情就是对AST节点遍历执行，执行过程中遇到<code>ERROR</code>或<code>Return</code>就中止遍历且返回。</p>
+<h2>Return值</h2>
+<div class="highlight"><pre><span></span><span class="c1">//...</span>
+<span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">ReturnStatement</span><span class="p">)</span><span class="w"></span>
+<span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ReturnStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">returnStmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ReturnStatement</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">returnStmt</span><span class="o">-&gt;</span><span class="n">pReturnValue</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isError</span><span class="p">(</span><span class="n">val</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">ReturnValue</span><span class="o">&gt;</span><span class="p">(</span><span class="n">val</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w"> </span><span class="c1">//...</span>
+</pre></div>
+<p>对于返回值直接返回即可，不需要额外的处理。</p>
+<h2>整数与布尔值</h2>
+<div class="highlight"><pre><span></span><span class="c1">//...</span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">IntegerLiteral</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IntegerLiteral</span><span class="o">&gt;</span><span class="w"> </span><span class="n">integerLiteral</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IntegerLiteral</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">integerLiteral</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Boolean</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">nativeBoolToBooleanObject</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="c1">//...</span>
+</pre></div>
+<p>其中整数就是直接返回，而布尔值为了不需要每次都创建新对象，可以共享一个全局布尔值变量:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Null</span><span class="o">&gt;</span><span class="w"> </span><span class="n">NULL_OBJ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Null</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="w"> </span><span class="n">TRUE_OBJ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="w"> </span><span class="n">FALSE_OBJ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="w"> </span><span class="n">nativeBoolToBooleanObject</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">input</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">input</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">TRUE_OBJ</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">FALSE_OBJ</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>Let语句</h2>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">LetStatement</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">LetStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">LetStatement</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">lit</span><span class="o">-&gt;</span><span class="n">pValue</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isError</span><span class="p">(</span><span class="n">val</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">env</span><span class="o">-&gt;</span><span class="n">Set</span><span class="p">(</span><span class="n">lit</span><span class="o">-&gt;</span><span class="n">pName</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p><code>let</code>语句执行表达式获取到值后，不管值是什么类型，都存入符号表环境中。</p>
+<h2>标志符</h2>
+<div class="highlight"><pre><span></span><span class="c1">//...</span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Identifier</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ident</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">evalIdentifier</span><span class="p">(</span><span class="n">ident</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="c1">//...</span>
+
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">evalIdentifier</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Environment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">env</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">env</span><span class="o">-&gt;</span><span class="n">Get</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">val</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">newError</span><span class="p">(</span><span class="s">"identifier not found: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>标志符直接就是符号表环境取出来。</p>
+<h2>If条件语句</h2>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">IfExpression</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">evalIfExpression</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">evalIfExpression</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ie</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Environment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">env</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">condition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">ie</span><span class="o">-&gt;</span><span class="n">pCondition</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isError</span><span class="p">(</span><span class="n">condition</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">condition</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isTruthy</span><span class="p">(</span><span class="n">condition</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">ie</span><span class="o">-&gt;</span><span class="n">pConsequence</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ie</span><span class="o">-&gt;</span><span class="n">pAlternative</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">ie</span><span class="o">-&gt;</span><span class="n">pAlternative</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">NULL_OBJ</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>这里值得注意的是判断条件是否为真时直接判断是否和全局变量是同一个对象:</p>
+<div class="highlight"><pre><span></span><span class="kt">bool</span><span class="w"> </span><span class="nf">isTruthy</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">obj</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">obj</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">NULL_OBJ</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">obj</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">TRUE_OBJ</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">obj</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FALSE_OBJ</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>表达式求值</h2>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exprStmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">exprStmt</span><span class="o">-&gt;</span><span class="n">pExpression</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">PrefixExpression</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">PrefixExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">infixObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">PrefixExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">pRight</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isError</span><span class="p">(</span><span class="n">right</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">right</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">evalPrefixExpression</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="p">,</span><span class="w"> </span><span class="n">right</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">InfixExpression</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">InfixExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">infixObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">InfixExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">pLeft</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isError</span><span class="p">(</span><span class="n">left</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">left</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">pRight</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isError</span><span class="p">(</span><span class="n">right</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">right</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">evalInfixExpression</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="p">,</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="n">right</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>目前前缀表达式只支持<code>!</code>和<code>-</code>:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">evalPrefixExpression</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ops</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                      </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">right</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"!"</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">evalBangOperatorExpression</span><span class="p">(</span><span class="n">right</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"-"</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">evalMinusPrefixOperatorExpression</span><span class="p">(</span><span class="n">right</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">newError</span><span class="p">(</span><span class="s">"unknown operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ops</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">right</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>而中缀表达式目前只对整数有所支持:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">evalIntegerInfixExpression</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ops</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                            </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                            </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">right</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">leftValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">left</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">rightValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">right</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"+"</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftValue</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">rightValue</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"-"</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftValue</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">rightValue</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"*"</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftValue</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rightValue</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"/"</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftValue</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">rightValue</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"&lt;"</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">nativeBoolToBooleanObject</span><span class="p">(</span><span class="n">leftValue</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">rightValue</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"&gt;"</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">nativeBoolToBooleanObject</span><span class="p">(</span><span class="n">leftValue</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">rightValue</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"=="</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">nativeBoolToBooleanObject</span><span class="p">(</span><span class="n">leftValue</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rightValue</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"!="</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">nativeBoolToBooleanObject</span><span class="p">(</span><span class="n">leftValue</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">rightValue</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">newError</span><span class="p">(</span><span class="s">"unknown operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">left</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ops</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">right</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">evalInfixExpression</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ops</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                     </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                     </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">right</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">left</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">INTEGER</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">right</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">INTEGER</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">evalIntegerInfixExpression</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="n">right</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"=="</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">nativeBoolToBooleanObject</span><span class="p">(</span><span class="n">left</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">right</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ops</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"!="</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">nativeBoolToBooleanObject</span><span class="p">(</span><span class="n">left</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">right</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">left</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">right</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">newError</span><span class="p">(</span><span class="s">"type mismatch: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">left</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ops</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">right</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">newError</span><span class="p">(</span><span class="s">"unknown operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">left</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ops</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">right</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>代码块求值</h2>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">BlockStatement</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">BlockStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">blockStmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">BlockStatement</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">evalBlockStatement</span><span class="p">(</span><span class="n">blockStmt</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>代码块里面的每条语句挨个调用:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">evalBlockStatement</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">BlockStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">block</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Environment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">env</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stmt</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">block</span><span class="o">-&gt;</span><span class="n">v_pStatements</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">stmt</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    	</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    	</span><span class="p">{</span><span class="w"></span>
+<span class="w">    		</span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="w"> </span><span class="n">rt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">();</span><span class="w"></span>
+<span class="w">    		</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">RETURN_VALUE</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">rt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">ERROR</span><span class="p">)</span><span class="w"></span>
+<span class="w">    		</span><span class="p">{</span><span class="w"></span>
+<span class="w">    			</span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">    		</span><span class="p">}</span><span class="w"></span>
+<span class="w">    	</span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>如果代码块中间有错误或者返回就立即中止遍历代码块。</p>
+<h2>函数的定义与调用</h2>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="o">&gt;</span><span class="w"> </span><span class="n">funcObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Function</span><span class="o">&gt;</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Function</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">for_each</span><span class="p">(</span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">v_pParameters</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">v_pParameters</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">)</span><span class="w"></span>
+<span class="w">    			  </span><span class="p">{</span><span class="w"> </span><span class="n">function</span><span class="o">-&gt;</span><span class="n">Parameters</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">x</span><span class="p">);</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">function</span><span class="o">-&gt;</span><span class="n">Env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">env</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">function</span><span class="o">-&gt;</span><span class="n">Body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">pBody</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">function</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">CallExpression</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">CallExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">CallExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">callObj</span><span class="o">-&gt;</span><span class="n">pFunction</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isError</span><span class="p">(</span><span class="n">function</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">function</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">evalExpressions</span><span class="p">(</span><span class="n">callObj</span><span class="o">-&gt;</span><span class="n">pArguments</span><span class="p">,</span><span class="w"> </span><span class="n">env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">args</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">isError</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">applyFunction</span><span class="p">(</span><span class="n">function</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>函数为了支持闭包，因此定义函数的时候要把当时的符号表环境保存起来，然后调用的时候用外部符号表环境里面的值作为实参，而那些外部符号表环境没有的值则使用闭包环境里面的值:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Environment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">extendFunctionEnv</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Function</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fn</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                                        </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">args</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Environment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">NewEnclosedEnvironment</span><span class="p">(</span><span class="n">fn</span><span class="o">-&gt;</span><span class="n">Env</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">fn</span><span class="o">-&gt;</span><span class="n">Parameters</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">env</span><span class="o">-&gt;</span><span class="n">Set</span><span class="p">(</span><span class="n">fn</span><span class="o">-&gt;</span><span class="n">Parameters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">env</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">applyFunction</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fn</span><span class="p">,</span><span class="w"> </span>
+<span class="w">                                               </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">args</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Function</span><span class="o">&gt;</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Function</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">function</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">newError</span><span class="p">(</span><span class="s">"not a function: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">fn</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Environment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">extendedEnv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">extendFunctionEnv</span><span class="p">(</span><span class="n">function</span><span class="p">,</span><span class="w"> </span><span class="n">args</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">evaluated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eval</span><span class="p">(</span><span class="n">function</span><span class="o">-&gt;</span><span class="n">Body</span><span class="p">,</span><span class="w"> </span><span class="n">extendedEnv</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">unwrapReturnValue</span><span class="p">(</span><span class="n">evaluated</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>其实参替换就是挨个进行值的替换，然后执行代码块。</p>
+<h2>测试用例</h2>
+<div class="highlight"><pre><span></span>$ ./test_monkey
+<span class="o">[==========]</span> Running <span class="m">26</span> tests from <span class="m">26</span> <span class="nb">test</span> suites.
+<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment set-up.
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken
+<span class="o">[</span> RUN      <span class="o">]</span> TestNextToken.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestNextToken.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestString
+<span class="o">[</span> RUN      <span class="o">]</span> TestString.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestString.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestString <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestLetStatements
+<span class="o">[</span> RUN      <span class="o">]</span> TestLetStatements.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestLetStatements.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestLetStatements <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestReturnStatements
+<span class="o">[</span> RUN      <span class="o">]</span> TestReturnStatements.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestReturnStatements.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestReturnStatements <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIdentifierExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestIdentifierExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestIdentifierExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIdentifierExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIntegerLiteralExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestIntegerLiteralExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestIntegerLiteralExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIntegerLiteralExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestParsingPrefixExpressions
+<span class="o">[</span> RUN      <span class="o">]</span> TestParsingPrefixExpressions.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestParsingPrefixExpressions.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestParsingPrefixExpressions <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestParsingInfixExpressions
+<span class="o">[</span> RUN      <span class="o">]</span> TestParsingInfixExpressions.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestParsingInfixExpressions.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestParsingInfixExpressions <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestOperatorPrecedenceParsing
+<span class="o">[</span> RUN      <span class="o">]</span> TestOperatorPrecedenceParsing.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestOperatorPrecedenceParsing.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestOperatorPrecedenceParsing <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestBooleanExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestBooleanExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestBooleanExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestBooleanExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIfExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestIfExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestIfExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIfExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIfElseExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestIfElseExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestIfElseExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestIfElseExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestFunctionLiteralParsing
+<span class="o">[</span> RUN      <span class="o">]</span> TestFunctionLiteralParsing.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestFunctionLiteralParsing.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestFunctionLiteralParsing <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestFunctionParameterParsing
+<span class="o">[</span> RUN      <span class="o">]</span> TestFunctionParameterParsing.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestFunctionParameterParsing.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestFunctionParameterParsing <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestCallExpressionParsing
+<span class="o">[</span> RUN      <span class="o">]</span> TestCallExpressionParsing.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestCallExpressionParsing.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestCallExpressionParsing <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestCallExpressionParameterParsing
+<span class="o">[</span> RUN      <span class="o">]</span> TestCallExpressionParameterParsing.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestCallExpressionParameterParsing.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestCallExpressionParameterParsing <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalIntegerExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestEvalIntegerExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestEvalIntegerExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalIntegerExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalBooleanExpression
+<span class="o">[</span> RUN      <span class="o">]</span> TestEvalBooleanExpression.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestEvalBooleanExpression.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalBooleanExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalBangOperator
+<span class="o">[</span> RUN      <span class="o">]</span> TestEvalBangOperator.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestEvalBangOperator.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalBangOperator <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalIfElseExpressions
+<span class="o">[</span> RUN      <span class="o">]</span> TestEvalIfElseExpressions.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestEvalIfElseExpressions.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalIfElseExpressions <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalReturnStatements
+<span class="o">[</span> RUN      <span class="o">]</span> TestEvalReturnStatements.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestEvalReturnStatements.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalReturnStatements <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalErrorHandling
+<span class="o">[</span> RUN      <span class="o">]</span> TestEvalErrorHandling.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestEvalErrorHandling.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalErrorHandling <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalLetStatements
+<span class="o">[</span> RUN      <span class="o">]</span> TestEvalLetStatements.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestEvalLetStatements.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalLetStatements <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalFunctionObject
+<span class="o">[</span> RUN      <span class="o">]</span> TestEvalFunctionObject.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestEvalFunctionObject.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalFunctionObject <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalFunctionApplication
+<span class="o">[</span> RUN      <span class="o">]</span> TestEvalFunctionApplication.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestEvalFunctionApplication.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalFunctionApplication <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalEnclosingEnvironments
+<span class="o">[</span> RUN      <span class="o">]</span> TestEvalEnclosingEnvironments.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestEvalEnclosingEnvironments.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestEvalEnclosingEnvironments <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment tear-down
+<span class="o">[==========]</span> <span class="m">26</span> tests from <span class="m">26</span> <span class="nb">test</span> suites ran. <span class="o">(</span><span class="m">3</span> ms total<span class="o">)</span>
+<span class="o">[</span>  PASSED  <span class="o">]</span> <span class="m">26</span> tests.
+</pre></div>
+<h2>REPL</h2>
+<div class="highlight"><pre><span></span>$ ./monkey
+Hello ! This is the Monkey-CPP programming language!
+Feel free to <span class="nb">type</span> <span class="k">in</span> commands
+&gt;&gt; <span class="m">5</span> + <span class="m">5</span> + <span class="m">5</span> + <span class="m">5</span> - <span class="m">10</span>
+<span class="m">10</span>
+&gt;&gt; -5
+-5
+&gt;&gt; <span class="m">1</span> &gt; <span class="m">2</span>
+<span class="nb">false</span>
+&gt;&gt; <span class="m">1</span> &lt; <span class="m">2</span>
+<span class="nb">true</span>
+&gt;&gt; <span class="nv">1</span> <span class="o">==</span> <span class="m">1</span>
+<span class="nb">true</span>
+&gt;&gt; !false
+<span class="nb">true</span>
+&gt;&gt; !!false
+<span class="nb">false</span>
+&gt;&gt; <span class="k">if</span> <span class="o">(</span><span class="nb">false</span><span class="o">)</span> <span class="o">{</span> <span class="m">10</span> <span class="o">}</span>
+null
+&gt;&gt; <span class="k">if</span> <span class="o">(</span><span class="m">10</span> &gt; <span class="m">1</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="m">10</span><span class="p">;</span> <span class="o">}</span>
+<span class="m">10</span>
+&gt;&gt; <span class="nb">let</span> <span class="nv">a</span> <span class="o">=</span> <span class="m">5</span><span class="p">;</span> <span class="nb">let</span> <span class="nv">b</span> <span class="o">=</span> a<span class="p">;</span> <span class="nb">let</span> <span class="nv">c</span> <span class="o">=</span> a + b + <span class="m">5</span><span class="p">;</span> c<span class="p">;</span>
+<span class="m">15</span>
+&gt;&gt; <span class="nb">let</span> <span class="nv">add</span> <span class="o">=</span> fn<span class="o">(</span>x, y<span class="o">)</span> <span class="o">{</span> x + y<span class="p">;</span> <span class="o">}</span><span class="p">;</span> add<span class="o">(</span><span class="m">5</span> + <span class="m">5</span>, add<span class="o">(</span><span class="m">5</span>, <span class="m">5</span><span class="o">))</span><span class="p">;</span>
+<span class="m">20</span>
+</pre></div>
+<p>一个闭包的例子:</p>
+<div class="highlight"><pre><span></span>&gt;&gt; <span class="nb">let</span> <span class="nv">first</span> <span class="o">=</span> <span class="m">10</span><span class="p">;</span>
+&gt;&gt; <span class="nb">let</span> <span class="nv">second</span> <span class="o">=</span> <span class="m">10</span><span class="p">;</span>
+&gt;&gt; <span class="nb">let</span> <span class="nv">third</span> <span class="o">=</span> <span class="m">10</span><span class="p">;</span>
+&gt;&gt;
+&gt;&gt; first
+<span class="m">10</span>
+&gt;&gt; second
+<span class="m">10</span>
+&gt;&gt; third
+<span class="m">10</span>
+&gt;&gt;
+&gt;&gt; <span class="nb">let</span> <span class="nv">ourFunction</span> <span class="o">=</span> fn<span class="o">(</span>first<span class="o">)</span> <span class="o">{</span> <span class="nb">let</span> <span class="nv">second</span> <span class="o">=</span> <span class="m">20</span><span class="p">;</span> <span class="k">return</span> first + second + third<span class="p">;</span><span class="o">}</span>
+&gt;&gt;
+&gt;&gt; first
+<span class="m">10</span>
+&gt;&gt; second
+<span class="m">10</span>
+&gt;&gt; third
+<span class="m">10</span>
+&gt;&gt;
+&gt;&gt; ourFunction<span class="o">(</span><span class="m">20</span><span class="o">)</span> + first + second<span class="p">;</span>
+<span class="m">70</span>
+&gt;&gt;
+&gt;&gt; first
+<span class="m">10</span>
+&gt;&gt; second
+<span class="m">10</span>
+&gt;&gt; third
+<span class="m">10</span>
+</pre></div>
+<p>在定义函数的时候，为函数内部闭包环境定义了一个<code>second</code>变量，调用的时候它起作用，并不会影响外部的符号表环境。</p>
+<h2>总结</h2>
+<ul>
+<li>用<code>shared_ptr</code>代替了大部分的<code>unique_ptr</code>,为的是符号表环境里面的对象是共享访问的</li>
+<li>使用智能指针，不知道具体是否能够达到自动<code>GC</code>的效果</li>
+<li>目前的执行速度很慢，尤其是递归调用计算<code>斐波那契数列</code>的时候，后面字节码或作为内置函数应可以提高效率</li>
+</ul>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-24 Thu，共1235字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/11/21/writing_an_interpreter_in_cpp_4.html" title="C++实现解释器(4):求值">http://www.lesliezhu.com/2022/11/21/writing_an_interpreter_in_cpp_4.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2022/11/21/writing_an_interpreter_in_cpp_4.html"><i class="fa fa-file-o"></i>C++实现解释器(4):求值</a></li><li><a href="http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html"><i class="fa fa-file-o"></i>C++实现解释器(3):语法分析与普拉特解析</a></li><li><a href="http://www.lesliezhu.com/2022/11/21/man_pages_missing.html"><i class="fa fa-file-o"></i>Docker镜像里为什么Linux无法安装Man Pages？</a></li><li><a href="http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html"><i class="fa fa-file-o"></i>Linux如何通过PAM管理授权?</a></li><li><a href="http://www.lesliezhu.com/2022/11/20/TMOUT_env_variable_in_liunux.html"><i class="fa fa-file-o"></i>Linux如何设置用户长时间不操作就自动登出?</a></li><li><a href="http://www.lesliezhu.com/2022/11/17/git_subtree_and_submodule.html"><i class="fa fa-file-o"></i>Git如何管理子模块和第三方模块？</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>15</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/读史札记.html">读史札记<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>2</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>12</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>27</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        

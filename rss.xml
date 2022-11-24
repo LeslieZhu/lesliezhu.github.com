@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> C++实现解释器(4):求值 </title>
+            <link> http://www.lesliezhu.com/2022/11/21/writing_an_interpreter_in_cpp_4.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/11/21/writing_an_interpreter_in_cpp_4.html</guid>
+            <category><![CDATA[C++学习与实践]]></category><category><![CDATA[解释器与编译器]]></category>
+            <pubDate>2022-11-24 Thu</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/11/21/writing_an_interpreter_in_cpp_4.html</comments>
+            </item>
+            
+            <item>
             <title> C++实现解释器(3):语法分析与普拉特解析 </title>
             <link> http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html </link>
             <author><![CDATA[吴羽舒]]></author>
