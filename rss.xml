@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> C++实现编译器(6):字节码与虚拟机 </title>
+            <link> http://www.lesliezhu.com/2022/11/26/writing_an_interpreter_in_cpp_6.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/11/26/writing_an_interpreter_in_cpp_6.html</guid>
+            <category><![CDATA[C++学习与实践]]></category><category><![CDATA[解释器与编译器]]></category>
+            <pubDate>2022-12-10 Sat</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/11/26/writing_an_interpreter_in_cpp_6.html</comments>
+            </item>
+            
+            <item>
             <title> C++实现解释器(5):功能扩展 </title>
             <link> http://www.lesliezhu.com/2022/11/24/writing_an_interpreter_in_cpp_5.html </link>
             <author><![CDATA[吴羽舒]]></author>

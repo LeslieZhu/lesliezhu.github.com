@@ -1,0 +1,718 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>C++实现编译器(6):字节码与虚拟机</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="minyilife@use-wechat.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        <style></style>
+        </head>
+        
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>C++实现编译器(6):字节码与虚拟机</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a> , <a href="http://www.lesliezhu.com/tags/解释器与编译器.html"><i class="解释器与编译器"></i>解释器与编译器</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        <div id='content'>
+<blockquote>
+<p>参照《Writing An Interpreter/Compiler In Go》，改用C++实现。</p>
+<p>项目源码: <a href="https://github.com/LeslieZhu/monkey-cpp">https://github.com/LeslieZhu/monkey-cpp</a></p>
+</blockquote>
+<h2>引言</h2>
+<p>本篇对应的源码位于目录: <code>src/05/</code></p>
+<div class="highlight"><pre><span></span>src
+ |05
+ | |token
+ | | |token.hpp
+ | |evaluator
+ | | |evaluator.hpp
+ | | |builtins.hpp
+ | |CMakeLists.txt
+ | |test
+ | | |lexer_test.hpp
+ | | |parser_test.hpp
+ | | |evaluator_test.hpp
+ | | |vm_test.hpp
+ | | |objects_test.hpp
+ | | |ast_test.hpp
+ | | |code_test.hpp
+ | | |compiler_test.hpp
+ | | |main.cpp
+ | |lexer
+ | | |lexer.hpp
+ | |repl
+ | | |repl.hpp
+ | |code
+ | | |code.hpp
+ | |objects
+ | | |objects.hpp
+ | | |environment.hpp
+ | |parser
+ | | |parser.hpp
+ | | |parser_tracing.hpp
+ | |vm
+ | | |vm.hpp
+ | |ast
+ | | |ast.hpp
+ | |main
+ | | |monkey.cpp
+ | |compiler
+ | | |compiler.hpp
+</pre></div>
+<p>为了提高性能和移植性，在前面树遍历解释器基础上，引入虚拟机和字节码。</p>
+<p>为了在代码结构和接口形式上都尽量保持和原有Go语言代码相近，多花了一些时间，因为Go原生带有切片、字节序大小端读写等封装好的功能，而在C++就需要自己去组装这些工具。</p>
+<p>目前进度为止，虚拟机只支持通过字节码进行整数的加法操作。</p>
+<h2>编译器与虚拟机(vm)</h2>
+<p>由词法分析器、语法分析器对源代码进行标记和语法分析后，将源代码转换成AST，这个过程叫做<code>前端</code>。</p>
+<p>之后，会有<code>优化器</code>将AST翻译成一种中间表示(<code>IR</code>)。</p>
+<p>最后，由<code>代码生成器</code>生成目标语言代码，这个过程叫<code>后端</code>。</p>
+<p>简而言之，<code>编译器</code>获取一种语言的源代码并转换成另一种语言的源代码，又叫<code>翻译器</code>。</p>
+<p><code>虚拟机(vm)</code>跟物理机一样，有特定的运行循环，即通过循环执行<code>取值-解码-执行</code>来完成运转，这个周期称之为<code>指令周期</code>；有一个程序计数器，可以获取指令，然后解析并执行。</p>
+<p>虚拟机拥有栈，可以分为<code>栈式虚拟机</code>和<code>寄存器式虚拟机</code>，前者易于构建，后者则速度更快。</p>
+<p>这里将采用基于<code>虚拟调用栈</code>的虚拟机，在此虚拟机中执行自定义的<code>字节码</code>。</p>
+<h2>大小端字节序</h2>
+<div class="highlight"><pre><span></span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">BinaryEndianType</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">SMALLENDIAN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">BIGENDIAN</span><span class="p">,</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="n">BinaryEndianType</span><span class="w"> </span><span class="nf">BinaryEndian</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iVal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0xFFFE</span><span class="p">;</span><span class="w"> </span><span class="c1">// 65534</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">iVal</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">0xFF</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">BinaryEndianType</span><span class="o">::</span><span class="n">BIGENDIAN</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">BinaryEndianType</span><span class="o">::</span><span class="n">SMALLENDIAN</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>这里设计的字节码规定使用大端字节序。</p>
+<h2>字节码</h2>
+<p>因为所有指令的操作码大小都是一个字节，因此得名<code>字节码</code>。</p>
+<div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">Opcode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">uint8_t</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="n">Instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Opcode</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">OpcodeType</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Opcode</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">OpConstant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">OpAdd</span><span class="p">,</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>操作码只需要1个字节，这里使用<code>uint8_t</code>来作为其类型，等同于Go语言里面的<code>byte</code>类型，本质上就是C语言里面的<code>unsigned char</code>类型。</p>
+<p>对于整个字节码本身来说，使用一个<code>vector&lt;uint8_t&gt;</code>这样一块连续内存空间表示，为了获得更好的类型支持，添加了一个枚举类<code>OpcodeType</code>，继承了<code>uint8_t</code>以便后续方便的转换。</p>
+<p>对于存储字节码的这段连续内存，使用两个辅助函数来读取和写入2个字节的数字，即<code>uint16_t</code>类型:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">ReadUint16</span><span class="p">(</span><span class="n">Instructions</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ins</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">offset</span><span class="p">,</span><span class="w"> </span><span class="kt">uint16_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">uint16Value</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">memcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">uint16Value</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">ins</span><span class="p">[</span><span class="n">offset</span><span class="p">]),</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">uint16Value</span><span class="p">));</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">BinaryEndian</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">BinaryEndianType</span><span class="o">::</span><span class="n">SMALLENDIAN</span><span class="p">)</span><span class="w"> </span><span class="c1">// from BIGENDIAN</span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">uint16Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="o">&amp;</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="w"></span>
+<span class="w">        </span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
+<span class="w">        </span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">WriteUint16</span><span class="p">(</span><span class="n">Instructions</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ins</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">offset</span><span class="p">,</span><span class="w"> </span><span class="kt">uint16_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">uint16Value</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">BinaryEndian</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">BinaryEndianType</span><span class="o">::</span><span class="n">SMALLENDIAN</span><span class="p">)</span><span class="w"> </span><span class="c1">// to BIGENDIAN</span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">uint16Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">tmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="o">&amp;</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="w"></span>
+<span class="w">        </span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
+<span class="w">        </span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">memcpy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ins</span><span class="p">[</span><span class="n">offset</span><span class="p">],</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">uint16Value</span><span class="p">),</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">uint16Value</span><span class="p">));</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>操作码定义</h2>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Definition</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Name</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">OperandWidths</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">Definition</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">    </span><span class="n">Definition</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">width</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">OperandWidths</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">width</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="o">~</span><span class="n">Definition</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">OperandWidths</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">OpcodeType</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">definitions</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpConstant</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"OpConstant"</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)},</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpAdd</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"OpAdd"</span><span class="p">)},</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Lookup</span><span class="p">(</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">){</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">definitions</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">op</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">fit</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">definitions</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">fit</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>每个操作码包含这几个信息：操作码名字、操作参数宽度。比如定义变量操作码<code>OpConstant</code>它包含一个参数，这个参数是2，即用2个字节来存储变量的值；而<code>OpAdd</code>操作码表示相加操作，它不需要读取参数，而是后续通过虚拟调用栈进行出栈操作。</p>
+<h2>生成字节码与反汇编</h2>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Opcode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Make</span><span class="p">(</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">operands</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">def</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Lookup</span><span class="p">(</span><span class="n">op</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">def</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Opcode</span><span class="o">&gt;</span><span class="p">{};</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">instructionLen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">w</span><span class="o">:</span><span class="w"> </span><span class="n">def</span><span class="o">-&gt;</span><span class="n">OperandWidths</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">instructionLen</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">w</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Opcode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">instruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Opcode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">instructionLen</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">instruction</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Opcode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">op</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">offset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">operands</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">def</span><span class="o">-&gt;</span><span class="n">OperandWidths</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"></span>
+<span class="w">        </span><span class="k">switch</span><span class="p">(</span><span class="n">width</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w"></span>
+<span class="w">                </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">uint16Value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">uint16_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">operands</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span><span class="w"></span>
+<span class="w">                </span><span class="n">WriteUint16</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span><span class="w"> </span><span class="n">offset</span><span class="p">,</span><span class="w"> </span><span class="n">uint16Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="n">offset</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">width</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">instruction</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>这个辅助函数<code>Make</code>根据每个操作码的定义，将参数的值以规定好的字节长度变成大端字节序形式。</p>
+<p>对应的将字节码读取进来变成虚拟机中可以识别的形式，相等于反汇编角色:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ReadOperands</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;</span><span class="w"> </span><span class="n">def</span><span class="p">,</span><span class="w"> </span><span class="n">Instructions</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ins</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pos</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">def</span><span class="o">-&gt;</span><span class="n">OperandWidths</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">operands</span><span class="p">(</span><span class="n">size</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">offset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">def</span><span class="o">-&gt;</span><span class="n">OperandWidths</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"></span>
+<span class="w">        </span><span class="k">switch</span><span class="p">(</span><span class="n">width</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w"></span>
+<span class="w">                </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">uint16Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">                    </span><span class="n">ReadUint16</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="n">uint16Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">                    </span><span class="n">operands</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uint16Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"></span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">offset</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">width</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_pair</span><span class="p">(</span><span class="n">operands</span><span class="p">,</span><span class="w"> </span><span class="n">offset</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>方法类似，根据操作码定义好的宽度读取一定数量的字节变成整数类型，即反汇编了字节码。</p>
+<h2>最小编译器</h2>
+<p>字节码对象的表示形式:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">ByteCode</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">Instructions</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">Constants</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">ByteCode</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="o">&amp;</span><span class="n">instructions</span><span class="p">,</span><span class="w"></span>
+<span class="w">             </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">constants</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Instructions</span><span class="p">(</span><span class="n">instructions</span><span class="p">),</span><span class="w"></span>
+<span class="w">                                                                         </span><span class="n">Constants</span><span class="p">(</span><span class="n">constants</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>因为目前字节码只支持常量，因此它的定义就是一个连续内存地址表示字节码内容，然后各个Object组成一个向量，这样在字节码里面只需要存储对应常量的位置索引即可。</p>
+<p>定义最小的编译器:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Compiler</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">instructions</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">constants</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">Compiler</span><span class="p">(){}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Error</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Compile</span><span class="p">([[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ByteCode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Bytecode</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">ByteCode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">constants</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>这个编译器做的事情是从AST根节点开始编译成字节码形式，目前它不支持任何操作，只有一个基本框架。</p>
+<h2>编译AST</h2>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Error</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Compile</span><span class="p">([[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Program</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Program</span><span class="o">&gt;</span><span class="w"> </span><span class="n">program</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Program</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">stmt</span><span class="o">:</span><span class="w"> </span><span class="n">program</span><span class="o">-&gt;</span><span class="n">v_pStatements</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">stmt</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
+<span class="w">            </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exprStmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">exprStmt</span><span class="o">-&gt;</span><span class="n">pExpression</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">InfixExpression</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">InfixExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">infixObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">InfixExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">pLeft</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">pRight</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"+"</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpAdd</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unknow operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">IntegerLiteral</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IntegerLiteral</span><span class="o">&gt;</span><span class="w"> </span><span class="n">integerLiteral</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IntegerLiteral</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">integerObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">integerLiteral</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addConstant</span><span class="p">(</span><span class="n">integerObj</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpConstant</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">pos</span><span class="p">});</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>这个和之前解释执行根节点类似，只是它使用两个辅助函数来记录当前常量的位置索引，然后把这个索引信息写入到字节码中，以便反汇编时候快速获取常量值:</p>
+<div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">addConstant</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">obj</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">constants</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">constants</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">operands</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">ins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Make</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">operands</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addInstruction</span><span class="p">(</span><span class="n">ins</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">addInstruction</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">ins</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">posNewInstruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">instructions</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">instructions</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="n">ins</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">ins</span><span class="p">.</span><span class="n">end</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">posNewInstruction</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>虚拟调用栈</h2>
+<p>通过虚拟调用栈来完成指令的<code>读取-解码-执行</code>循环，使用了一个微型虚拟机:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">VM</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">constants</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">instructions</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">stack</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">sp</span><span class="p">;</span><span class="w"> </span><span class="c1">// 始终指向调用栈的下一个空闲位置，栈顶的值是stack[sp-1]</span>
+
+<span class="w">    </span><span class="n">VM</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;&amp;</span><span class="w"> </span><span class="n">objs</span><span class="p">,</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ins</span><span class="p">)</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="n">constants</span><span class="p">(</span><span class="n">objs</span><span class="p">),</span><span class="w"></span>
+<span class="w">    </span><span class="n">instructions</span><span class="p">(</span><span class="n">ins</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">stack</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">StackSize</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">VM</span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">compiler</span><span class="o">::</span><span class="n">ByteCode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bytecode</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">VM</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bytecode</span><span class="o">-&gt;</span><span class="n">Constants</span><span class="p">,</span><span class="w"> </span><span class="n">bytecode</span><span class="o">-&gt;</span><span class="n">Instructions</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>在调用栈上只有<code>压栈</code>、<code>出栈</code>、<code>获取栈顶</code>几个操作:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">StackTop</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">sp</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">stack</span><span class="p">[</span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">obj</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">sp</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">StackSize</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"stack overflow"</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">stack</span><span class="p">[</span><span class="n">sp</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obj</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">sp</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Pop</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">[</span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="n">sp</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">obj</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>调用栈执行加法运算</h2>
+<p>让调用栈执行起来，不断进入<code>读取-解码-执行</code>循环:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Run</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ip</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="n">ip</span><span class="o">++</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">instructions</span><span class="p">[</span><span class="n">ip</span><span class="p">]);</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">switch</span><span class="p">(</span><span class="n">op</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpConstant</span><span class="o">:</span><span class="w"></span>
+<span class="w">                </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">constIndex</span><span class="p">;</span><span class="w"></span>
+<span class="w">                    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint16</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">constIndex</span><span class="p">);</span><span class="w"></span>
+<span class="w">                    </span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
+<span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">constants</span><span class="p">[</span><span class="n">constIndex</span><span class="p">]);</span><span class="w"></span>
+<span class="w">                    </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">                    </span><span class="p">{</span><span class="w"></span>
+<span class="w">                        </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">                    </span><span class="p">}</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"></span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpAdd</span><span class="o">:</span><span class="w"></span>
+<span class="w">                </span><span class="p">{</span><span class="w"></span>
+<span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span><span class="w"></span>
+<span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span><span class="w"></span>
+<span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">rightObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">right</span><span class="p">);</span><span class="w"></span>
+<span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">leftObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">left</span><span class="p">);</span><span class="w"></span>
+<span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">rightObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">                    </span><span class="n">Push</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">result</span><span class="p">));</span><span class="w"></span>
+<span class="w">                </span><span class="p">}</span><span class="w"></span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>为了执行速度，没有继续调用<code>Lookup</code>来反复查找，而是直接使用规定好的字节宽度等信息。</p>
+<h2>REPL</h2>
+<div class="highlight"><pre><span></span>Hello lesliezhu! This is the Monkey-CPP programming language!
+Feel free to <span class="nb">type</span> <span class="k">in</span> commands
+&gt;&gt; <span class="m">1</span>+2+3+4
+<span class="m">10</span>
+&gt;&gt; <span class="m">1</span>+2<span class="p">;</span><span class="m">3</span>+4<span class="p">;</span><span class="m">5</span>+6
+<span class="m">11</span>
+&gt;&gt;
+&gt;&gt; /2
+
+   .--.  .-<span class="s2">"     "</span>-.  .--.
+  / .. <span class="se">\/</span>  .-. .-.  <span class="se">\/</span> .. <span class="se">\</span>
+ <span class="p">|</span> <span class="p">|</span>  <span class="s1">'|  /   Y   \  |'</span>  <span class="p">|</span> <span class="p">|</span>
+ <span class="p">|</span> <span class="se">\ </span>  <span class="se">\ </span> <span class="se">\ </span><span class="m">0</span> <span class="p">|</span> <span class="m">0</span> /  /   / <span class="p">|</span>
+  <span class="se">\ </span><span class="s1">'- ,\.-"""""""-./, -'</span> /
+   <span class="s1">''</span>-<span class="s1">' /_   ^ ^   _\ '</span>-<span class="s1">''</span>
+       <span class="p">|</span>  <span class="se">\.</span>_   _./  <span class="p">|</span>
+       <span class="se">\ </span>  <span class="se">\ </span><span class="s1">'~'</span> /   /
+        <span class="s1">'._ '</span>-<span class="o">=</span>-<span class="s1">' _.'</span>
+           <span class="s1">'-----'</span>
+
+Woops! We ran into some monkey business here!
+ parser errors:
+    no prefix parse <span class="k">function</span> <span class="k">for</span> / found
+&gt;&gt;
+</pre></div>
+<h2>测试用例</h2>
+<p>全部通过测试用例:</p>
+<div class="highlight"><pre><span></span><span class="o">[==========]</span> Running <span class="m">45</span> tests from <span class="m">45</span> <span class="nb">test</span> suites.
+<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment set-up.
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken
+<span class="o">[</span> RUN      <span class="o">]</span> TestNextToken.BasicAssertions
+<span class="o">[</span>       OK <span class="o">]</span> TestNextToken.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+......
+
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from testVMIntegerArithmetic
+<span class="o">[</span> RUN      <span class="o">]</span> testVMIntegerArithmetic.basicTest
+<span class="o">[</span>       OK <span class="o">]</span> testVMIntegerArithmetic.basicTest <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from testVMIntegerArithmetic <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+
+<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment tear-down
+<span class="o">[==========]</span> <span class="m">45</span> tests from <span class="m">45</span> <span class="nb">test</span> suites ran. <span class="o">(</span><span class="m">23</span> ms total<span class="o">)</span>
+<span class="o">[</span>  PASSED  <span class="o">]</span> <span class="m">45</span> tests.
+</pre></div>
+<h2>总结</h2>
+<p>理解了字节码的本质就是一段连续内存地址，然后按照约定好的操作码信息反汇编回来，通过虚拟调用栈来执行；目前只支持整数的加法运算，后续进行添加其它类型的支持。</p>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-10 Sat，共1235字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/11/26/writing_an_interpreter_in_cpp_6.html" title="C++实现编译器(6):字节码与虚拟机">http://www.lesliezhu.com/2022/11/26/writing_an_interpreter_in_cpp_6.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/11/24/writing_an_interpreter_in_cpp_5.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2022/11/26/writing_an_interpreter_in_cpp_6.html"><i class="fa fa-file-o"></i>C++实现编译器(6):字节码与虚拟机</a></li><li><a href="http://www.lesliezhu.com/2022/11/24/writing_an_interpreter_in_cpp_5.html"><i class="fa fa-file-o"></i>C++实现解释器(5):功能扩展</a></li><li><a href="http://www.lesliezhu.com/2022/11/21/writing_an_interpreter_in_cpp_4.html"><i class="fa fa-file-o"></i>C++实现解释器(4):求值</a></li><li><a href="http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html"><i class="fa fa-file-o"></i>C++实现解释器(3):语法分析与普拉特解析</a></li><li><a href="http://www.lesliezhu.com/2022/11/21/man_pages_missing.html"><i class="fa fa-file-o"></i>Docker镜像里为什么Linux无法安装Man Pages？</a></li><li><a href="http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html"><i class="fa fa-file-o"></i>Linux如何通过PAM管理授权?</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>17</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/读史札记.html">读史札记<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>2</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>29</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        
