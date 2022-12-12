@@ -429,7 +429,7 @@
 <span class="w">    </span><span class="n">lastInstruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prevInstruction</span><span class="p">;</span><span class="w"></span>
 <span class="p">}</span><span class="w"></span>
 </pre></div>
-<p>每个刚出栈的元素都可以记录和判断，则可以去除编译期去除一些出栈操作，起到回退的效果。</p>
+<p>每个刚出栈的元素都可以记录和判断，则可以编译期去除一些出栈操作，起到回退的效果。</p>
 <p>至于跳转指令的真实偏移量，在编译到可以确定这个值时回填过去：</p>
 <div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">replaceInstruction</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="o">&amp;</span><span class="w"> </span><span class="n">newInstruction</span><span class="p">)</span><span class="w"></span>
 <span class="p">{</span><span class="w"></span>
@@ -625,7 +625,7 @@
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-12 Mon，共1005字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-12 Mon，共1003字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
