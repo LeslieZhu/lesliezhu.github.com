@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> C++实现编译器(7):跳转指令 </title>
+            <link> http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_7.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_7.html</guid>
+            <category><![CDATA[C++学习与实践]]></category><category><![CDATA[解释器与编译器]]></category>
+            <pubDate>2022-12-12 Mon</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_7.html</comments>
+            </item>
+            
+            <item>
             <title> 明天做客要斯文 </title>
             <link> http://www.lesliezhu.com/2022/12/11/be_a_guest_tomorrow.html </link>
             <author><![CDATA[吴羽舒]]></author>
