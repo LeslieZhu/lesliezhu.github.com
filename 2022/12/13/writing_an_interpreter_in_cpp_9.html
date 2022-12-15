@@ -1,0 +1,985 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>C++实现编译器(9):函数与栈帧</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="minyilife@use-wechat.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        <style></style>
+        </head>
+        
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>C++实现编译器(9):函数与栈帧</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a> , <a href="http://www.lesliezhu.com/tags/解释器与编译器.html"><i class="解释器与编译器"></i>解释器与编译器</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        <div id='content'>
+<blockquote>
+<p>参照《Writing An Interpreter/Compiler In Go》，改用C++实现。</p>
+<p>项目源码: <a href="https://github.com/LeslieZhu/monkey-cpp">https://github.com/LeslieZhu/monkey-cpp</a></p>
+</blockquote>
+<h2>引言</h2>
+<p>本篇对应的源码位于目录: <code>src/08/</code></p>
+<p>函数部分是最重要也是最难的部分，随着函数的编译需要切换编译作用域，而函数的递归和互相调用则需要切换调用栈环境，引入了<code>栈帧</code>。</p>
+<h2>函数常量</h2>
+<p>这里从一个没有参数、没有局部变量、没有全局变量的最简单函数入手:</p>
+<div class="highlight"><pre><span></span><span class="n">let</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(){</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>可以将函数当做字面常量来表示，它被定义后本身的内容或值是不变的；因此，新增一种对象类型，即函数编译后的对象，该对象包含自身的字节码。</p>
+<div class="highlight"><pre><span></span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ObjectType</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">//...</span>
+<span class="w">    </span><span class="n">COMPILED_FUNCTION</span><span class="p">,</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">CompiledFunction</span><span class="o">:</span><span class="w"> </span><span class="n">Object</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">Instructions</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">CompiledFunction</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ins</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="n">Instructions</span><span class="p">(</span><span class="n">ins</span><span class="p">){}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ObjectType</span><span class="w"> </span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">COMPILED_FUNCTION</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Inspect</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">oss</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="k">this</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">oss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>这样一个函数编译后就和其它对象一样看待处理，函数体就是一个代码块，而之前已经可以支持代码块编译为字节码了。因此，对于这个简单函数的编译不是问题，如何调用才是问题。</p>
+<h2>编译作用域</h2>
+<p>编译函数生成的字节码不能和主程序的指令混合在一起，因此需要引入带作用域的栈。</p>
+<p>将之前编译器里面的三个元素独立出来作为一个编译作用域结构:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">CompilationScope</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">instructions</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">EmittedInstruction</span><span class="w"> </span><span class="n">lastInstruction</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">EmittedInstruction</span><span class="w"> </span><span class="n">prevInstruction</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">Compiler</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">constants</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">compiler</span><span class="o">::</span><span class="n">SymbolTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">symbolTable</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">CompilationScope</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">scopes</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">scopeIndex</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">Compiler</span><span class="p">(){</span><span class="w"></span>
+<span class="w">        </span><span class="n">symbolTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">compiler</span><span class="o">::</span><span class="n">NewSymbolTable</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">mainScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">CompilationScope</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">scopes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">mainScope</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">scopeIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">//...</span>
+
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">currentInstructions</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">scopes</span><span class="p">[</span><span class="n">scopeIndex</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">instructions</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">enterScope</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">CompilationScope</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">scopes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">scope</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">scopeIndex</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">leaveScope</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">ins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentInstructions</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">scopes</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">scopeIndex</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">ins</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>和之前的区别是通过<code>enterScope</code>和<code>leaveScope</code>来创建和销毁编译作用域，从而防止在编译时把主程序字节码打乱。</p>
+<h2>函数编译与调用约定</h2>
+<p>调用一个函数，对于返回值有两种可能：</p>
+<ul>
+<li>显示或隐式返回了内容</li>
+<li>没有返回内容</li>
+</ul>
+<p>比如:</p>
+<div class="highlight"><pre><span></span><span class="n">let</span><span class="w"> </span><span class="n">fn1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="n">let</span><span class="w"> </span><span class="n">fn2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(){</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="n">let</span><span class="w"> </span><span class="n">fn3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>不管是显示还是隐式返回，只要有返回内容，都应该编译为相同的字节码，新增操作码<code>OpReturnValue</code>；对于没有返回值的函数，即函数编译后，发现结尾不是一个操作码<code>OpReturnValue</code>结尾，那么就是无返回值类型，自动给它补上一个<code>null</code>无效值对象，新增操作码<code>OpReturn</code>。</p>
+<p>对于函数的调用，新增<code>OpCall</code>操作码，它的操作数暂时是0，因为不处理带有参数的函数，后续根据参数个数作为操作数。</p>
+<div class="highlight"><pre><span></span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">OpcodeType</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Opcode</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">//...</span>
+<span class="w">    </span><span class="n">OpCall</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">OpReturnValue</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">OpReturn</span><span class="p">,</span><span class="w">   </span><span class="c1">// return null</span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="o">&gt;</span><span class="w"> </span><span class="n">funcObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 在新编译作用域编译函数</span>
+<span class="w">    </span><span class="n">enterScope</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">pBody</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 隐式返回</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lastInstructionIs</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpPop</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">removeLastPopWithReturn</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 无返回则强制返回null</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">lastInstructionIs</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturnValue</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturn</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 回到上一层作用域并获取编译字节码</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">ins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leaveScope</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">compiledFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ins</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addConstant</span><span class="p">(</span><span class="n">compiledFn</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpConstant</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">pos</span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">ReturnStatement</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ReturnStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">returnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ReturnStatement</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">returnObj</span><span class="o">-&gt;</span><span class="n">pReturnValue</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturnValue</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>因为函数编译后是作为一个常量对象处理，所以它要么是被OpConstant变量加入到constants里面，要么是被OpSetGlobal绑到到全局变量了；总之，当它被调用的时候，这个字面量已经在调用栈栈顶了，这个时候只需要发出OpCall指令就可以调用它。</p>
+<p>函数被调用后，如果有返回值，则函数本身出栈，返回值入栈；如果没有返回值，则函数出栈，一个null值入栈。</p>
+<p>因为目前考虑的函数都没有参数，所以虚拟机在函数执行后不需要发出OpPop指令来让函数出栈。</p>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">CallExpression</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">CallExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">CallExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">callObj</span><span class="o">-&gt;</span><span class="n">pFunction</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpCall</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>栈帧</h2>
+<p><code>帧</code>是<code>调用帧</code>或者<code>栈帧</code>的简称，指保存与执行信息相关的数据结构，在编译器或解释器术语中，有时也叫<code>活动记录</code>。</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">vm</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Frame</span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fn</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">ip</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">Frame</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="n">fn</span><span class="p">(</span><span class="n">f</span><span class="p">),</span><span class="w"> </span><span class="n">ip</span><span class="p">(</span><span class="n">i</span><span class="p">){}</span><span class="w"></span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">Instruction</span><span class="p">()</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">fn</span><span class="o">-&gt;</span><span class="n">Instructions</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Frame</span><span class="o">&gt;</span><span class="w"> </span><span class="n">NewFrame</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Frame</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>发现这个帧的定义和之前整个虚拟机的调用栈类似，只不过调用的主体变成了函数编译后的字节码对象。</p>
+<p>既然整个虚拟机处理的就是一个字节码，那么可以把之前的主程序字节码也当做是一个编译后的函数，即<code>main</code>函数，对应的帧当做<code>主帧</code>。</p>
+<div class="highlight"><pre><span></span><span class="c1">// 最多嵌套1024层调用</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">FrameSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">VM</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">constants</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">globals</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">stack</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">sp</span><span class="p">;</span><span class="w"> </span><span class="c1">// 始终指向调用栈的下一个空闲位置，栈顶的值是stack[sp-1]</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Frame</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">frames</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">frameIndex</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">//...</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Frame</span><span class="o">&gt;</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">frames</span><span class="p">[</span><span class="n">frameIndex</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">pushFrame</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Frame</span><span class="o">&gt;</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">frames</span><span class="p">[</span><span class="n">frameIndex</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">frameIndex</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Frame</span><span class="o">&gt;</span><span class="w"> </span><span class="n">popFrame</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">frameIndex</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">frames</span><span class="p">[</span><span class="n">frameIndex</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">VM</span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">compiler</span><span class="o">::</span><span class="n">ByteCode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bytecode</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">mainFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bytecode</span><span class="o">-&gt;</span><span class="n">Instructions</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">mainFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewFrame</span><span class="p">(</span><span class="n">mainFn</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Frame</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">frames</span><span class="p">(</span><span class="n">FrameSize</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mainFrame</span><span class="p">;</span><span class="w"> </span><span class="c1">// frameIndex: 1</span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">VM</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bytecode</span><span class="o">-&gt;</span><span class="n">Constants</span><span class="p">,</span><span class="w"> </span><span class="n">frames</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>为了追求性能，预先分配好了栈帧空间，而不是采用追加动态扩展内存方式。</p>
+<p>当前只需要修改Run函数，将之前直接使用instructions的地方改成使用主帧即可。</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Run</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="c1">// 主帧初始化</span>
+<span class="w">   </span><span class="k">auto</span><span class="w"> </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="n">ip</span><span class="p">;</span><span class="w"></span>
+<span class="w">   </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">   </span><span class="c1">// 获取主帧字节码序列</span>
+<span class="w">   </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">Instruction</span><span class="p">();</span><span class="w"></span>
+<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="n">ins_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">   </span><span class="k">while</span><span class="p">(</span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ins_size</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="c1">// frame-&gt;ip start with -1</span>
+<span class="w">   </span><span class="p">{</span><span class="w"></span>
+<span class="w">       </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">       </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="p">;</span><span class="w"></span>
+<span class="w">       </span><span class="n">op</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">instructions</span><span class="p">[</span><span class="n">ip</span><span class="p">]);</span><span class="w"></span>
+
+<span class="w">       </span><span class="k">switch</span><span class="p">(</span><span class="n">op</span><span class="p">)</span><span class="w"></span>
+<span class="w">       </span><span class="p">{</span><span class="w"></span>
+<span class="w">          </span><span class="c1">//...</span>
+
+<span class="w">          </span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpCall</span><span class="o">:</span><span class="w"></span>
+<span class="w">               </span><span class="p">{</span><span class="w"></span>
+<span class="w">                   </span><span class="k">auto</span><span class="w"> </span><span class="n">fnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">[</span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
+<span class="w">                   </span><span class="k">if</span><span class="p">(</span><span class="n">fnObj</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">COMPILED_FUNCTION</span><span class="p">)</span><span class="w"></span>
+<span class="w">                   </span><span class="p">{</span><span class="w"></span>
+<span class="w">                       </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"calling non-function"</span><span class="p">);</span><span class="w"></span>
+<span class="w">                   </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">                   </span><span class="k">auto</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fnObj</span><span class="p">);</span><span class="w"></span>
+<span class="w">                   </span><span class="k">auto</span><span class="w"> </span><span class="n">funcFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewFrame</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">                   </span><span class="n">pushFrame</span><span class="p">(</span><span class="n">funcFrame</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">                   </span><span class="c1">// 立即切换栈帧环境</span>
+<span class="w">                   </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">();</span><span class="w"></span>
+<span class="w">                   </span><span class="n">instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">Instruction</span><span class="p">();</span><span class="w"></span>
+<span class="w">                   </span><span class="n">ins_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+<span class="w">               </span><span class="p">}</span><span class="w"></span>
+<span class="w">               </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">           </span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturnValue</span><span class="o">:</span><span class="w"></span>
+<span class="w">               </span><span class="p">{</span><span class="w"></span>
+<span class="w">                   </span><span class="k">auto</span><span class="w"> </span><span class="n">returnValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">                   </span><span class="n">popFrame</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">                   </span><span class="c1">// 立即切换栈帧环境</span>
+<span class="w">                   </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">();</span><span class="w"></span>
+<span class="w">                   </span><span class="n">instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">Instruction</span><span class="p">();</span><span class="w"></span>
+<span class="w">                   </span><span class="n">ins_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">                   </span><span class="n">Pop</span><span class="p">();</span><span class="w"> </span><span class="c1">// 函数本体出栈</span>
+
+<span class="w">                   </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">returnValue</span><span class="p">);</span><span class="w"></span>
+<span class="w">                   </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">                   </span><span class="p">{</span><span class="w"></span>
+<span class="w">                      </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">                   </span><span class="p">}</span><span class="w"></span>
+<span class="w">               </span><span class="p">}</span><span class="w"></span>
+<span class="w">               </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">           </span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturn</span><span class="o">:</span><span class="w"></span>
+<span class="w">               </span><span class="p">{</span><span class="w"></span>
+<span class="w">                   </span><span class="n">popFrame</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">                   </span><span class="c1">// 立即切换栈帧环境</span>
+<span class="w">                   </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">();</span><span class="w"></span>
+<span class="w">                   </span><span class="n">instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">Instruction</span><span class="p">();</span><span class="w"></span>
+<span class="w">                   </span><span class="n">ins_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">                   </span><span class="n">Pop</span><span class="p">();</span><span class="w"> </span><span class="c1">// 函数本体出栈</span>
+
+<span class="w">                   </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">NULL_OBJ</span><span class="p">);</span><span class="w"></span>
+<span class="w">                   </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">                   </span><span class="p">{</span><span class="w"></span>
+<span class="w">                      </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">                   </span><span class="p">}</span><span class="w"></span>
+<span class="w">               </span><span class="p">}</span><span class="w"></span>
+<span class="w">               </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">       </span><span class="p">}</span><span class="w"></span>
+<span class="w">   </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>在栈帧变化的时候需要切换栈帧环境，为下一次循环做好初始化工作。</p>
+<h2>局部变量操作码</h2>
+<div class="highlight"><pre><span></span><span class="n">let</span><span class="w"> </span><span class="n">globalSeed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span><span class="w"></span>
+
+<span class="n">let</span><span class="w"> </span><span class="n">minusOne</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">let</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">globalSeed</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">num</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">let</span><span class="w"> </span><span class="n">minusTwo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">let</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">globalSeed</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">num</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">minusOne</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">minusTwo</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+<p>这个例子中全局变量和局部变量都有，其中num局部变量只能在函数内部访问。</p>
+<p>相对于全局变量操作数使用2个字节，局部变量操作数使用1个字节，256个局部变量应该是够了:</p>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetGlobal</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"OpGetGlobal"</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)},</span><span class="w"></span>
+<span class="p">{</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpSetGlobal</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"OpSetGlobal"</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)},</span><span class="w"></span>
+
+<span class="p">{</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetLocal</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"OpGetLocal"</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)},</span><span class="w"></span>
+<span class="p">{</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpSetLocal</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"OpSetLocal"</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)},</span><span class="w"></span>
+</pre></div>
+<p>支持单字节的编码和解码:</p>
+<div class="highlight"><pre><span></span><span class="k">switch</span><span class="p">(</span><span class="n">width</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">uint16Value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">uint16_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">operands</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span><span class="w"></span>
+<span class="w">            </span><span class="n">WriteUint16</span><span class="p">(</span><span class="n">instruction</span><span class="p">,</span><span class="w"> </span><span class="n">offset</span><span class="p">,</span><span class="w"> </span><span class="n">uint16Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">instruction</span><span class="p">[</span><span class="n">offset</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Opcode</span><span class="o">&gt;</span><span class="p">(</span><span class="n">operands</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">switch</span><span class="p">(</span><span class="n">width</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mi">2</span><span class="o">:</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">uint16Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="n">ReadUint16</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="n">uint16Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="n">operands</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uint16Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">uint8Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="n">uint8Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="n">operands</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">uint8Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>编译时作用域与符号表的切换</h2>
+<p>之前编译作用域的时候只使用了全局作用域，但已经能够切换作用域了，那么伴随作用域的切换同时也切换符号表:</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">SymbolScopeType</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">GlobalScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"GLOBAL"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">LocalScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"LOCAL"</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">SymbolTable</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SymbolTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Outer</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">store</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numDefinitions</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Define</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">numDefinitions</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="c1">// 决定是否外部变量或非当前局部变量</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">Outer</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">GlobalScope</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">LocalScope</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">store</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">numDefinitions</span><span class="o">++</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Resolve</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">store</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">fit</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">store</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">fit</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">Outer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">Outer</span><span class="o">-&gt;</span><span class="n">Resolve</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">else</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SymbolTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">NewEnclosedSymbolTable</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SymbolTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">outer</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">SymbolTable</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Outer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">outer</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>新的符号表会有一条嵌套的外部符号表，编译的时候根据这个外部符号表是否存在来决定它是不是外部变量或者非当前局部变量:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">enterScope</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">scope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">CompilationScope</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">scopes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">scope</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">scopeIndex</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">symbolTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewEnclosedSymbolTable</span><span class="p">(</span><span class="n">symbolTable</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="nf">leaveScope</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">ins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentInstructions</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">scopes</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">scopeIndex</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">symbolTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbolTable</span><span class="o">-&gt;</span><span class="n">Outer</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ins</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>编译为字节码的时候区别就是是否本地局部变量操作码的选择:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">compiler</span><span class="o">::</span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">GlobalScope</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpSetGlobal</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Index</span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpSetLocal</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Index</span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">if</span><span class="p">(</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">compiler</span><span class="o">::</span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">GlobalScope</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetGlobal</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Index</span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetLocal</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Index</span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>虚拟机运行时局部绑定</h2>
+<p>之前已经可以处理全局变量了，虽然可以在调用函数的时候遇到SetLocal指令就临时建立一个数据结构来存储局部变量，但这种涉及内存动态分配会影响性能。</p>
+<p>在虚拟机遇到OpCall指令需要调用函数时，此时栈顶是函数字节码本体，如果调用函数期间的局部变量可以借用虚拟机调用栈，就可以避免动态分配内存。</p>
+<p>假设知道接下来调用函数有N个局部变量，那么在调用栈栈顶现在借用N个空间，执行的时候遇到局部变量定义就入栈一个元素，遇到使用局部变量就从调用栈读取。</p>
+<p>最后函数调用完毕，归还这部分借用的N个元素空间，这里的归还其实就是调用栈的栈顶指针回归原位，这个原位又叫<code>基指针</code>或<code>帧指针</code>。</p>
+<p>先获取函数的局部变量数量，这个信息有助于需要调用调用栈多少空间:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">CompiledFunction</span><span class="o">:</span><span class="w"> </span><span class="n">Object</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">Instructions</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">NumLocals</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="c1">//...</span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">Frame</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">   </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fn</span><span class="p">;</span><span class="w"></span>
+<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="n">ip</span><span class="p">;</span><span class="w"></span>
+<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="n">basePointer</span><span class="p">;</span><span class="w"></span>
+<span class="w">   </span><span class="c1">//..</span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>遇到OpCall指令时:</p>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpCall</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">fnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">[</span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">fnObj</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">COMPILED_FUNCTION</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"calling non-function"</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fnObj</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">funcFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewFrame</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="p">,</span><span class="w"> </span><span class="n">sp</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">pushFrame</span><span class="p">(</span><span class="n">funcFrame</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">Instruction</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">ins_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">        </span><span class="c1">// 借用一段调用栈空间</span>
+<span class="w">        </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">basePointer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="o">-&gt;</span><span class="n">NumLocals</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+<p>如果只看一个简单函数，会觉得这个地方的sp并不需要改变值，但因为函数嵌套的缘故，必须改变sp值以达到借用的效果。</p>
+<p>因为借用调用栈处理局部变量绑定，当遇到嵌套很深的递归调用时，可能调用栈空间很快就不足了。</p>
+<p>进入函数调用内部后，处理SetLocal与GetLocal指令:</p>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpSetLocal</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">localIndex</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">localIndex</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">stack</span><span class="p">[</span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">basePointer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="n">localIndex</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetLocal</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">localIndex</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">localIndex</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">stack</span><span class="p">[</span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">basePointer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="n">localIndex</span><span class="p">)]);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">           </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+<p>通过基指针来精确定位调用栈中的空间，在使用完毕函数退出的时候要把这段空间归还:</p>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturnValue</span><span class="o">:</span><span class="w"></span>
+<span class="w">     </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">returnValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">callFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">popFrame</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">callFrame</span><span class="o">-&gt;</span><span class="n">basePointer</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">         </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="n">instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">Instruction</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="n">ins_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">         </span><span class="c1">//Pop(); // 函数本体出栈</span>
+
+<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">returnValue</span><span class="p">);</span><span class="w"></span>
+<span class="w">         </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">         </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"></span>
+<span class="w">     </span><span class="p">}</span><span class="w"></span>
+<span class="w">     </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturn</span><span class="o">:</span><span class="w"></span>
+<span class="w">     </span><span class="p">{</span><span class="w"></span>
+<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">callFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">popFrame</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">callFrame</span><span class="o">-&gt;</span><span class="n">basePointer</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">         </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="n">instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">Instruction</span><span class="p">();</span><span class="w"></span>
+<span class="w">         </span><span class="n">ins_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">         </span><span class="c1">//Pop(); // 函数本体出栈</span>
+
+<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">NULL_OBJ</span><span class="p">);</span><span class="w"></span>
+<span class="w">         </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">         </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"></span>
+<span class="w">     </span><span class="p">}</span><span class="w"></span>
+<span class="w">     </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+<p>本来是直接恢复基指针，但直接通过基指针减1的方式，可以省去一个Pop操作来弹出函数本体；至此，函数局部变量可以处理了。</p>
+<h2>函数参数</h2>
+<p>函数调用的参数是一种特殊的局部变量绑定，只不是是隐式的绑定。</p>
+<p>之前假设函数是不带参数的，因此函数本体入栈后，接着便是OpCall指令；但现在做出改变，函数本体入栈后，函数参数入栈，最后才是OpCall指令。为了让OpCall知道函数有多少个参数，它需要使用1个字节来作为操作数。那么它的工作方式是往前寻找N个位置到达函数本体，函数本体调用的时候后面N个元素便是它的参数了。</p>
+<div class="highlight"><pre><span></span><span class="c1">// {OpcodeType::OpCall, std::make_shared&lt;Definition&gt;("OpCall")},</span>
+<span class="p">{</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpCall</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"OpCall"</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)},</span><span class="w"></span>
+</pre></div>
+<p>函数编译后要包含参数个数信息:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">CompiledFunction</span><span class="o">:</span><span class="w"> </span><span class="n">Object</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="n">Instructions</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">NumLocals</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">NumParameters</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">CompiledFunction</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ins</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">numLocals</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">numParameters</span><span class="p">)</span><span class="w"></span>
+<span class="w">    	</span><span class="o">:</span><span class="w"> </span><span class="n">Instructions</span><span class="p">(</span><span class="n">ins</span><span class="p">),</span><span class="w"></span>
+<span class="w">    	  </span><span class="n">NumLocals</span><span class="p">(</span><span class="n">numLocals</span><span class="p">),</span><span class="w"></span>
+<span class="w">    	  </span><span class="n">NumParameters</span><span class="p">(</span><span class="n">numParameters</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">//...</span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>编译函数的时候把参数当做局部变量绑定发出SetLocal指令:</p>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="o">&gt;</span><span class="w"> </span><span class="n">funcObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">enterScope</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 把参数当做局部变量进行绑定</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">args</span><span class="o">:</span><span class="w"> </span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">v_pParameters</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">symbolTable</span><span class="o">-&gt;</span><span class="n">Define</span><span class="p">(</span><span class="n">args</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">pBody</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lastInstructionIs</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpPop</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">removeLastPopWithReturn</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">lastInstructionIs</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturnValue</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturn</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">numLocals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbolTable</span><span class="o">-&gt;</span><span class="n">numDefinitions</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">numParameters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">v_pParameters</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">ins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leaveScope</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">compiledFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span><span class="w"> </span><span class="n">numLocals</span><span class="p">,</span><span class="w"> </span><span class="n">numParameters</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addConstant</span><span class="p">(</span><span class="n">compiledFn</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpConstant</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">pos</span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>而编译生成OpCall指令时要带上被调用函数参数个数作为操作数:</p>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">CallExpression</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">CallExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">CallExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 将函数本体编译，最先入栈</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">callObj</span><span class="o">-&gt;</span><span class="n">pFunction</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 将每个实参编译进去，入栈时在OpCall前面</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">args</span><span class="o">:</span><span class="w"> </span><span class="n">callObj</span><span class="o">-&gt;</span><span class="n">pArguments</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">args</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">argsNum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">callObj</span><span class="o">-&gt;</span><span class="n">pArguments</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 入栈OpCall指令，操作数是实参个数</span>
+<span class="w">    </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpCall</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">argsNum</span><span class="p">});</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>虚拟机具体执行的时候只要找准函数本体的位置作为基指针，那么所有问题都水到渠成了，等同于实参已经自动绑定到形参:</p>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpCall</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// 读取1字节为实参个数</span>
+<span class="w">        </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">numArgs</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">callFunction</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">           </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">Instruction</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">ins_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callFunction</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// 要跳过实参个数</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">fnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">[</span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="p">];</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fnObj</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">COMPILED_FUNCTION</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"calling non-function"</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fnObj</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 判断实参个数与形参个数是否一致</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="o">-&gt;</span><span class="n">NumParameters</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="o">-&gt;</span><span class="n">NumParameters</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"wrong number of arguments: want="</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">", got="</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">str2</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 基指针也要跳过实参个数</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">funcFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewFrame</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="p">,</span><span class="w"> </span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">pushFrame</span><span class="p">(</span><span class="n">funcFrame</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">funcFrame</span><span class="o">-&gt;</span><span class="n">basePointer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="o">-&gt;</span><span class="n">NumLocals</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>执行效果:</p>
+<div class="highlight"><pre><span></span>&gt;&gt; <span class="nb">let</span> <span class="nv">one</span> <span class="o">=</span> fn<span class="o">(){</span> <span class="m">1</span><span class="p">;</span> <span class="o">}</span>
+CompiledFunction<span class="o">[</span>0x600000e84058<span class="o">]</span>
+
+&gt;&gt; <span class="nb">let</span> <span class="nv">two</span> <span class="o">=</span> fn<span class="o">(){</span> <span class="nb">let</span> <span class="nv">result</span> <span class="o">=</span> one<span class="o">()</span><span class="p">;</span> <span class="k">return</span> result + result<span class="p">;</span> <span class="o">}</span>
+CompiledFunction<span class="o">[</span>0x600000e84098<span class="o">]</span>
+
+&gt;&gt; <span class="nb">let</span> <span class="nv">three</span> <span class="o">=</span> fn<span class="o">(</span>two<span class="o">){</span> two<span class="o">()</span> + <span class="m">1</span><span class="p">;</span> <span class="o">}</span>
+CompiledFunction<span class="o">[</span>0x600000e8c058<span class="o">]</span>
+
+&gt;&gt; three<span class="o">(</span>two<span class="o">)</span>
+<span class="m">3</span>
+</pre></div>
+<h2>总结</h2>
+<p>之前只有主帧的时候，一直在想后面对函数会怎么设计，栈帧让人有种豁然开朗的感觉；将函数参数与局部变量都使用调用栈存储，而不是动态分配内存，提高了性能。</p>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-15 Thu，共2230字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/12/13/writing_an_interpreter_in_cpp_9.html" title="C++实现编译器(9):函数与栈帧">http://www.lesliezhu.com/2022/12/13/writing_an_interpreter_in_cpp_9.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_8.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2022/12/13/writing_an_interpreter_in_cpp_9.html"><i class="fa fa-file-o"></i>C++实现编译器(9):函数与栈帧</a></li><li><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_8.html"><i class="fa fa-file-o"></i>C++实现编译器(8):符号表、字符串、数组与字典</a></li><li><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_7.html"><i class="fa fa-file-o"></i>C++实现编译器(7):跳转指令</a></li><li><a href="http://www.lesliezhu.com/2022/12/11/be_a_guest_tomorrow.html"><i class="fa fa-file-o"></i>明天做客要斯文</a></li><li><a href="http://www.lesliezhu.com/2022/11/26/writing_an_interpreter_in_cpp_6.html"><i class="fa fa-file-o"></i>C++实现编译器(6):字节码与虚拟机</a></li><li><a href="http://www.lesliezhu.com/2022/11/24/writing_an_interpreter_in_cpp_5.html"><i class="fa fa-file-o"></i>C++实现解释器(5):功能扩展</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>20</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/读史札记.html">读史札记<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>3</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>33</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        
