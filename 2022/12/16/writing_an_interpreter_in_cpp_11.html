@@ -1,0 +1,722 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>C++实现编译器(11):闭包</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="minyilife@use-wechat.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        <style></style>
+        </head>
+        
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>C++实现编译器(11):闭包</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a> , <a href="http://www.lesliezhu.com/tags/解释器与编译器.html"><i class="解释器与编译器"></i>解释器与编译器</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        <div id='content'>
+<blockquote>
+<p>参照《Writing An Interpreter/Compiler In Go》，改用C++实现。</p>
+<p>项目源码: <a href="https://github.com/LeslieZhu/monkey-cpp">https://github.com/LeslieZhu/monkey-cpp</a></p>
+</blockquote>
+<h2>引言</h2>
+<p>本篇对应的源码位于目录: <code>src/10/</code></p>
+<p><code>闭包</code>是迄今为止字节码编译器和虚拟机领域中最重要的功能之一。</p>
+<p>比如:</p>
+<div class="highlight"><pre><span></span><span class="n">let</span><span class="w"> </span><span class="n">newAdder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(</span><span class="n">a</span><span class="p">){</span><span class="w"></span>
+<span class="w">    </span><span class="n">let</span><span class="w"> </span><span class="n">adder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">adder</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">let</span><span class="w"> </span><span class="n">addTwo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newAdder</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="w"></span>
+
+<span class="n">addTwo</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span><span class="w"> </span><span class="c1">// =&gt; 5</span>
+</pre></div>
+<p>newAdder函数返回的adder就是<code>闭包</code>，因为它不仅有自己的参数b，还可以继续访问自己被定义时候的newAdder的参数a。</p>
+<p>之前解释器中函数支持闭包是通过为函数添加一个<code>env</code>变量实现的:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Function</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Object</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">Parameters</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">BlockStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Body</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Environment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Env</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="c1">//...</span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>这个<code>env</code>变量会指向函数定义时候的环境，从而在执行的时候，需要使用这个定义时的环境来执行。</p>
+<p>但现在是通过编译器和虚拟机来实现闭包，它们是编译时与运行时的概念，迎来一系列的挑战。</p>
+<h2>自由变量与闭包函数对象</h2>
+<p>关于闭包实现的资料可供参考:</p>
+<ul>
+<li>GNU Guile</li>
+<li>Lua实现</li>
+<li>Wren代码库</li>
+<li>Matt Might关于编译闭包主题文章</li>
+</ul>
+<p>自由变量既不是当前局部作用域中定义的变量，也不是当前函数的参数；不受当前作用域的约束。</p>
+<p>自由变量是那些在局部使用但在封闭作用域内定义的变量。</p>
+<p>不管函数是否是闭包，先把所有函数都变成闭包; 在编译函数时检查它是否有对自由变量的引用，如果有则将引用的值放到栈内，将值和编译后的函数放到一个闭包结构中，作为一个整体入栈。</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Closure</span><span class="o">:</span><span class="w"> </span><span class="n">Object</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Fn</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">Free</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">Closure</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fn</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="n">Fn</span><span class="p">(</span><span class="n">fn</span><span class="p">){}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Closure</span><span class="p">(){}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">ObjectType</span><span class="w"> </span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">ObjectType</span><span class="o">::</span><span class="n">CLOSURE</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Inspect</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    	</span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">oss</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="n">oss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Closure["</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="k">this</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"]"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    	</span><span class="k">return</span><span class="w"> </span><span class="n">oss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">Frame</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// std::shared_ptr&lt;objects::CompiledFunction&gt; fn;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Closure</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cl</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ip</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">basePointer</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">//...</span>
+
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="w"> </span><span class="nf">Instruction</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// return fn-&gt;Instructions;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">cl</span><span class="o">-&gt;</span><span class="n">Fn</span><span class="o">-&gt;</span><span class="n">Instructions</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>这里的Free相当于一个env角色；为了将函数编译成闭包，需要新增操作码:</p>
+<div class="highlight"><pre><span></span><span class="p">{</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpClosure</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Definition</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"OpClosure"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">})},</span><span class="w"></span>
+</pre></div>
+<p>OpClosure有两个操作数，第1个操作数用于找到函数本体，第2个操作数用于标记有多少个自由变量。</p>
+<h2>函数变闭包</h2>
+<p>假设所有函数都有0个自由变量，即OpClosure第二个操作数是0；同时，之前编译函数后使用的OpConstant指令需要都换成OpClosure指令:</p>
+<div class="highlight"><pre><span></span><span class="c1">//emit(bytecode::OpcodeType::OpConstant, {pos});</span>
+<span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpClosure</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">});</span><span class="w"></span>
+</pre></div>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpClosure</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">constIndex</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint16</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">constIndex</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">numFree</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">numFree</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PushClosure</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">constIndex</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">           </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PushClosure</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">constIndex</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">constant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constants</span><span class="p">[</span><span class="n">constIndex</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">compiledFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">constant</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">compiledFn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"not a function: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">constant</span><span class="o">-&gt;</span><span class="n">Inspect</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">closure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Closure</span><span class="o">&gt;</span><span class="p">(</span><span class="n">compiledFn</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">closure</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>想象一下，代码被编译器编译的时候，已经有了函数字节码对象作为常量存储着，然后知道它的索引是N，那么主程序字节码只需要一个OpClosure指令即可，带上两个操作数，第1个是函数本体的索引；等到虚拟机去执行的时候，解压遇到OpClosure指令，根据操作数获取一个函数本体，打包为一个闭包，入栈即可。</p>
+<p>相应的OpCall调用的对象就是闭包或内置函数了，不会直接调用函数本体:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w">  </span><span class="n">executeCall</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">fnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">[</span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="p">];</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">fnObj</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">CLOSURE</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">//auto compiledFnObj = std::dynamic_pointer_cast&lt;objects::CompiledFunction&gt;(fnObj);</span>
+<span class="w">        </span><span class="c1">//return callFunction(compiledFnObj, numArgs);</span>
+
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">closureFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Closure</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fnObj</span><span class="p">);</span><span class="w">        </span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">callClosure</span><span class="p">(</span><span class="n">closureFn</span><span class="p">,</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">fnObj</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">BUILTIN</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">builtinFnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fnObj</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">callBuiltin</span><span class="p">(</span><span class="n">builtinFnObj</span><span class="p">,</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"calling non-function and non-built-in"</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>对于没有自由变量的普通函数，它目前工作良好。</p>
+<h2>编译与解析自由变量</h2>
+<p>新增一种编译作用域，叫自由变量作用域:</p>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">SymbolScopeType</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">GlobalScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"GLOBAL"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">LocalScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"LOCAL"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">BuiltinScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"BUILTIN"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">FreeScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"FREE"</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>符号表中需携带一个自由变量清单:</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">SymbolTable</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">SymbolTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Outer</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">store</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numDefinitions</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">FreeSymbols</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="c1">//...</span>
+<span class="p">};</span><span class="w"></span>
+</pre></div>
+<p>编译器在编译函数的时候，本身已经有一个符号表了，这个符号表记录了它的局部变量，现在在这个符号表内部添加了一个存储空间来存储自由变量:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DefineFree</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="n">original</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// 记录最原始信息</span>
+<span class="w">    </span><span class="n">FreeSymbols</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">original</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 第三个参数index使得可以通过2次跳转找到最原始的符号信息</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="p">(</span><span class="n">original</span><span class="o">-&gt;</span><span class="n">Name</span><span class="p">,</span><span class="w"> </span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">FreeScope</span><span class="w"> </span><span class="p">,</span><span class="n">FreeSymbols</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">store</span><span class="p">[</span><span class="n">original</span><span class="o">-&gt;</span><span class="n">Name</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Resolve</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">store</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">fit</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">store</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">fit</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">Outer</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Outer</span><span class="o">-&gt;</span><span class="n">Resolve</span><span class="p">(</span><span class="n">name</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">obj</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">obj</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">GlobalScope</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">BuiltinScope</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">obj</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="c1">// 注册自由变量</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">free</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DefineFree</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">free</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>判断函数里面的自由变量就是看它是否是局部变量，如果不是，那么从外部查找，找到后发现它不是全局变量或内置变量，那么就是外部局部变量，即自由变量。</p>
+<p>编译函数的时候，需要在函数本体前面把自由变量提前编码:</p>
+<div class="highlight"><pre><span></span><span class="c1">//...</span>
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">lastInstructionIs</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturnValue</span><span class="p">))</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpReturn</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">// 获取编译好的函数自由变量</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">freeSymbols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbolTable</span><span class="o">-&gt;</span><span class="n">FreeSymbols</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">numLocals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbolTable</span><span class="o">-&gt;</span><span class="n">numDefinitions</span><span class="p">;</span><span class="w"></span>
+<span class="k">auto</span><span class="w"> </span><span class="n">numParameters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">v_pParameters</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+<span class="k">auto</span><span class="w"> </span><span class="n">ins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leaveScope</span><span class="p">();</span><span class="w"></span>
+
+<span class="c1">// 首先编码自由变量</span>
+<span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sym</span><span class="o">:</span><span class="w"> </span><span class="n">freeSymbols</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">loadSymbol</span><span class="p">(</span><span class="n">sym</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">compiledFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ins</span><span class="p">,</span><span class="w"> </span><span class="n">numLocals</span><span class="p">,</span><span class="w"> </span><span class="n">numParameters</span><span class="p">);</span><span class="w"></span>
+<span class="k">auto</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addConstant</span><span class="p">(</span><span class="n">compiledFn</span><span class="p">);</span><span class="w"></span>
+
+<span class="c1">//emit(bytecode::OpcodeType::OpConstant, {pos});</span>
+<span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpClosure</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">freeSymbols</span><span class="p">.</span><span class="n">size</span><span class="p">())});</span><span class="w"></span>
+</pre></div>
+<p>在loadSymbol中新增了OpGetFree获取自由变量。</p>
+<h2>虚拟机运行时重建闭包对象</h2>
+<p>现在函数编译后的字节码存储顺序如下:</p>
+<div class="highlight"><pre><span></span>OpGetFree 0,OpGetFree 1,...,OpGetFree N,OpClosure,FnIndex,N-Free
+</pre></div>
+<p>虚拟机解码字节码的时候构建调用栈情况如下:</p>
+<div class="highlight"><pre><span></span>LocalN
+...
+Local2
+Local1 ---&gt;函数本体中有局部变量N，根据基指针借用
+ArgN
+...
+Arg2
+Arg1 --&gt; 函数本体中有参数个数N，基指针往后N个借用空间用于函数执行时使用
+CompiledFunction ---&gt; 根据常量索引找到函数本体，其位置是基指针
+FreeN ---&gt; 通过OpClosure知道有N个自由变量，那么基指针往前N个直接拿
+....
+Free2
+Free1
+函数之前的其它对象, 函数执行后栈指针回到这里
+</pre></div>
+<p>解码OpGetFree指令读取自由变量:</p>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetFree</span><span class="o">:</span><span class="w"></span>
+<span class="w">      </span><span class="p">{</span><span class="w"></span>
+<span class="w">          </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">freeIndex</span><span class="p">;</span><span class="w"></span>
+<span class="w">          </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">freeIndex</span><span class="p">);</span><span class="w"></span>
+<span class="w">          </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">          </span><span class="k">auto</span><span class="w"> </span><span class="n">currentClosure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">cl</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">          </span><span class="c1">// 读取闭包自由变量值</span>
+<span class="w">          </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">currentClosure</span><span class="o">-&gt;</span><span class="n">Free</span><span class="p">[</span><span class="n">freeIndex</span><span class="p">]);</span><span class="w"></span>
+<span class="w">          </span><span class="k">if</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">          </span><span class="p">{</span><span class="w"></span>
+<span class="w">             </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">          </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+<p>打包函数为闭包部分需要包含自由变量:</p>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpClosure</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">constIndex</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint16</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">constIndex</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">numFree</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">numFree</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PushClosure</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">constIndex</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">numFree</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">        </span><span class="p">{</span><span class="w"></span>
+<span class="w">           </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PushClosure</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">constIndex</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">numFree</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">constant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constants</span><span class="p">[</span><span class="n">constIndex</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">compiledFn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">constant</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">compiledFn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"not a function: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">constant</span><span class="o">-&gt;</span><span class="n">Inspect</span><span class="p">());</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 从调用栈读取所有自由变量</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">free</span><span class="p">(</span><span class="n">numFree</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">numFree</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">free</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">[</span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numFree</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">];</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 调用栈指针归位</span>
+<span class="w">    </span><span class="n">sp</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">numFree</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">closure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Closure</span><span class="o">&gt;</span><span class="p">(</span><span class="n">compiledFn</span><span class="p">,</span><span class="w"> </span><span class="n">free</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">closure</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>递归闭包</h2>
+<p>函数递归调用:</p>
+<div class="highlight"><pre><span></span><span class="n">let</span><span class="w"> </span><span class="n">countDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span><span class="w"></span>
+<span class="w">       </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">       </span><span class="n">countDown</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">let</span><span class="w"> </span><span class="n">wrapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="n">countDown</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">wrapper</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+<p>因为这个countDown函数调用了自己，那么在这个函数必须进行编译的时候必须先把它加入到符号表，否则编译时会找不到自己:</p>
+<div class="highlight"><pre><span></span><span class="w">else if(node-&gt;GetNodeType() == ast::NodeType::LetStatement)</span>
+<span class="w"> </span>   {<span class="w"></span>
+<span class="w"> </span>        std::shared_ptr&lt;ast::LetStatement&gt; letObj = std::dynamic_pointer_cast&lt;ast::LetStatement&gt;(node);<span class="w"></span>
+<span class="gi">+</span><span class="w"></span>
+<span class="gi">+        // 对函数内部来说，函数名是外部变量了，自然可以访问到</span><span class="w"></span>
+<span class="gi">+        auto symbol = symbolTable-&gt;Define(letObj-&gt;pName-&gt;Value);</span><span class="w"></span>
+<span class="gi">+</span><span class="w"></span>
+<span class="w"> </span>        auto resultObj = Compile(letObj-&gt;pValue);<span class="w"></span>
+<span class="w"> </span>        if (objects::isError(resultObj))<span class="w"></span>
+<span class="w"> </span>        {<span class="w"></span>
+<span class="w"> </span>             return resultObj;<span class="w"></span>
+<span class="w"> </span>        }<span class="w"></span>
+
+<span class="gd">-        auto symbol = symbolTable-&gt;Define(letObj-&gt;pName-&gt;Value);</span><span class="w"></span>
+<span class="gi">+        // auto symbol = symbolTable-&gt;Define(letObj-&gt;pName-&gt;Value);</span><span class="w"></span>
+
+<span class="w"> </span>        //....<span class="w"></span>
+<span class="w"> </span>    }<span class="w"></span>
+</pre></div>
+<p>只是调整了函数名进入符号表的时机就可以解决上面这种简单函数递归调用，但面对递归闭包的时候，比如:</p>
+<div class="highlight"><pre><span></span><span class="n">let</span><span class="w"> </span><span class="n">wrapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(){</span><span class="w"></span>
+<span class="w">    </span><span class="n">let</span><span class="w"> </span><span class="n">countDown</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="w"></span>
+<span class="w">         </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span><span class="w"></span>
+<span class="w">             </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">             </span><span class="n">countDown</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="w">         </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">};</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">countDown</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="n">wrapper</span><span class="p">();</span><span class="w"></span>
+</pre></div>
+<p>在这个例子里面虽然还是调用countDown函数，但区别是这个函数是定义在wrapper自己内部的，即这个闭包是递归的。</p>
+<p>目前它不能运行，因为对于递归闭包还支持不好，虚拟机执行的时候会报错，但查看编译器的编码:</p>
+<div class="highlight"><pre><span></span>0000 OpGetLocal 0    ===&gt; 这里造成错误
+0002 OpClosure 3 0
+0006 OpSetLocal 0
+0008 OpGetLocal 0
+0010 OpConstant 4
+0013 OpCall 1
+0015 OpReturnValue
+</pre></div>
+<p>因为countDown编译的时候发现调用了自己，而函数自己本身还没有编译好，因此它被当做了自由变量。在闭包函数之前会把自由变量入栈，但这个入栈的东西其实还没有定义好。</p>
+<h2>记录函数名字</h2>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">LetStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">parseLetStatement</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">LetStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pStmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">LetStatement</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">Token</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">curToken</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">expectPeek</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">IDENT</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">pName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="p">(</span><span class="n">curToken</span><span class="p">,</span><span class="w"> </span><span class="n">curToken</span><span class="p">.</span><span class="n">Literal</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">expectPeek</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ASSIGN</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">pValue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parseExpression</span><span class="p">(</span><span class="n">Priority</span><span class="o">::</span><span class="n">LOWEST</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 如果是用let定义函数，则记下函数名字，方便后续检查是否自引用</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">pValue</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">fl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">pValue</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">fl</span><span class="o">-&gt;</span><span class="n">Name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pStmt</span><span class="o">-&gt;</span><span class="n">pName</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">peekTokenIs</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SEMICOLON</span><span class="p">))</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">nextToken</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pStmt</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<h2>编译自引用</h2>
+<p>编译函数的时候，进入函数内部作用域后，第一步是让函数名本身占据符号表最开始的位置:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DefineFunctionName</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">FunctionScope</span><span class="w"> </span><span class="p">,</span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">store</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">//...</span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="o">&gt;</span><span class="w"> </span><span class="n">funcObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">FunctionLiteral</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">enterScope</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 实际上等于函数名本身不会是自由变量了</span>
+<span class="w">    </span><span class="c1">// 而是局部变量，但属于FunctionScope</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">Name</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s">""</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">symbolTable</span><span class="o">-&gt;</span><span class="n">DefineFunctionName</span><span class="p">(</span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">Name</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">args</span><span class="o">:</span><span class="w"> </span><span class="n">funcObj</span><span class="o">-&gt;</span><span class="n">v_pParameters</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">symbolTable</span><span class="o">-&gt;</span><span class="n">Define</span><span class="p">(</span><span class="n">args</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="c1">//...</span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="c1">//...</span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Identifier</span><span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="w"> </span><span class="n">identObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Identifier</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbolTable</span><span class="o">-&gt;</span><span class="n">Resolve</span><span class="p">(</span><span class="n">identObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">symbol</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"undefined variable "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">identObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">loadSymbol</span><span class="p">(</span><span class="n">symbol</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>这样在函数体内部编译的时候，遇到<code>自引用</code>情况时，它会找到函数名在符号表中的索引位置，并发出获取它的指令，但因为它已经被定义为FunctionScope了，会使用OpCurrentClosure指令，而不是之前的OpGetFree指令。</p>
+<p>虚拟机对OpCurrentClosure的处理:</p>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpCurrentClosure</span><span class="o">:</span><span class="w"></span>
+<span class="w">      </span><span class="p">{</span><span class="w"></span>
+<span class="w">          </span><span class="k">auto</span><span class="w"> </span><span class="n">currentClosure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">cl</span><span class="p">;</span><span class="w"></span>
+<span class="w">          </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">currentClosure</span><span class="p">);</span><span class="w"></span>
+<span class="w">          </span><span class="k">if</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
+<span class="w">          </span><span class="p">{</span><span class="w"></span>
+<span class="w">             </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
+<span class="w">          </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+<h2>总结</h2>
+<p>闭包是比较难理解和难实现的功能，尤其是需要在编译时和运行时两个不同阶段处理却又要能够正常运行时，再加上嵌套递归闭包，那不同的实现方式对于执行速度影响会非常大。</p>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-17 Sat，共1666字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_11.html" title="C++实现编译器(11):闭包">http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_11.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev"><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_10.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html"><i class="fa fa-file-o"></i>C++实现编译器(12):结语</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_11.html"><i class="fa fa-file-o"></i>C++实现编译器(11):闭包</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_10.html"><i class="fa fa-file-o"></i>C++实现编译器(10):内置函数</a></li><li><a href="http://www.lesliezhu.com/2022/12/13/writing_an_interpreter_in_cpp_9.html"><i class="fa fa-file-o"></i>C++实现编译器(9):函数与栈帧</a></li><li><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_8.html"><i class="fa fa-file-o"></i>C++实现编译器(8):符号表、字符串、数组与字典</a></li><li><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_7.html"><i class="fa fa-file-o"></i>C++实现编译器(7):跳转指令</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>23</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>12</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/读史札记.html">读史札记<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>3</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>36</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        

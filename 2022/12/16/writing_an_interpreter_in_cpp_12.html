@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>C++学习与实践</title>
+        <title>C++实现编译器(12):结语</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -31,10 +31,9 @@
         <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
-        <ORGNOTESTYLE>
+        <style></style>
         </head>
         
-
         <body>  
         <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         
@@ -49,7 +48,6 @@
     
         <a class="navbar-brand" href="/index.html">MinYiLife</a>
         
-
         <div class="collapse navbar-collapse nav-menu">
         
         <ul class="nav navbar-nav">
@@ -84,13 +82,12 @@
         </div> <!-- container -->
         </nav>
         
-
         <div class="clearfix"></div>
         <div class="container">
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>C++学习与实践</h1>
+        <h1>C++实现编译器(12):结语</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -99,24 +96,126 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        分类: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a>
-
+        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a> , <a href="http://www.lesliezhu.com/tags/解释器与编译器.html"><i class="解释器与编译器"></i>解释器与编译器</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        
+        <div id='content'>
+<blockquote>
+<p>参照《Writing An Interpreter/Compiler In Go》，改用C++实现。</p>
+<p>项目源码: <a href="https://github.com/LeslieZhu/monkey-cpp">https://github.com/LeslieZhu/monkey-cpp</a></p>
+</blockquote>
+<h2>引言</h2>
+<p>这两本书是2022年6月出版，8月买到手，11月中旬开始细读，12月中旬完成，历时1个月，记录笔记共10篇。</p>
+<p>至此，自制解释器与编译器告一段落，在这过程中获得了一个自顶向下树遍历解释器和一个基于字节码的虚拟机及编译器。</p>
+<p>对于整个程序执行过程，对词法分析、语法分析、AST构建、AST解释或编译、虚拟机运行字节码各个阶段做一个回顾：</p>
+<ul>
+<li>词法分析：lexer扫描整个程序，根据词法规则拆分形成一系列的词法Token</li>
+<li>语法分析：parser接收每一个词法Token，根据不同的语句语义，检查其是否是由正确的Token组合，构建AST语法树</li>
+<li>解释求值器：evaluator根据AST语法树自顶向下解释执行，引入了Object系统和Environment系统来存储求值结果</li>
+<li>编译器: compiler根据AST语法树自顶向下编译，引入了符号表(SymbolTable)、常量表(Constants)和作用域表(Scope)，最后得到的是字节码</li>
+<li>虚拟机：vm读取字节码，根据特定的操作码控制逻辑，结合符号表、常量表与作用域表，通过调用栈得到执行结果</li>
+</ul>
+<p>虚拟机字节码操作数都是整数，这些整数作为索引，用于在符号表、常量表、作用域表中查找到正确的对象，然后进入调用栈，根据操作码的逻辑完成计算。</p>
+<p>如果要将源文件编译为字节码文件，然后虚拟机加载字节码文件执行，即编译器和虚拟机分离，则需要用一种方式将符号表、常量表、作用域表能够写入文件并正确读取，然后是字节码本身的写入文件和读取。</p>
+<h2>斐波那契数基准测试</h2>
+<div class="highlight"><pre><span></span><span class="n">let</span><span class="w"> </span><span class="n">fibonacci</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">){</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">fibonacci</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">fibonacci</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
 
-        <!-- display as entry -->
-        <div class="entry">
-        <div class="row">
-        <div class="col-md-9">
-        <li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html" target="_blank"><i class="fa fa-file-o"></i>C++实现编译器(12):结语</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_11.html" target="_blank"><i class="fa fa-file-o"></i>C++实现编译器(11):闭包</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_10.html" target="_blank"><i class="fa fa-file-o"></i>C++实现编译器(10):内置函数</a></li><li><a href="http://www.lesliezhu.com/2022/12/13/writing_an_interpreter_in_cpp_9.html" target="_blank"><i class="fa fa-file-o"></i>C++实现编译器(9):函数与栈帧</a></li><li><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_8.html" target="_blank"><i class="fa fa-file-o"></i>C++实现编译器(8):符号表、字符串、数组与字典</a></li><li><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_7.html" target="_blank"><i class="fa fa-file-o"></i>C++实现编译器(7):跳转指令</a></li><li><a href="http://www.lesliezhu.com/2022/11/26/writing_an_interpreter_in_cpp_6.html" target="_blank"><i class="fa fa-file-o"></i>C++实现编译器(6):字节码与虚拟机</a></li><li><a href="http://www.lesliezhu.com/2022/11/24/writing_an_interpreter_in_cpp_5.html" target="_blank"><i class="fa fa-file-o"></i>C++实现解释器(5):功能扩展</a></li><li><a href="http://www.lesliezhu.com/2022/11/21/writing_an_interpreter_in_cpp_4.html" target="_blank"><i class="fa fa-file-o"></i>C++实现解释器(4):求值</a></li><li><a href="http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html" target="_blank"><i class="fa fa-file-o"></i>C++实现解释器(3):语法分析与普拉特解析</a></li><li><a href="http://www.lesliezhu.com/2022/11/16/cpp_go_to_wrong_1.html" target="_blank"><i class="fa fa-file-o"></i>C++疑难杂症(1):小心std::variant中的bool类型值</a></li><li><a href="http://www.lesliezhu.com/2022/11/11/writing_an_interpreter_in_cpp_2.html" target="_blank"><i class="fa fa-file-o"></i>C++实现解释器(2):词法分析</a></li><li><a href="http://www.lesliezhu.com/2022/11/10/writing_an_interpreter_in_cpp_1.html" target="_blank"><i class="fa fa-file-o"></i>C++实现解释器(1):开篇</a></li><li><a href="http://www.lesliezhu.com/2022/11/04/cpp_10.html" target="_blank"><i class="fa fa-file-o"></i>C++语言导学(10):并发(下)</a></li><li><a href="http://www.lesliezhu.com/2022/11/01/cpp_9.html" target="_blank"><i class="fa fa-file-o"></i>C++语言导学(9):并发(上)</a></li><li><a href="http://www.lesliezhu.com/2022/11/01/cpp_8.html" target="_blank"><i class="fa fa-file-o"></i>C++语言导学(8):模板</a></li><li><a href="http://www.lesliezhu.com/2022/10/31/cpp_7.html" target="_blank"><i class="fa fa-file-o"></i>C++语言导学(7):函数对象(Function Object)</a></li><li><a href="http://www.lesliezhu.com/2022/10/26/cpp_6.html" target="_blank"><i class="fa fa-file-o"></i>C++语言导学(6): lambda表达式</a></li><li><a href="http://www.lesliezhu.com/2022/10/26/cpp_5.html" target="_blank"><i class="fa fa-file-o"></i>C++语言导学(5): 容器</a></li><li><a href="http://www.lesliezhu.com/2022/10/26/cpp_4.html" target="_blank"><i class="fa fa-file-o"></i>C++语言导学(4): pImpl习惯用法</a></li><li><a href="http://www.lesliezhu.com/2022/10/25/cpp_3.html" target="_blank"><i class="fa fa-file-o"></i>C++语言导学(3): RAII与智能指针</a></li><li><a href="http://www.lesliezhu.com/2022/10/23/cpp_2.html" target="_blank"><i class="fa fa-file-o"></i>C++语言导学(2): 模块化</a></li><li><a href="http://www.lesliezhu.com/2022/10/22/cpp_1.html" target="_blank"><i class="fa fa-file-o"></i>C++语言导学(1): 基础知识</a></li>
-        </div>
-        </div>
-        </div>
-        
-        </div> <!-- mypage -->
-        </div> <!-- col-md-9 -->
-        
+<span class="n">fibonacci</span><span class="p">(</span><span class="mi">35</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+<p>分别用解释器和编译器执行对比:</p>
+<div class="highlight"><pre><span></span>$ ./fibonacci -engine <span class="nb">eval</span>
+<span class="nv">engine</span><span class="o">=</span>eval, fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>, <span class="nv">duration</span><span class="o">=</span>83s
 
+$ ./fibonacci -engine vm
+<span class="nv">engine</span><span class="o">=</span>vm, fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>, <span class="nv">duration</span><span class="o">=</span>31s
+
+$ <span class="nb">time</span> python fibonacci.py
+fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span> <span class="m">9227465</span>
+python fibonacci.py  <span class="m">3</span>.59s user <span class="m">0</span>.04s system <span class="m">99</span>% cpu <span class="m">3</span>.639 total
+</pre></div>
+<ul>
+<li>虚拟机执行字节码比解释器执行要快3倍左右</li>
+<li>和Python对比, Python比目前虚拟机快10倍左右</li>
+</ul>
+<h2>总结</h2>
+<p>不管是这个解释器还是编译器，它的速度是非常慢的，无法用于生产环境，但在这个过程还是学习到很多东西：</p>
+<ul>
+<li>完成了刚买到书时候的想法，用C++重新实现一遍</li>
+<li>完善自己开发并一直在用的笔记工具软件OrgNote，更好的支持Markdown</li>
+<li>为了发布到公众号，发现公众号编辑器复制过去的内容必须是inline-css，否则会丢失格式，找到了Firefox插件Markdown Here完成</li>
+<li>智能指针的使用，达到最初的目标，即代码不出现new和delete</li>
+<li>对字节码、虚拟机、调用栈等有了更深的理解</li>
+<li>gtest测试框架使用</li>
+<li>gflags包的使用</li>
+</ul>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-18 Sun，共698字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html" title="C++实现编译器(12):结语">http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_11.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
         <div class="col-md-3">
         <div id="sidebar">
         
@@ -166,12 +265,10 @@
         </div> <!-- sidebar -->
         </div> <!-- col-md-3 -->
         
-
         </div> <!-- row-fluid -->
         </div>
         </div>
         
-
         <div class="container-narrow">
         <footer>
         <p>&copy; 2014 吴羽舒
