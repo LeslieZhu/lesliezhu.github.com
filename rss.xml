@@ -22,7 +22,7 @@
         </image>        
         
             <item>
-            <title> C++实现编译器(12):阶段性总结 </title>
+            <title> C++实现编译器(12):结语 </title>
             <link> http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html </link>
             <author><![CDATA[吴羽舒]]></author>
             <guid isPermaLink="true">http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html</guid>
