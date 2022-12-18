@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>C++实现编译器(12):结语</title>
+        <title>C++实现编译器(12):阶段性总结</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>C++实现编译器(12):结语</h1>
+        <h1>C++实现编译器(12):阶段性总结</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -104,6 +104,7 @@
 <p>项目源码: <a href="https://github.com/LeslieZhu/monkey-cpp">https://github.com/LeslieZhu/monkey-cpp</a></p>
 </blockquote>
 <h2>引言</h2>
+<p><img alt="" src="/images/waiic.jpg"/></p>
 <p>这两本书是2022年6月出版，8月买到手，11月中旬开始细读，12月中旬完成，历时1个月，记录笔记共10篇。</p>
 <p>至此，自制解释器与编译器告一段落，在这过程中获得了一个自顶向下树遍历解释器和一个基于字节码的虚拟机及编译器。</p>
 <p>对于整个程序执行过程，对词法分析、语法分析、AST构建、AST解释或编译、虚拟机运行字节码各个阶段做一个回顾：</p>
@@ -131,8 +132,17 @@
 
 <span class="n">fibonacci</span><span class="p">(</span><span class="mi">35</span><span class="p">);</span><span class="w"></span>
 </pre></div>
-<p>分别用解释器和编译器执行对比:</p>
-<div class="highlight"><pre><span></span>$ ./fibonacci -engine <span class="nb">eval</span>
+<p>同时fibonacci也实现了内置函数形式，分别用解释器和编译器执行对比:</p>
+<div class="highlight"><pre><span></span>$ ./fibonacci
+usage: fibonacci -engine vm<span class="p">|</span><span class="nb">eval</span> <span class="o">[</span>-builtin<span class="o">]</span>
+
+$ ./fibonacci -engine <span class="nb">eval</span> -builtin
+<span class="nv">engine</span><span class="o">=</span>eval, fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>, <span class="nv">duration</span><span class="o">=</span>0s
+
+$ ./fibonacci -engine vm -builtin
+<span class="nv">engine</span><span class="o">=</span>vm, fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>, <span class="nv">duration</span><span class="o">=</span>0s
+
+$ ./fibonacci -engine <span class="nb">eval</span>
 <span class="nv">engine</span><span class="o">=</span>eval, fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>, <span class="nv">duration</span><span class="o">=</span>83s
 
 $ ./fibonacci -engine vm
@@ -145,9 +155,10 @@ python fibonacci.py  <span class="m">3</span>.59s user <span class="m">0</span>.
 <ul>
 <li>虚拟机执行字节码比解释器执行要快3倍左右</li>
 <li>和Python对比, Python比目前虚拟机快10倍左右</li>
+<li>使用内置函数(C++)实现，不管是解释器或虚拟机都是毫秒级</li>
 </ul>
-<h2>总结</h2>
-<p>不管是这个解释器还是编译器，它的速度是非常慢的，无法用于生产环境，但在这个过程还是学习到很多东西：</p>
+<h2>结语</h2>
+<p>不管是这个解释器还是编译器，它的速度是非常慢的，无法用于生产环境，除非使用内置函数或库等形式加速，但在这个过程还是学习到很多东西：</p>
 <ul>
 <li>完成了刚买到书时候的想法，用C++重新实现一遍</li>
 <li>完善自己开发并一直在用的笔记工具软件OrgNote，更好的支持Markdown</li>
@@ -156,6 +167,20 @@ python fibonacci.py  <span class="m">3</span>.59s user <span class="m">0</span>.
 <li>对字节码、虚拟机、调用栈等有了更深的理解</li>
 <li>gtest测试框架使用</li>
 <li>gflags包的使用</li>
+<li>对比Go语言，现代C++写起来也可以很爽、很灵活</li>
+<li>......</li>
+</ul>
+<p>下一步可以改进的方向：</p>
+<ul>
+<li>支持更多数据类型，比如浮点数</li>
+<li>支持更多语句类型，比如else if</li>
+<li>支持模块导入，比如import</li>
+<li>支持类定义，比如class</li>
+<li>支持宏，比如macro</li>
+<li>支持C/C++扩展</li>
+<li>支持LLVM IR</li>
+<li>支持更友好的REPL</li>
+<li>......</li>
 </ul>
 </div>
         <hr>
@@ -163,12 +188,12 @@ python fibonacci.py  <span class="m">3</span>.59s user <span class="m">0</span>.
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-18 Sun，共698字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-18 Sun，共830字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html" title="C++实现编译器(12):结语">http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html</a>
+        <a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html" title="C++实现编译器(12):阶段性总结">http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -229,7 +254,7 @@ python fibonacci.py  <span class="m">3</span>.59s user <span class="m">0</span>.
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html"><i class="fa fa-file-o"></i>C++实现编译器(12):结语</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_11.html"><i class="fa fa-file-o"></i>C++实现编译器(11):闭包</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_10.html"><i class="fa fa-file-o"></i>C++实现编译器(10):内置函数</a></li><li><a href="http://www.lesliezhu.com/2022/12/13/writing_an_interpreter_in_cpp_9.html"><i class="fa fa-file-o"></i>C++实现编译器(9):函数与栈帧</a></li><li><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_8.html"><i class="fa fa-file-o"></i>C++实现编译器(8):符号表、字符串、数组与字典</a></li><li><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_7.html"><i class="fa fa-file-o"></i>C++实现编译器(7):跳转指令</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html"><i class="fa fa-file-o"></i>C++实现编译器(12):阶段性总结</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_11.html"><i class="fa fa-file-o"></i>C++实现编译器(11):闭包</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_10.html"><i class="fa fa-file-o"></i>C++实现编译器(10):内置函数</a></li><li><a href="http://www.lesliezhu.com/2022/12/13/writing_an_interpreter_in_cpp_9.html"><i class="fa fa-file-o"></i>C++实现编译器(9):函数与栈帧</a></li><li><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_8.html"><i class="fa fa-file-o"></i>C++实现编译器(8):符号表、字符串、数组与字典</a></li><li><a href="http://www.lesliezhu.com/2022/12/12/writing_an_interpreter_in_cpp_7.html"><i class="fa fa-file-o"></i>C++实现编译器(7):跳转指令</a></li>
         </ul>   
         </div> 
         
