@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>MinYiLife</title>
+        <title>用clang-format统一代码风格</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -31,10 +31,9 @@
         <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
-        <ORGNOTESTYLE>
+        <style></style>
         </head>
         
-
         <body>  
         <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         
@@ -49,7 +48,6 @@
     
         <a class="navbar-brand" href="/index.html">MinYiLife</a>
         
-
         <div class="collapse navbar-collapse nav-menu">
         
         <ul class="nav navbar-nav">
@@ -84,13 +82,12 @@
         </div> <!-- container -->
         </nav>
         
-
         <div class="clearfix"></div>
         <div class="container">
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>敏行如思，毅往无前！</h1>
+        <h1>用clang-format统一代码风格</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -99,112 +96,136 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        主页君: 吴羽舒
-
+        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        
+        <div id='content'>
+<h2>引言</h2>
+<p>有不少工具用于统一项目编码风格，比如Go语言自带<code>fmt</code>模块统一编码风格，又比如C++有<code>astyle</code>这样的工具，但这里要介绍的是<code>clang-format</code>工具。</p>
+<p>安装:</p>
+<div class="highlight"><pre><span></span>$ sudo yum install clang-format git-clang-format
+</pre></div>
+<p>如果是源码安装，在<code>llvm-project/clang/</code>目录下:</p>
+<div class="highlight"><pre><span></span>$ mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build/
+$ cmake ../
+$ make clang-format
+</pre></div>
+<p>同时还提供了其它工具对应的版本:</p>
+<div class="highlight"><pre><span></span>llvm-project/clang/tools/clang-format/clang-format-bbedit.applescript
+llvm-project/clang/tools/clang-format/clang-format-diff.py
+llvm-project/clang/tools/clang-format/clang-format-sublime.py
+llvm-project/clang/tools/clang-format/clang-format-test.el
+llvm-project/clang/tools/clang-format/clang-format.el
+llvm-project/clang/tools/clang-format/clang-format.py
+llvm-project/clang/tools/clang-format/git-clang-format
+</pre></div>
+<h2>生成风格配置文件</h2>
+<p>以llvm和google为例:</p>
+<div class="highlight"><pre><span></span>$ clang-format -style<span class="o">=</span>llvm   -dump-config &gt; .clang-format
+$ clang-format -style<span class="o">=</span>google -dump-config &gt; .clang-format
+</pre></div>
+<p>有了<code>.clang-format</code>风格配置文件，命令<code>clang-format</code>就会自动读取此配置文件，编辑器<code>vscode</code>只要安装了<code>vs-clang-format</code>插件也会自动读取此配置。</p>
+<h2>修改文件风格</h2>
+<div class="highlight"><pre><span></span>$ clang-format filename.cpp     <span class="c1"># 只对比不修改文件</span>
+$ clang-format -i filename.cpp  <span class="c1"># 直接修改文件</span>
+</pre></div>
+<h2>git自动clang-format</h2>
+<p>需要依赖<code>git-clang-format</code>:</p>
+<div class="highlight"><pre><span></span>$ git clang-format
+</pre></div>
+<p>它会自动对暂存区的文件进行风格转换，也可以配置git-hooks让执行<code>git commit</code>的时候自动进行转换。</p>
+<p>添加文件<code>.git/hooks/pre-commit</code>:</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
 
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/26/cpp_4.html">C++语言导学(4): pImpl习惯用法</a>
-            <span class="date">2022-10-26 Wed </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/25/cpp_3.html">C++语言导学(3): RAII与智能指针</a>
-            <span class="date">2022-10-25 Tue </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/23/cpp_2.html">C++语言导学(2): 模块化</a>
-            <span class="date">2022-10-23 Sun </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/22/cpp_1.html">C++语言导学(1): 基础知识</a>
-            <span class="date">2022-10-22 Sat </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2020/05/10/I_want_a_dictionary.html">妈，我想要一本字典！</a>
-            <span class="date">2020-05-10 Sun </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2019/10/17/积雨云.html">积雨云</a>
-            <span class="date">2019-10-17 Thu </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/18/unzip.html">几个常用的Linux命令与问题</a>
-            <span class="date">2022-10-18 Tue </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/10/18/NanChaoGuShiRenWu_01.html">第一位田园诗人陶渊明</a>
-            <span class="date">2022-10-18 Tue </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/06/22/TangXuanZong.html">唐玄宗在位45年大事记</a>
-            <span class="date">2022-06-22 Wed </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/06/20/LiZhong.html">唐高宗庶长子李忠的坎坷人生</a>
-            <span class="date">2022-06-20 Mon </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/06/19/TangChaoHuangDiJieShao.html">唐朝的20位皇帝</a>
-            <span class="date">2022-06-19 Sun </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-            <h3 class="title">
-            <a href="http://www.lesliezhu.com/2022/05/19/CuiHao.html">诗人崔颢的有文无行</a>
-            <span class="date">2022-05-19 Thu </span>
-            </h3>
-            <div class="col-md-12">
-                </div> <!-- col-md-12 -->
-                
-        <div>
-        <center>
-        <div class="pagination">
-        <ul class="pagination">
-        <li class="prev"><a href="/index.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>Newer</a></li>
-        <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
-        <li class="next disabled"><a><i class="fa fa-arrow-circle-o-right"></i>Older</a></li>
+git clang-format
+</pre></div>
+<p>这样就不怕忘记执行clang-format了。</p>
+<h2>部分代码不想被格式化</h2>
+<div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">formatted_code</span><span class="p">;</span><span class="w"></span>
+
+<span class="c1">// clang-format off</span>
+<span class="w">    </span><span class="kt">void</span><span class="w">    </span><span class="n">unformatted_code</span><span class="w">  </span><span class="p">;</span><span class="w"></span>
+<span class="c1">// clang-format on</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="n">formatted_code_again</span><span class="p">;</span><span class="w"></span>
+</pre></div>
+<p>通过注释的方式告诉<code>clang-format</code>不要因为代码风格而改动这部分代码。</p>
+<h2>.clang-format配置项</h2>
+<ul>
+<li>文档: <a href="https://clang.llvm.org/docs/ClangFormatStyleOptions.html">https://clang.llvm.org/docs/ClangFormatStyleOptions.html</a></li>
+<li>例子: <a href="https://github.com/godotengine/godot/blob/master/.clang-format">https://github.com/godotengine/godot/blob/master/.clang-format</a></li>
+</ul>
+<p>几个配置:</p>
+<div class="highlight"><pre><span></span>BasedOnStyle:  LLVM           # 基于LLVM风格
+AlignAfterOpenBracket: Align  # 括号后跨行对齐
+ColumnLimit:     0            # 行字符数量无限制
+IndentCaseLabels: true        # case缩进
+IndentWidth:     4            # 4格缩进
+NamespaceIndentation: All     # 名字空间缩进
+TabWidth:        4            # TAB长度
+UseTab:          Never        # 不使用TAB
+Language:        Cpp
+Standard:        c++17
+</pre></div>
+<p>不管使用什么风格，只要保持一致即可。</p>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-20 Tue，共301字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/12/19/git_clang_format.html" title="用clang-format统一代码风格">http://www.lesliezhu.com/2022/12/19/git_clang_format.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
         </ul>
         </div>
-        </center>
-        </div>
         
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
             
-        </div> <!-- mypage -->
-        </div> <!-- col-md-12 -->
-        
-
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
         <div class="col-md-3">
         <div id="sidebar">
         
@@ -256,12 +277,10 @@
         </div> <!-- sidebar -->
         </div> <!-- col-md-3 -->
         
-
         </div> <!-- row-fluid -->
         </div>
         </div>
         
-
         <div class="container-narrow">
         <footer>
         <p>&copy; 2014 吴羽舒
