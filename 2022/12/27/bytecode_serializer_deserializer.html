@@ -1,0 +1,632 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>Ledge语言字节码编译文件的存储与加载</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="minyilife@use-wechat.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        <style></style>
+        </head>
+        
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>Ledge语言字节码编译文件的存储与加载</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a> , <a href="http://www.lesliezhu.com/tags/解释器与编译器.html"><i class="解释器与编译器"></i>解释器与编译器</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        <div id='content'>
+<blockquote>
+<p>Ledge语言: <a href="https://ledge-lang.github.io/zh/">https://ledge-lang.github.io/zh/</a></p>
+</blockquote>
+<h2>引言</h2>
+<p>虚拟机编译器生成字节码后，如果不是保存在内存中，而是要保存为字节码文件，比如Java保存的<code>.class</code>文件，Python保存的<code>.pyc</code>文件，这些文件里面主要是序列化的常量池和字节码本身。</p>
+<p>这里先简单看看<code>.pyc</code>文件里面存了什么，然后为Ledge语言实现初步的字节码文件存储与加载。</p>
+<h2>Python的.pyc文件</h2>
+<p>Python在序列化字节码的时候，开头4个字节存储的是MagicNumber，在源文件(<code>PC/launcher.c</code>):</p>
+<p><img alt="" src="/images/ledge/pyc-1.png"/>
+<img alt="" src="/images/ledge/pyc-2.png"/>
+<img alt="" src="/images/ledge/pyc-3.png"/></p>
+<p>可以验证一下:</p>
+<div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">python</span> <span class="o">--</span><span class="n">version</span>
+<span class="n">Python</span> <span class="mf">2.7.5</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">imp</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">get_magic</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span>
+<span class="s1">'</span><span class="se">\x03\xf3</span><span class="s1">'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="s1">'</span><span class="se">\x03</span><span class="s1">'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="s1">'</span><span class="se">\xf3</span><span class="s1">'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a0</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'hex'</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'hex'</span><span class="p">),</span><span class="mi">16</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a0</span>
+<span class="mi">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a1</span>
+<span class="mi">243</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a1</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">|</span> <span class="n">a0</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+<span class="mi">62211</span>
+</pre></div>
+<p>62211是Python2.7版本最后一个魔法数，而2.7也是Python2最后一个版本。</p>
+<p>再验证一下:</p>
+<div class="highlight"><pre><span></span><span class="err">$</span> <span class="n">python</span> <span class="o">--</span><span class="n">version</span>
+<span class="n">Python</span> <span class="mf">3.7.2</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">imp</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">get_magic</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span>
+<span class="sa">b</span><span class="s1">'B</span><span class="se">\r\r\n</span><span class="s1">'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">|</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+<span class="mi">3394</span>
+</pre></div>
+<p>确认魔法数后，基本可以确定是Python的字节码文件，同时防止魔法数碰撞，还会读取若干个Object再次确认是Python字节码文件。</p>
+<p>基本上思路是通过前几个字节内容判断是否是这个编程语言所属的字节码文件，进而判断版本是否一致，再后面基本就是常量池和字节码本身了。</p>
+<h2>boost serialization</h2>
+<p>采用<code>Boost</code>库里面序列化功能，它有一个非侵入式方案，比较适合目前Ledge在剧烈变动开发阶段。</p>
+<p>它支持序列化为文本、XML和二进制格式，涉及到二进制格式有可能大端小端字节序导致存在移植性问题，因此Ledge目前选择同时支持文本和二进制格式。</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/archive/binary_iarchive.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/archive/binary_oarchive.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/archive/text_iarchive.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/archive/text_oarchive.hpp&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/serialization/list.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/serialization/shared_ptr.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/serialization/string.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/serialization/vector.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/serialization/version.hpp&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/iostreams/stream.hpp&gt;</span><span class="cp"></span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">boost</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">namespace</span><span class="w"> </span><span class="nn">serialization</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Archive</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">serialize</span><span class="p">([[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="n">Archive</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ar</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">version</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"un-catch serialize Object"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Archive</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">serialize</span><span class="p">(</span><span class="n">Archive</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ar</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">version</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">ar</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Archive</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">serialize</span><span class="p">(</span><span class="n">Archive</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ar</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">version</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">ar</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Archive</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">serialize</span><span class="p">(</span><span class="n">Archive</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ar</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">version</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">ar</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Archive</span><span class="o">&gt;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">serialize</span><span class="p">(</span><span class="n">Archive</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ar</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">obj</span><span class="p">,</span><span class="w"></span>
+<span class="w">                       </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">version</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">ar</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">NumLocals</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="n">ar</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">NumParameters</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="n">ar</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">Instructions</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// namespace serialization</span>
+<span class="p">}</span><span class="w"> </span><span class="c1">// namespace boost</span>
+</pre></div>
+<p>通过这段代码，以非侵入式的方式在Boost内部添加了对Ledge各种对象的支持，这里只有数字、字符串和函数三种类型，是因为Ledge目前的虚拟机对于数组、哈希和闭包等都是运行时重新构建（导致运行效率低），后续有新的类型需要支持只需要这里添加。非侵入式的好处是不需要改动各个对象本身的代码，即使将来改动序列化方案也很方便一次性替换。</p>
+<h2>Ledge输出.llc文件</h2>
+<div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">versionPair</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">versionPair</span><span class="o">&gt;</span><span class="w"> </span><span class="n">MagicNumberDict</span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="s">"0.0.4"</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mi">3390</span><span class="p">,</span><span class="w"> </span><span class="mi">3394</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">},</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="kt">bool</span><span class="w"> </span><span class="nf">SaveLLCFileToText</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">llcFileName</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">compiler</span><span class="o">::</span><span class="n">ByteCode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">code</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ofstream</span><span class="w"> </span><span class="n">outfile</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">outfile</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">llcFileName</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">outfile</span><span class="p">.</span><span class="n">good</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"can not open file: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">llcFileName</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">outfile</span><span class="p">.</span><span class="n">close</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">boost</span><span class="o">::</span><span class="n">archive</span><span class="o">::</span><span class="n">text_oarchive</span><span class="w"> </span><span class="n">oa</span><span class="p">(</span><span class="n">outfile</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MagicNumberDict</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">repl</span><span class="o">::</span><span class="n">LEDGE_VERSION</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fit</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">MagicNumberDict</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">oa</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">fit</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">.</span><span class="n">second</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"ERROR: there is a unspport magic number with version: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">repl</span><span class="o">::</span><span class="n">LEDGE_VERSION</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">oa</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">code</span><span class="o">-&gt;</span><span class="n">Constants</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">obj</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">code</span><span class="o">-&gt;</span><span class="n">Constants</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">obj</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">oa</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">Bad</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="k">continue</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">objType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="n">oa</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">objType</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">objType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">INTEGER</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">realObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="n">oa</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">objType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">COMPILED_FUNCTION</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">realObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="n">oa</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">objType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">realObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="n">oa</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">objType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">realObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="n">oa</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"ERROR: there is a unspport constant object with type: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">oa</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">code</span><span class="o">-&gt;</span><span class="n">Instructions</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">outfile</span><span class="p">.</span><span class="n">close</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>基本以文本或二进制形式打开源文件，交给Boost就行了:</p>
+<div class="highlight"><pre><span></span><span class="n">boost</span><span class="o">::</span><span class="n">archive</span><span class="o">::</span><span class="n">text_oarchive</span><span class="w"> </span><span class="nf">oa</span><span class="p">(</span><span class="n">ofs</span><span class="p">);</span><span class="w"></span>
+<span class="n">boost</span><span class="o">::</span><span class="n">archive</span><span class="o">::</span><span class="n">binary_oarchive</span><span class="w"> </span><span class="nf">oa</span><span class="p">(</span><span class="n">ofs</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+<h2>Ledge读取.llc文件</h2>
+<p>基本是一个常量池重建的过程:</p>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">compiler</span><span class="o">::</span><span class="n">ByteCode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">LoadLLCFileFromText</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">llcFileName</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">ifstream</span><span class="w"> </span><span class="n">infile</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">infile</span><span class="p">.</span><span class="n">open</span><span class="p">(</span><span class="n">llcFileName</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">infile</span><span class="p">.</span><span class="n">good</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"can not open file: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">llcFileName</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="n">infile</span><span class="p">.</span><span class="n">close</span><span class="p">();</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">magicNumberMix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">magicNumberMax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">fit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">MagicNumberDict</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">repl</span><span class="o">::</span><span class="n">LEDGE_VERSION</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">fit</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">MagicNumberDict</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">magicNumberMix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fit</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">.</span><span class="n">first</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="n">magicNumberMax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fit</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">.</span><span class="n">second</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"ERROR: there is a unspport magic number with version: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">repl</span><span class="o">::</span><span class="n">LEDGE_VERSION</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">compiler</span><span class="o">::</span><span class="n">ByteCode</span><span class="o">&gt;</span><span class="w"> </span><span class="n">code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">compiler</span><span class="o">::</span><span class="n">ByteCode</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">magicNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">constantSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">boost</span><span class="o">::</span><span class="n">archive</span><span class="o">::</span><span class="n">text_iarchive</span><span class="w"> </span><span class="nf">ia</span><span class="p">(</span><span class="n">infile</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">ia</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">magicNumber</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">magicNumberChar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">&amp;</span><span class="n">magicNumber</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">magicNumber0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="o">&amp;</span><span class="n">magicNumberChar</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span><span class="w"></span>
+<span class="w">        </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">magicNumber1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="o">&amp;</span><span class="n">magicNumberChar</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span><span class="w"></span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">magicNumberMatch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(((</span><span class="n">magicNumber1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="mi">8</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">magicNumber0</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">0xFFFF</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">magicNumberMatch</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">magicNumberMix</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">magicNumberMatch</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">magicNumberMax</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"The Ledge Compiled File With Wrong Magic Number: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">magicNumberMatch</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">ia</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">constantSize</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">code</span><span class="o">-&gt;</span><span class="n">Constants</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">constantSize</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="w"> </span><span class="n">objType</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">constantSize</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="n">ia</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">objType</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">objType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">INTEGER</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="k">auto</span><span class="w"> </span><span class="n">realObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">                </span><span class="n">ia</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">                </span><span class="n">code</span><span class="o">-&gt;</span><span class="n">Constants</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">objType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">COMPILED_FUNCTION</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="k">auto</span><span class="w"> </span><span class="n">realObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">                </span><span class="n">ia</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">                </span><span class="n">code</span><span class="o">-&gt;</span><span class="n">Constants</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">objType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">STRING</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="k">auto</span><span class="w"> </span><span class="n">realObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">String</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">                </span><span class="n">ia</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">                </span><span class="n">code</span><span class="o">-&gt;</span><span class="n">Constants</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">objType</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">DOUBLE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="k">auto</span><span class="w"> </span><span class="n">realObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Double</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
+<span class="w">                </span><span class="n">ia</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">                </span><span class="n">code</span><span class="o">-&gt;</span><span class="n">Constants</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">realObj</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"ERROR: unsupport constant object type or nullptr"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">                </span><span class="n">code</span><span class="o">-&gt;</span><span class="n">Constants</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">ia</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">code</span><span class="o">-&gt;</span><span class="n">Instructions</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">infile</span><span class="p">.</span><span class="n">close</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">code</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>基本以文本或二进制形式打开源文件，交给Boost就行了:</p>
+<div class="highlight"><pre><span></span><span class="n">boost</span><span class="o">::</span><span class="n">archive</span><span class="o">::</span><span class="n">text_iarchive</span><span class="w"> </span><span class="nf">oa</span><span class="p">(</span><span class="n">ifs</span><span class="p">);</span><span class="w"></span>
+<span class="n">boost</span><span class="o">::</span><span class="n">archive</span><span class="o">::</span><span class="n">binary_iarchive</span><span class="w"> </span><span class="nf">oa</span><span class="p">(</span><span class="n">ifs</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+<h2>执行效果</h2>
+<p>测试源文件(<code>test.ll</code>):</p>
+<div class="highlight"><pre><span></span><span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="mf">3.14159</span><span class="p">;</span>
+
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="p">,</span><span class="mf">3</span><span class="p">];</span> <span class="err">#</span> <span class="nx">list</span> <span class="nx">or</span> <span class="nx">array</span>
+
+<span class="kd">let</span> <span class="nx">c</span> <span class="o">=</span> <span class="p">{</span><span class="mf">1</span><span class="o">:</span><span class="mf">1</span><span class="p">,</span><span class="mf">2</span><span class="o">:</span><span class="s2">"name"</span><span class="p">,</span><span class="mf">3</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span> <span class="mf">4</span><span class="o">:</span><span class="mf">1</span><span class="o">+</span><span class="mf">2</span><span class="p">,</span> <span class="kc">true</span><span class="o">:</span><span class="mf">1024</span><span class="p">}</span> <span class="err">#</span> <span class="nx">map</span> <span class="nx">or</span> <span class="nx">dict</span>
+
+<span class="kd">let</span> <span class="nx">fib</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">x</span><span class="p">){</span>  <span class="err">#</span> <span class="kd">function</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">x</span> <span class="o">==</span> <span class="mf">0</span><span class="p">){</span> 
+            <span class="k">return</span> <span class="mf">0</span><span class="p">;</span>
+        <span class="p">}</span><span class="nx">elif</span><span class="p">(</span><span class="nx">x</span> <span class="o">==</span> <span class="mf">1</span><span class="p">){</span> 
+            <span class="k">return</span> <span class="mf">1</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="k">return</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">x</span><span class="o">-</span><span class="mf">1</span><span class="p">)</span> <span class="o">+</span> <span class="nx">fib</span><span class="p">(</span><span class="nx">x</span><span class="o">-</span><span class="mf">2</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">adder</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">x</span><span class="p">){</span>  <span class="err">#</span> <span class="nx">closure</span>
+        <span class="kd">let</span> <span class="nx">add</span> <span class="o">=</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">y</span><span class="p">){</span> 
+              <span class="k">return</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span>
+        <span class="p">}</span>
+
+        <span class="nx">add</span><span class="p">;</span>
+    <span class="p">};</span>
+
+<span class="kd">let</span> <span class="nx">add2</span> <span class="o">=</span> <span class="nx">adder</span><span class="p">(</span><span class="mf">2</span><span class="p">);</span>
+
+<span class="nx">print</span><span class="p">(</span><span class="s2">"a:"</span><span class="p">,</span> <span class="nx">a</span><span class="p">);</span>
+<span class="nx">print</span><span class="p">(</span><span class="s2">"list:"</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span>
+<span class="nx">print</span><span class="p">(</span><span class="s2">"dict:"</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span>
+<span class="nx">print</span><span class="p">(</span><span class="s2">"fib(5):"</span><span class="p">,</span><span class="nx">fib</span><span class="p">(</span><span class="mf">15</span><span class="p">));</span>
+<span class="nx">print</span><span class="p">(</span><span class="s2">"add2(2):"</span><span class="p">,</span> <span class="nx">add2</span><span class="p">(</span><span class="mf">2</span><span class="p">));</span>
+</pre></div>
+<p>编译:</p>
+<div class="highlight"><pre><span></span>$ ./ledge test.ll
+
+serialize Double: <span class="m">3</span>.14159
+serialize Integer: <span class="m">1</span>
+serialize Integer: <span class="m">2</span>
+serialize Integer: <span class="m">3</span>
+serialize Integer: <span class="m">1</span>
+serialize Integer: <span class="m">1</span>
+serialize Integer: <span class="m">2</span>
+serialize String: name
+serialize Integer: <span class="m">3</span>
+serialize Integer: <span class="m">4</span>
+serialize Integer: <span class="m">1</span>
+serialize Integer: <span class="m">2</span>
+serialize Integer: <span class="m">1024</span>
+serialize Integer: <span class="m">0</span>
+serialize Integer: <span class="m">0</span>
+serialize Integer: <span class="m">1</span>
+serialize Integer: <span class="m">1</span>
+serialize Integer: <span class="m">1</span>
+serialize Integer: <span class="m">2</span>
+serialize CompiledFunction: CompiledFunction<span class="o">[</span>0x600000979358<span class="o">]</span>
+serialize Integer: <span class="m">2</span>
+serialize CompiledFunction: CompiledFunction<span class="o">[</span>0x600000979458<span class="o">]</span>
+serialize CompiledFunction: CompiledFunction<span class="o">[</span>0x600000979398<span class="o">]</span>
+serialize Integer: <span class="m">2</span>
+serialize String: a:
+serialize String: list:
+serialize String: dict:
+serialize String: fib<span class="o">(</span><span class="m">5</span><span class="o">)</span>:
+serialize Integer: <span class="m">15</span>
+serialize String: add2<span class="o">(</span><span class="m">2</span><span class="o">)</span>:
+serialize Integer: <span class="m">2</span>
+
+a: <span class="m">3</span>.141590
+list: <span class="o">[</span><span class="m">1</span>, <span class="m">2</span>, <span class="m">3</span><span class="o">]</span>
+dict: <span class="o">{</span>true: <span class="m">1024</span>, <span class="m">2</span>: <span class="s2">"name"</span>, <span class="m">3</span>: true, <span class="m">4</span>: <span class="m">3</span><span class="o">}</span>
+fib<span class="o">(</span><span class="m">5</span><span class="o">)</span>: <span class="m">610</span>
+add2<span class="o">(</span><span class="m">2</span><span class="o">)</span>: <span class="m">4</span>
+</pre></div>
+<p>执行字节码文件:</p>
+<div class="highlight"><pre><span></span>$ ./ledge test.llc
+
+<span class="nb">read</span> constant: <span class="m">3</span>.141590
+<span class="nb">read</span> constant: <span class="m">1</span>
+<span class="nb">read</span> constant: <span class="m">2</span>
+<span class="nb">read</span> constant: <span class="m">3</span>
+<span class="nb">read</span> constant: <span class="m">1</span>
+<span class="nb">read</span> constant: <span class="m">1</span>
+<span class="nb">read</span> constant: <span class="m">2</span>
+<span class="nb">read</span> constant: <span class="s2">"name"</span>
+<span class="nb">read</span> constant: <span class="m">3</span>
+<span class="nb">read</span> constant: <span class="m">4</span>
+<span class="nb">read</span> constant: <span class="m">1</span>
+<span class="nb">read</span> constant: <span class="m">2</span>
+<span class="nb">read</span> constant: <span class="m">1024</span>
+<span class="nb">read</span> constant: <span class="m">0</span>
+<span class="nb">read</span> constant: <span class="m">0</span>
+<span class="nb">read</span> constant: <span class="m">1</span>
+<span class="nb">read</span> constant: <span class="m">1</span>
+<span class="nb">read</span> constant: <span class="m">1</span>
+<span class="nb">read</span> constant: <span class="m">2</span>
+<span class="nb">read</span> constant: CompiledFunction<span class="o">[</span>0x600001c789d8<span class="o">]</span>
+<span class="nb">read</span> constant: <span class="m">2</span>
+<span class="nb">read</span> constant: CompiledFunction<span class="o">[</span>0x600001c78a58<span class="o">]</span>
+<span class="nb">read</span> constant: CompiledFunction<span class="o">[</span>0x600001c78a98<span class="o">]</span>
+<span class="nb">read</span> constant: <span class="m">2</span>
+<span class="nb">read</span> constant: <span class="s2">"a:"</span>
+<span class="nb">read</span> constant: <span class="s2">"list:"</span>
+<span class="nb">read</span> constant: <span class="s2">"dict:"</span>
+<span class="nb">read</span> constant: <span class="s2">"fib(5):"</span>
+<span class="nb">read</span> constant: <span class="m">15</span>
+<span class="nb">read</span> constant: <span class="s2">"add2(2):"</span>
+<span class="nb">read</span> constant: <span class="m">2</span>
+
+a: <span class="m">3</span>.141590
+list: <span class="o">[</span><span class="m">1</span>, <span class="m">2</span>, <span class="m">3</span><span class="o">]</span>
+dict: <span class="o">{</span>true: <span class="m">1024</span>, <span class="m">2</span>: <span class="s2">"name"</span>, <span class="m">3</span>: true, <span class="m">4</span>: <span class="m">3</span><span class="o">}</span>
+fib<span class="o">(</span><span class="m">5</span><span class="o">)</span>: <span class="m">610</span>
+add2<span class="o">(</span><span class="m">2</span><span class="o">)</span>: <span class="m">4</span>
+</pre></div>
+<p>一切工作正常。</p>
+<h2>总结</h2>
+<p>字节码文件保存与加载本质就是序列化与反序列化问题。</p>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-28 Wed，共615字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html" title="Ledge语言字节码编译文件的存储与加载">http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/12/19/git_clang_format.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html"><i class="fa fa-file-o"></i>Ledge语言字节码编译文件的存储与加载</a></li><li><a href="http://www.lesliezhu.com/2022/12/19/git_clang_format.html"><i class="fa fa-file-o"></i>用clang-format统一代码风格</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html"><i class="fa fa-file-o"></i>C++实现编译器(12):结语</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_11.html"><i class="fa fa-file-o"></i>C++实现编译器(11):闭包</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_10.html"><i class="fa fa-file-o"></i>C++实现编译器(10):内置函数</a></li><li><a href="http://www.lesliezhu.com/2022/12/13/writing_an_interpreter_in_cpp_9.html"><i class="fa fa-file-o"></i>C++实现编译器(9):函数与栈帧</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>25</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/读史札记.html">读史札记<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>3</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>38</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+            <li><a href="https://github.com/ledge-lang" title="Ledge: 正在开发的一个编程语言" target="_blank"><i class="fa fa-code-fork"></i>Ledge: 正在开发的一个编程语言</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        

@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> Ledge语言字节码编译文件的存储与加载 </title>
+            <link> http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html</guid>
+            <category><![CDATA[C++学习与实践]]></category><category><![CDATA[解释器与编译器]]></category>
+            <pubDate>2022-12-28 Wed</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html</comments>
+            </item>
+            
+            <item>
             <title> 用clang-format统一代码风格 </title>
             <link> http://www.lesliezhu.com/2022/12/19/git_clang_format.html </link>
             <author><![CDATA[吴羽舒]]></author>
