@@ -22,7 +22,7 @@
         </image>        
         
             <item>
-            <title> Ledge语言字节码编译文件的存储与加载 </title>
+            <title> Ledge语言：字节码编译文件的存储与加载 </title>
             <link> http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html </link>
             <author><![CDATA[吴羽舒]]></author>
             <guid isPermaLink="true">http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html</guid>
