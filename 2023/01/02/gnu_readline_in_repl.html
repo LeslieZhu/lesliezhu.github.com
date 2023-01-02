@@ -1,0 +1,429 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>用readline库改进REPL交互体验</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="minyilife@use-wechat.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        <style></style>
+        </head>
+        
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>用readline库改进REPL交互体验</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/C++库学习与实践.html"><i class="C++库学习与实践"></i>C++库学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        <div id='content'>
+<h2>引言</h2>
+<blockquote>
+<p>The GNU Readline library provides a set of functions for use by applications that allow users to edit command lines as they are typed in.</p>
+</blockquote>
+<p><code>GNU readline</code>库是广泛使用的C语言库，在<code>Emacs</code>和<code>Vi</code>中都有使用到:</p>
+<ul>
+<li><a href="https://tiswww.case.edu/php/chet/readline/rltop.html">https://tiswww.case.edu/php/chet/readline/rltop.html</a></li>
+<li><a href="https://tiswww.case.edu/php/chet/readline/readline.html">https://tiswww.case.edu/php/chet/readline/readline.html</a></li>
+</ul>
+<p>这篇将使用此库建立一个简单的REPL，具备一定的交互能力，然后通过默认配置文件以支持中文输入。</p>
+<h2>Python中的readline</h2>
+<p>在Python中就自带了这个库的对应版本:</p>
+<ul>
+<li><a href="https://docs.python.org/3/library/readline.html">https://docs.python.org/3/library/readline.html</a></li>
+</ul>
+<div class="highlight"><pre><span></span>/usr/local/python3/lib/python3.7/lib-dynload/readline.cpython-37m-x86_64-linux-gnu.so
+</pre></div>
+<p>而比Python官方REPL更好用的<code>IPython</code>最初是有一个类似readline功能的前端模块，后来替换为:</p>
+<ul>
+<li><code>python-prompt-toolkit</code>: <a href="https://github.com/prompt-toolkit/python-prompt-toolkit">https://github.com/prompt-toolkit/python-prompt-toolkit</a></li>
+<li><code>ripython</code>: <a href="https://github.com/ipython/rlipython">https://github.com/ipython/rlipython</a></li>
+</ul>
+<p>这两个库在readline库基础上让REPL和对应语言语法结合起来，有着更好的代码高亮、提示、补全、跨行输入等特性。</p>
+<h2>简陋的REPL</h2>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">line</span><span class="p">;</span><span class="w"></span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"&gt;&gt;"</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">getline</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="n">line</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">line</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>这就是最简单的REPL了，有提示符，也可以获取输入，但存在问题:</p>
+<ul>
+<li>没有命令提示</li>
+<li>没有历史命令</li>
+<li>光标无法移动，只能挨个删除输入字符</li>
+</ul>
+<h2>引入readline库</h2>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;readline/readline.h&gt;</span><span class="cp"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">line</span><span class="p">;</span><span class="w"></span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">line_read</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">readline</span><span class="p">(</span><span class="s">"&gt;&gt;"</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">line</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">line_read</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">line_read</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">line</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>通过调用readline获取输入，就自动有了光标移动等特性，每次获取输入后要通过free释放内存。</p>
+<h2>历史命令</h2>
+<p>REPL退出时将历史命令记录到文件中，然后每次启动的时候自动加载历史命令文件:</p>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;readline/readline.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;readline/history.h&gt;</span><span class="cp"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">history</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">".ledge_history"</span><span class="p">;</span><span class="w"></span>
+
+<span class="n">stifle_history</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span><span class="w"> </span><span class="c1">// 最多记录100条</span>
+
+<span class="n">read_history</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span><span class="w"></span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">line</span><span class="p">;</span><span class="w"></span>
+
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">line_read</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">readline</span><span class="p">(</span><span class="s">"&gt;&gt;"</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">line_read</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">*</span><span class="n">line_read</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">add_history</span><span class="p">(</span><span class="n">line_read</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">line</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">line_read</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">free</span><span class="p">(</span><span class="n">line_read</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">line</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="n">write_history</span><span class="p">(</span><span class="n">history</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span><span class="w"></span>
+</pre></div>
+<p>通过3个历史命令api完成了读取、添加、保存历史命令文件功能。</p>
+<h2>自动补全</h2>
+<p>默认自动补全是按Tab键用本地文件或目录来补全，可以定制为根据已输入内容进行语法补全:</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize_readline</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// .inputrc里面可以使用类似语法</span>
+<span class="w">    </span><span class="c1">// $if ledge ..... $endif</span>
+<span class="w">    </span><span class="n">rl_readline_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"ledge"</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 注册自动补全回调函数</span>
+<span class="w">    </span><span class="n">rl_attempted_completion_function</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ledge_completion</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+
+<span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="nf">ledge_completion</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">end</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="n">matches</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">matches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 行首部分作为命令，剩下部分用本地文件名补全</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">start</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">matches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rl_completion_matches</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="n">command_generator</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">matches</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rl_completion_matches</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="n">rl_filename_completion_function</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">matches</span><span class="p">);</span><span class="w"></span>
+<span class="p">}</span><span class="w">    </span>
+
+<span class="c1">// 不断尝试符合条件的命令，得到一个集合，到最后一个空字符串表示查找结束</span>
+<span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="nf">command_generator</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">list_index</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 开始查找</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">list_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">strlen</span><span class="p">(</span><span class="n">text</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">commands</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">list_index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">commands</span><span class="p">[</span><span class="n">list_index</span><span class="p">];</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">""</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="c1">// 结束查找</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">        </span><span class="n">list_index</span><span class="o">++</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">strncmp</span><span class="p">(</span><span class="n">name</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">dupstr</span><span class="p">(</span><span class="n">name</span><span class="p">.</span><span class="n">c_str</span><span class="p">()));</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="c1">// 结束查找</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>自动补全后，还可以预定义回调函数进一步执行相应操作。</p>
+<h2>readline无法输入中文</h2>
+<p><code>readline</code>库会自动读取配置文件(<code>~/.inputrc</code>):</p>
+<div class="highlight"><pre><span></span># 允许8bit输入
+set meta-flag on
+set input-meta on
+
+# 禁止自动去除最高位
+set convert-meta off
+
+# 允许最高位显示
+set output-meta on
+
+# 按键配置
+"\eOA": history-search-backward
+"\eOB": history-search-forward
+
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+
+"\eOC": forward-char
+"\eOD": backward-char
+
+"\e[C": forward-char
+"\e[D": backward-char
+</pre></div>
+<h2>vim无法显示中文</h2>
+<p>配置文件(<code>~/.vimrc</code>):</p>
+<div class="highlight"><pre><span></span>set encoding=utf8
+set termencoding=utf-8
+set fileencodings=utf-8,gbk
+</pre></div>
+<h2>emacs无法显示中文</h2>
+<p>配置文件(<code>~/.emacs.el</code>):</p>
+<div class="highlight"><pre><span></span>(set-language-environment "UTF-8")
+(set-locale-environment "UTF-8")
+</pre></div>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-01-02 Mon，共513字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2023/01/02/gnu_readline_in_repl.html" title="用readline库改进REPL交互体验">http://www.lesliezhu.com/2023/01/02/gnu_readline_in_repl.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2023/01/02/gnu_readline_in_repl.html"><i class="fa fa-file-o"></i>用readline库改进REPL交互体验</a></li><li><a href="http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html"><i class="fa fa-file-o"></i>Ledge语言：字节码编译文件的存储与加载</a></li><li><a href="http://www.lesliezhu.com/2022/12/19/git_clang_format.html"><i class="fa fa-file-o"></i>用clang-format统一代码风格</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html"><i class="fa fa-file-o"></i>C++实现编译器(12):结语</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_11.html"><i class="fa fa-file-o"></i>C++实现编译器(11):闭包</a></li><li><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_10.html"><i class="fa fa-file-o"></i>C++实现编译器(10):内置函数</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>25</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/读史札记.html">读史札记<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/C++库学习与实践.html">C++库学习与实践<span>1</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>39</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+            <li><a href="https://github.com/ledge-lang" title="Ledge: 正在开发的一个编程语言" target="_blank"><i class="fa fa-code-fork"></i>Ledge: 正在开发的一个编程语言</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        

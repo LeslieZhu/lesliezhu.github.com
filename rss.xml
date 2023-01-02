@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> 用readline库改进REPL交互体验 </title>
+            <link> http://www.lesliezhu.com/2023/01/02/gnu_readline_in_repl.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2023/01/02/gnu_readline_in_repl.html</guid>
+            <category><![CDATA[C++库学习与实践]]></category>
+            <pubDate>2023-01-02 Mon</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2023/01/02/gnu_readline_in_repl.html</comments>
+            </item>
+            
+            <item>
             <title> Ledge语言：字节码编译文件的存储与加载 </title>
             <link> http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html </link>
             <author><![CDATA[吴羽舒]]></author>
