@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> 使用Dockerfile和CMake编译LLVM程序 </title>
+            <link> http://www.lesliezhu.com/2022/12/28/dockerfile_for_ledge.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/12/28/dockerfile_for_ledge.html</guid>
+            <category><![CDATA[Linux操作与管理]]></category><category><![CDATA[C++学习与实践]]></category>
+            <pubDate>2023-01-05 Thu</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/12/28/dockerfile_for_ledge.html</comments>
+            </item>
+            
+            <item>
             <title> 用readline库改进REPL交互体验 </title>
             <link> http://www.lesliezhu.com/2023/01/02/gnu_readline_in_repl.html </link>
             <author><![CDATA[吴羽舒]]></author>

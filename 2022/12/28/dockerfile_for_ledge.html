@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>唐高宗庶长子李忠的坎坷人生</title>
+        <title>使用Dockerfile和CMake编译LLVM程序</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>唐高宗庶长子李忠的坎坷人生</h1>
+        <h1>使用Dockerfile和CMake编译LLVM程序</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,45 +96,123 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/读史札记.html"><i class="读史札记"></i>读史札记</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a> , <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id='content-reading'>
-<p>唐代从第一位太子李建成开始，太子这个位置好像被下了诅咒一般，最先封的太子都很难顺利即位，总是过的战战兢兢。</p>
-<p>第一代太子李建成被弟弟李世民所杀，第二代太子李承乾被父亲李世民所废，第三代太子李忠被父亲李治所废。</p>
-<p>贞观十七年，15岁的李治被封为太子，同年有了自己的第一个儿子，即庶长子李忠。</p>
-<p>第一个儿子出生，太子李治很是高兴，在宫里摆宴庆祝，结果太宗李世民也来看望，说：“朕终于有孙子了，要和大家一起尽情庆祝。”</p>
-<p>于是，喝酒喝到微微酣醉的时候，李世民开始带头跳舞，然后示意在场的群臣都跟着一起跳，于是所有人都跟着一起跳舞。</p>
-<p>想象一下这个场景，皇帝和大臣，可能还有宫女在一起跳舞，足够梦幻的了。</p>
-<p>舞后，对在场的所有人都进行了赏赐，这自然也少不了孩子生母宫人刘氏。</p>
-<p>三岁时，封为陈王。</p>
-<p>七岁时，李治即位登基，封为雍州牧。</p>
-<p>李忠的生母是宫人刘氏，出身卑微，而当时王皇后没有儿子，无力和萧淑妃争宠，皇后的舅舅就出主意，说：“陈王李忠生母出身卑微，如果我们立他为太子，那么太子必然心生感激。”</p>
-<p>于是，李忠被过继给了王皇后，王皇后请求皇帝立李忠为太子，接着授意长孙无忌等大臣也跟着奏请，永徽三年立为了太子。</p>
-<p>但好景不长，仅仅三年后，随着王皇后被废，武则天当了皇后，李忠这个太子也被废，降为梁王。</p>
-<p>不久又降为房州刺史，赏赐金银无数，豪宅一座。</p>
-<p>随着武则天不断的戕杀异己，李忠开始变得神经兮兮，天天担心有人要谋害自己；后来发展到穿着女人的衣服，和丫鬟侍女们混在一起，防止刺客暗杀。</p>
-<p>如此神经高度紧张状态下，很快李忠开始夜里做噩梦，然后自己偷偷给自己占卜。</p>
-<p>这个事情被武则天派来监视的人揭发，李忠被废除为庶人，关在黔州李承乾旧宅。</p>
-<p>就这样关了几年后，武则天的权利欲望越来越大，势力也越来越大，连李治都有点受不了了。</p>
-<p>武则天曾偷偷安排道士在宫里用符咒作法驱邪，被宦官王伏胜揭发，李治就想趁机废掉武则天，召见上官仪商议，拟草诏废后。</p>
-<p>结果皇帝身边的人早就把消息密报了武则天，武则天气冲冲来和李治当面申诉，结果李治临阵退缩怂了，为了推卸责任就说是上官仪唆使的。</p>
-<p>因为当初在李忠还是陈王时，王伏胜、上官仪都侍奉过他，所以武则天便斩草除根、永绝后患，指使许敬宗诬告三人共同谋反。</p>
-<p>于是王伏胜被杀，上官仪被满门抄斩，留下一个小孙女上官婉儿逃过一劫。</p>
-<p>李忠被杀时只有二十二岁，没有留下后代。</p>
-<p>即使是死后，也没人敢收尸，就这样过了快一年，已经成为太子的李弘奏请才将李忠收葬。</p>
-<p>武则天死后，神龙年间，追封为燕王。</p>
+        <div id='content'>
+<h2>引言</h2>
+<p><code>Docker</code>是非常方便使用的虚拟容器技术，为自己的项目或程序提供一个<code>Dockerfile</code>文件可以快速的建立对应的开发或部署环境，减少因为环境或工具链缺失而痛苦、漫长的前期准备工作。</p>
+<p><code>LLVM</code>是备受瞩目的编译器项目，提供了一系列工具链，但要将其引入自己的代码中进行编译的过程却也不是那么容易，甚至会导致很多人放弃尝试。</p>
+<p>这篇通过<code>Dockerfile</code>建立一个开发环境，然后在这个环境中通过<code>CMake</code>配置以顺利使用<code>LLVM</code>工具链完成项目构建，以后想继续学习或使用<code>LLVM</code>就可以在这个环境中拿这个模板直接操作了。</p>
+<h2>Dockerfile文件</h2>
+<p>这里使用的是<code>LLVM-13</code>，选择了<code>Debian-11.6</code>这个操作系统镜像为基础:</p>
+<div class="highlight"><pre><span></span><span class="c"># 基础镜像</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">debian:11.6</span>
+
+<span class="k">LABEL</span><span class="w"> </span><span class="k">MAINTAINER</span><span class="w"> </span><span class="s">lesliezhu http://lesliezhu.com</span>
+
+<span class="c"># 换成阿里云软件源</span>
+<span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span> <span class="se">\</span>
+    deb http://mirrors.aliyun.com/debian/ bullseye main non-free contrib<span class="se">\</span>
+    deb-src http://mirrors.aliyun.com/debian/ bullseye main non-free contrib<span class="se">\</span>
+    deb http://mirrors.aliyun.com/debian-security bullseye/updates main<span class="se">\</span>
+    deb-src http://mirrors.aliyun.com/debian-security bullseye/updates main<span class="se">\</span>
+    deb http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib<span class="se">\</span>
+    deb-src http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib<span class="se">\</span>
+    deb http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib<span class="se">\</span>
+    deb-src http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib<span class="se">\</span>
+    deb http://mirrors.ustc.edu.cn/debian-security/ stable-security main non-free contrib<span class="se">\</span>
+    deb-src http://mirrors.ustc.edu.cn/debian-security/ stable-security main non-free contrib<span class="se">\</span>
+    &gt; /etc/apt/sources.list
+
+<span class="c"># 安装软件包</span>
+<span class="k">RUN</span><span class="w"> </span>apt-get -y update <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    apt-get install -y cmake <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    apt-get install -y clang-13 llvm-13 llvm-13-dev  llvm-13-tools llvm-13-runtime llvm-13-linker-tools <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    apt-get install -y libgflags-dev libgtest-dev <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    apt-get install -y libboost-dev libboost-serialization-dev <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    apt-get install -y libreadline-dev zlib1g zlib1g-dev
+
+
+<span class="c"># 设置初始化环境变量等</span>
+<span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span> <span class="s1">'\n\n# for LLVM-13 \n\</span>
+<span class="s1">export CC=/usr/bin/clang-13 \n\</span>
+<span class="s1">export CXX=/usr/bin/clang++-13 \n\</span>
+<span class="s1">ln -sf /usr/bin/llvm-config-13 /usr/bin/llvm-config \n'</span><span class="se">\</span>
+    &gt;&gt; ~/.bashrc
+</pre></div>
+<h2>构建Docker镜像环境</h2>
+<div class="highlight"><pre><span></span><span class="c1"># 构建镜像</span>
+$ docker build -f Dockerfile -t ledge:builder .
+
+<span class="c1"># 进入镜像并自动映射挂载本地目录</span>
+$ docker run -v <span class="nv">$PWD</span>:<span class="nv">$PWD</span> -w <span class="nv">$PWD</span> --rm -it ledge:builder bash
+</pre></div>
+<p>这样一键启动了开发或部署运行环境，省时省力。</p>
+<h2>CMake编译LLVM程序</h2>
+<p><code>LLVM</code>良好的模块化设计导致的一个结果，就是配置参数比较复杂，提供专门获取编译参数的工具<code>llvm-config</code>:</p>
+<div class="highlight"><pre><span></span>$ llvm-config --cxxflags --ldflags --libs --system-libs
+</pre></div>
+<p>如果直接手写到<code>Makefile</code>， 大致会类似:</p>
+<div class="highlight"><pre><span></span>$ clang++ -g -O3 <span class="sb">`</span>llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native<span class="sb">`</span> program.cpp -o program
+</pre></div>
+<p>如果是使用<code>CMake</code>管理的项目，则可以这样:</p>
+<div class="highlight"><pre><span></span><span class="c"># 要求必须找到LLVM</span>
+<span class="nb">find_package</span><span class="p">(</span><span class="s">LLVM</span><span class="w"> </span><span class="s">REQUIRED</span><span class="w"> </span><span class="s">CONFIG</span><span class="p">)</span>
+
+<span class="nb">message</span><span class="p">(</span><span class="s">STATUS</span><span class="w"> </span><span class="s2">"Found LLVM: ${LLVM_PACKAGE_VERSION}"</span><span class="p">)</span>
+<span class="nb">message</span><span class="p">(</span><span class="s">STATUS</span><span class="w"> </span><span class="s2">"Using LLVM: ${LLVM_DIR}"</span><span class="p">)</span>
+<span class="nb">message</span><span class="p">(</span><span class="s">STATUS</span><span class="w"> </span><span class="s2">"Using LLVM_INCLUDE_DIRS: ${LLVM_INCLUDE_DIRS}"</span><span class="p">)</span>
+<span class="nb">message</span><span class="p">(</span><span class="s">STATUS</span><span class="w"> </span><span class="s2">"Using LLVM_DEFINITIONS: ${LLVM_DEFINITIONS}"</span><span class="p">)</span>
+
+<span class="nb">include_directories</span><span class="p">(</span><span class="o">${</span><span class="nv">LLVM_INCLUDE_DIRS</span><span class="o">}</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_CXX_FLAGS</span><span class="w"> </span><span class="s2">"${CMAKE_CXX_FLAGS} ${LLVM_DEFINITIONS}"</span><span class="p">)</span>
+
+<span class="c"># 执行shell命令获取链接参数</span>
+<span class="nb">execute_process</span><span class="p">(</span><span class="s">COMMAND</span><span class="w"> </span><span class="s">llvm-config</span><span class="w"> </span><span class="s">--ldflags</span>
+<span class="w">  </span><span class="s">WORKING_DIRECTORY</span><span class="w"> </span><span class="o">${</span><span class="nv">PROJECT_SOURCE_DIR</span><span class="o">}</span>
+<span class="w">  </span><span class="s">TIMEOUT</span><span class="w"> </span><span class="s">20</span>
+<span class="w">  </span><span class="s">RESULT_VARIABLE</span><span class="w"> </span><span class="s">LLVM_LDFLAGS_result</span>
+<span class="w">  </span><span class="s">OUTPUT_VARIABLE</span><span class="w"> </span><span class="s">LLVM_LDFLAGS</span>
+<span class="w">  </span><span class="s">ERROR_VARIABLE</span><span class="w"> </span><span class="s">LLVM_LDFLAGS_error</span>
+<span class="w">  </span><span class="s">OUTPUT_STRIP_TRAILING_WHITESPACE</span>
+<span class="w">  </span><span class="s">ERROR_STRIP_TRAILING_WHITESPACE</span>
+<span class="p">)</span>
+
+<span class="nb">message</span><span class="p">(</span><span class="s">STATUS</span><span class="w"> </span><span class="s2">"Using LLVM_LDFLAGS: ${LLVM_LDFLAGS}"</span><span class="p">)</span>
+<span class="nb">SET</span><span class="p">(</span><span class="s">CMAKE_CXX_FLAGS</span><span class="w"> </span><span class="s2">"${CMAKE_CXX_FLAGS} ${LLVM_LDFLAGS}"</span><span class="p">)</span>
+
+<span class="c"># 执行shell命令获取链接库清单</span>
+<span class="nb">execute_process</span><span class="p">(</span><span class="s">COMMAND</span><span class="w"> </span><span class="s">llvm-config</span><span class="w"> </span><span class="s">--libs</span><span class="w"> </span><span class="s">core</span><span class="w"> </span><span class="s">orcjit</span><span class="w"> </span><span class="s">native</span><span class="w"> </span><span class="s">--system-libs</span>
+<span class="w">  </span><span class="s">COMMAND</span><span class="w"> </span><span class="s">tr</span><span class="w"> </span><span class="s2">"\n"</span><span class="w"> </span><span class="s2">" "</span>
+<span class="w">  </span><span class="s">WORKING_DIRECTORY</span><span class="w"> </span><span class="o">${</span><span class="nv">PROJECT_SOURCE_DIR</span><span class="o">}</span>
+<span class="w">  </span><span class="s">TIMEOUT</span><span class="w"> </span><span class="s">20</span>
+<span class="w">  </span><span class="s">RESULT_VARIABLE</span><span class="w"> </span><span class="s">LLVM_LIBS_result</span>
+<span class="w">  </span><span class="s">OUTPUT_VARIABLE</span><span class="w"> </span><span class="s">LLVM_LIBS</span>
+<span class="w">  </span><span class="s">ERROR_VARIABLE</span><span class="w"> </span><span class="s">LLVM_LIBS_error</span>
+<span class="w">  </span><span class="s">OUTPUT_STRIP_TRAILING_WHITESPACE</span>
+<span class="w">  </span><span class="s">ERROR_STRIP_TRAILING_WHITESPACE</span>
+<span class="p">)</span>
+
+<span class="nb">message</span><span class="p">(</span><span class="s">STATUS</span><span class="w"> </span><span class="s2">"Using LLVM_LIBS: ${LLVM_LIBS}"</span><span class="p">)</span>
+
+<span class="nb">add_executable</span><span class="p">(</span><span class="s">program</span><span class="w"> </span><span class="s">src/program.cpp</span><span class="p">)</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">program</span><span class="w"> </span><span class="o">${</span><span class="nv">LLVM_LIBS</span><span class="o">}</span><span class="p">)</span>
+</pre></div>
+<p>这样就可以愉快的引入<code>LLVM</code>并编译现有程序了。</p>
+<h2>总结</h2>
+<p>工欲善其事必先利其器。</p>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-06-20 Mon，共905字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-01-05 Thu，共418字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2022/06/20/LiZhong.html" title="唐高宗庶长子李忠的坎坷人生">http://www.lesliezhu.com/2022/06/20/LiZhong.html</a>
+        <a href="http://www.lesliezhu.com/2022/12/28/dockerfile_for_ledge.html" title="使用Dockerfile和CMake编译LLVM程序">http://www.lesliezhu.com/2022/12/28/dockerfile_for_ledge.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -147,9 +225,9 @@
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/06/22/TangXuanZong.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2022/06/19/TangChaoHuangDiJieShao.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2023/01/02/gnu_readline_in_repl.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>
