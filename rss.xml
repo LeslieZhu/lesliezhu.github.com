@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> LLVM框架(1):开篇 </title>
+            <link> http://www.lesliezhu.com/2022/12/17/llvm_1.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/12/17/llvm_1.html</guid>
+            <category><![CDATA[解释器与编译器]]></category>
+            <pubDate>2023-01-12 Thu</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/12/17/llvm_1.html</comments>
+            </item>
+            
+            <item>
             <title> 客家人的一种少见“伯-叔”类关系称呼 </title>
             <link> http://www.lesliezhu.com/2023/01/07/a_special_call_name_of_hakka.html </link>
             <author><![CDATA[吴羽舒]]></author>
