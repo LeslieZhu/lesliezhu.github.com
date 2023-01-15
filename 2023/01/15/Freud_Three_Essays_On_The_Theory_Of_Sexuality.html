@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>Docker镜像里为什么Linux无法安装Man Pages？</title>
+        <title>弗洛伊德与《性学三论》</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>Docker镜像里为什么Linux无法安装Man Pages？</h1>
+        <h1>弗洛伊德与《性学三论》</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,67 +96,79 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/读书札记.html"><i class="读书札记"></i>读书札记</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id='content'>
+        <div id='content-reading'>
 <h2>引言</h2>
-<p><code>Man Pages</code>是Linux系统常用的在线文档手册。</p>
-<p>常说在Linux里不需要记住软件命令的用法，只要会<code>找男人</code>就行了，指的就是查看这个<code>man pages</code>文档。</p>
-<p>Docker是比较常用的容器，常用于部署应用或作为开发环境，但一般的Docker镜像为了减少体积，不会带有<code>Man Pages</code>文档手册。</p>
-<p>有时候哪怕按照一般的做法使用<code>yum</code>安装了<code>man-pages</code>软件包，发现还是没有按预期安装文档，这是怎么回事呢？</p>
-<h2>man pages文档手册</h2>
-<p>一般情况下，这样安装<code>man-pages</code>软件包以下载文档手册的:</p>
-<div class="highlight"><pre><span></span>$ yum install man man-pages man-db
-
-$ mandb <span class="c1"># 更新man文档手册的索引信息</span>
-
-$ man strcpy <span class="c1"># 查看strcpy文档手册</span>
-</pre></div>
-<p>假设现在要查看<code>nlopt</code>相关的文档，但不知道哪个软件包包含有这份文档手册，则可以这样查看:</p>
-<div class="highlight"><pre><span></span>$ man nlopt
-No manual entry <span class="k">for</span> nlopt
-
-$ yum whatprovides */nlopt.*.gz
-
-NLopt-devel-2.4.2-2.el7.x86_64 : Development files <span class="k">for</span> NLopt
-Repo        : epel
-Matched from:
-Filename    : /usr/share/man/man3/nlopt.3.gz
-
-$ yum install NLopt-devel
-
-or
-
-$ yum reinstall NLopt-devel
-
-$ man -w nlopt <span class="c1"># 找到文档具体位置</span>
-/usr/share/man/man3/nlopt.3.gz
-
-$ man nlopt <span class="c1"># 查看文档</span>
-
-$ man <span class="m">3</span> nlopt
-</pre></div>
-<p>找到软件包名字后，安装软件就会有下载对应文档，进而可以通过<code>man</code>命令查看了。</p>
-<p>当然有的软件包提供的文档不是<code>man-page</code>格式，而是<code>info</code>格式，那就另当别论。</p>
-<h2>yum无法下载文档</h2>
-<p>前面讲到Docker镜像为了减少大小，一般是不会下载软件文档的，即使后面重新安装了软件，会发现软件虽然安装了但文档却没有下载，这是通过<code>/etc/yum.conf</code>来设置的:</p>
-<div class="highlight"><pre><span></span><span class="k">[main]</span><span class="w"></span>
-<span class="na">//...</span><span class="w"></span>
-<span class="na">tsflags</span><span class="o">=</span><span class="s">nodocs</span><span class="w"></span>
-</pre></div>
-<p>将这行配置注释后，使用<code>yum</code>安装软件时就会自动下载文档了；其实这个选项是传递给了<code>rpm</code>命令，参看: <a href="https://jsmith.fedorapeople.org/drafts/SMG/html/Software_Management_Guide/ch06s22.html">yum-plugin-tsflags</a></p>
+<p>学习过心理学的人应该都听过<code>弗洛伊德</code>这个名字，他是<code>精神分析学派</code>祖师爷。</p>
+<p>本着了解一下儿童性教育这个话题看完了其著作《性学三论》，这本书的标题在这个依旧谈性色变的时代会造成一点误导和困扰。</p>
+<p>书中内容其实是弗洛伊德阐述自己的一些学术理论，比如性变态的来源、青春期的变化、爱情心理学和自恋心理学等，只不过作者认为一切的根由都和性有关，把很多现象都归结到性理论上面去；当时的很多人对这套理论嗤之以鼻，认为太牵强了，有很大的争议。</p>
+<p>虽然这本书发表的时候清朝还没有灭亡，但其很多内容在现在仍不过时，尤其关于青春期心理变化部分。</p>
+<p>对于书里面的观点，自己没有专业背景，就不予置评了，这里只整理弗洛伊德生平和主要理论观点，作为一篇读书笔记。</p>
+<h2>弗洛伊德生平</h2>
+<ul>
+<li>1856年，出生于奥匈帝国一个犹太家庭</li>
+<li>1859年，先搬家到德国莱比锡，后搬家到奥地利首都维也纳</li>
+<li>1865年，9岁入学，一直到高中都是同一个学校，学习了古希腊和古罗马文学、拉丁语、希腊语、法语、英语、西班牙语、意大利语</li>
+<li>1873年，17岁进入维也纳大学医学专业学习</li>
+<li>1881年，25岁获得医学博士学位</li>
+<li>1885年，去巴黎学习，期间从神经学家转换为精神病理学家</li>
+<li>1886年，由于经济原因以神经病医师身份经营私人诊所，结婚并育有三男三女</li>
+<li>1889年，去法国学习，放弃催眠术改为自由联想</li>
+<li>1895年，发表《歇斯底里症研究》，奠定精神分析理论基础</li>
+<li>1897年，发表《梦的解析》</li>
+<li>1902年，成立心理分析协会</li>
+<li>1904年，发表《日常生活中的心理学病理学》、《多拉的分析》和《性学三论》</li>
+<li>1913年，发表《图腾与禁忌》</li>
+<li>1920年，建立死本能理论</li>
+<li>1923年，确诊口腔癌</li>
+<li>1933年，纳粹在柏林公开烧毁弗洛伊德著作</li>
+<li>1938年，逃亡伦敦，四个妹妹在奥地利被纳粹分子杀害</li>
+<li>1939年，伦敦去世，享年83岁</li>
+</ul>
+<h2>潜意识论</h2>
+<p>弗洛伊德认为，人的心理分为意识和无意识现象，无意识现象又可以分为前意识和潜意识。</p>
+<ul>
+<li><code>前意识</code>: 指的是能够进入意识中的经验</li>
+<li><code>潜意识</code>: 指的是不能进入或很难进入意识中的经验</li>
+</ul>
+<p>潜意识的心理虽然不被人所察觉，但却支配着人的一生。</p>
+<h2>精神分析方法</h2>
+<p>精神分析用于研究潜意识现象，主要方法有：</p>
+<ul>
+<li><code>自由联想法</code>：不给予任何思想限制或指引的联想</li>
+<li><code>梦的解析法</code>：梦的本质是潜意识愿望的曲折表达，是被压抑的潜意识欲望的伪装与象征</li>
+<li><code>日常生活的心理分析法</code>：导致过失产生的心理机制都是被压抑于意识中的欲望经过扭曲掩盖后的表达</li>
+</ul>
+<p>比如徐峥、莫文蔚主演电影《催眠大师》里面那样，一个心理分析师以催眠或自由联想的方式让一个人彻底放松然后想到什么、看到什么告诉心理分析师，分析后最终找到潜意识产生的最初原因。</p>
+<h2>本能理论</h2>
+<p>把本能分为：</p>
+<ul>
+<li><code>生的本能</code>：包括饥饿、口渴、性等为了生存和维持生命的创造性力量</li>
+<li><code>死的本能</code>：包括自虐、自杀、仇恨、攻击等破坏性力量</li>
+</ul>
+<h2>人格理论</h2>
+<p>人格分为：</p>
+<ul>
+<li><code>本我</code>：原始的、与生俱来的、最接近人性的潜意识本能，按照快乐原则行事</li>
+<li><code>自我</code>：监督自我的有意识本能，按照现实原则行事</li>
+<li><code>超我</code>：人格中最道德的部分，按照至善原则行事</li>
+</ul>
+<p>精神分析心理学会研究这三部分内容和相互关系，个人的人格是不断变化和成长的，父母的影响、生活环境的影响、青春期等都会产生重大影响，奠定人格模式的基础。</p>
+<h2>社会文化观</h2>
+<p>弗洛伊德认为，<code>文明发展的动力只能是来自于个人性本能的压抑和升华</code>。</p>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-22 Tue，共385字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-01-16 Mon，共1132字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2022/11/21/man_pages_missing.html" title="Docker镜像里为什么Linux无法安装Man Pages？">http://www.lesliezhu.com/2022/11/21/man_pages_missing.html</a>
+        <a href="http://www.lesliezhu.com/2023/01/15/Freud_Three_Essays_On_The_Theory_Of_Sexuality.html" title="弗洛伊德与《性学三论》">http://www.lesliezhu.com/2023/01/15/Freud_Three_Essays_On_The_Theory_Of_Sexuality.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -169,9 +181,9 @@ $ man <span class="m">3</span> nlopt
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/12/17/llvm_1.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>
