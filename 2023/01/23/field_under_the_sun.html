@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>Docker镜像里为什么Linux无法安装Man Pages？</title>
+        <title>在希望的田野上</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>Docker镜像里为什么Linux无法安装Man Pages？</h1>
+        <h1>在希望的田野上</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,67 +96,40 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/南野集.html"><i class="南野集"></i>南野集</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id='content'>
-<h2>引言</h2>
-<p><code>Man Pages</code>是Linux系统常用的在线文档手册。</p>
-<p>常说在Linux里不需要记住软件命令的用法，只要会<code>找男人</code>就行了，指的就是查看这个<code>man pages</code>文档。</p>
-<p>Docker是比较常用的容器，常用于部署应用或作为开发环境，但一般的Docker镜像为了减少体积，不会带有<code>Man Pages</code>文档手册。</p>
-<p>有时候哪怕按照一般的做法使用<code>yum</code>安装了<code>man-pages</code>软件包，发现还是没有按预期安装文档，这是怎么回事呢？</p>
-<h2>man pages文档手册</h2>
-<p>一般情况下，这样安装<code>man-pages</code>软件包以下载文档手册的:</p>
-<div class="highlight"><pre><span></span>$ yum install man man-pages man-db
-
-$ mandb <span class="c1"># 更新man文档手册的索引信息</span>
-
-$ man strcpy <span class="c1"># 查看strcpy文档手册</span>
-</pre></div>
-<p>假设现在要查看<code>nlopt</code>相关的文档，但不知道哪个软件包包含有这份文档手册，则可以这样查看:</p>
-<div class="highlight"><pre><span></span>$ man nlopt
-No manual entry <span class="k">for</span> nlopt
-
-$ yum whatprovides */nlopt.*.gz
-
-NLopt-devel-2.4.2-2.el7.x86_64 : Development files <span class="k">for</span> NLopt
-Repo        : epel
-Matched from:
-Filename    : /usr/share/man/man3/nlopt.3.gz
-
-$ yum install NLopt-devel
-
-or
-
-$ yum reinstall NLopt-devel
-
-$ man -w nlopt <span class="c1"># 找到文档具体位置</span>
-/usr/share/man/man3/nlopt.3.gz
-
-$ man nlopt <span class="c1"># 查看文档</span>
-
-$ man <span class="m">3</span> nlopt
-</pre></div>
-<p>找到软件包名字后，安装软件就会有下载对应文档，进而可以通过<code>man</code>命令查看了。</p>
-<p>当然有的软件包提供的文档不是<code>man-page</code>格式，而是<code>info</code>格式，那就另当别论。</p>
-<h2>yum无法下载文档</h2>
-<p>前面讲到Docker镜像为了减少大小，一般是不会下载软件文档的，即使后面重新安装了软件，会发现软件虽然安装了但文档却没有下载，这是通过<code>/etc/yum.conf</code>来设置的:</p>
-<div class="highlight"><pre><span></span><span class="k">[main]</span><span class="w"></span>
-<span class="na">//...</span><span class="w"></span>
-<span class="na">tsflags</span><span class="o">=</span><span class="s">nodocs</span><span class="w"></span>
-</pre></div>
-<p>将这行配置注释后，使用<code>yum</code>安装软件时就会自动下载文档了；其实这个选项是传递给了<code>rpm</code>命令，参看: <a href="https://jsmith.fedorapeople.org/drafts/SMG/html/Software_Management_Guide/ch06s22.html">yum-plugin-tsflags</a></p>
+        <div id='content-reading'>
+<p>​正月初一的晚上梦见了母亲，我和母亲正在田里干活，一会儿除草，一会儿施肥，一会儿又打农药，在一片绿油油的稻田里，仿佛整个世界都清澈了起来。</p>
+<p>那时十三四岁的我在初中寄宿，每周回来两次；哥哥刚读完初中就外出当学徒打工，到满十八岁又去当兵了；父亲在临县矿山打工，只有农忙时节会回来帮忙；家里有鱼塘，又养了牛，生活的重担基本都压在母亲一个人身上。</p>
+<p>种水稻是一个精耕细作、工序繁杂的事情，春分时节要播种培育幼苗；清明谷雨时节前后要莳田，也就是插秧；之后要耘田、除草、施肥和打农药；小暑节气前后割稻子；因为是二季稻，收割完后马上就又要犁田、耙田、插秧……年年如此反复，亲戚邻里之间需要互相帮忙。</p>
+<p>父亲一般只在插秧和割稻子阶段会回来，那时候和父亲一起去打工的族亲也要回来，因此一年农忙时节那几个月是没法打工挣钱的；为了方便回来农忙，也没法走太远到沿海地区去打工，总之，虽然年年打工但只能挣个温饱，大家日子都过得挺苦的。</p>
+<p>那年是哥哥入伍第一年，我也开始读初三了；又是一个周六放学回家，我的自行车在车棚里放几天后又没有气了，在学校附近打完气就往回走。但长期有点营养不良和贫血，感觉浑身无力，稍微遇到一点上坡就得下来推着走。看着同学们一个个从身边打招呼后呼啸而过，心中难免有点失落。回去的路，前一大半多是上坡，就只好一路推着，眼看是到最后一个长坡了，迎面却看见一人赶着一大一小两头黄牛走来。</p>
+<p>我一下子就呆住了，我认出这是我家的牛，而那个人很明显就是牛贩子了。我不知道黄牛母女俩有没有认出我来，但我站那看了很久，直到它们消失在我的视线里，我感到非常羞愧，有一种无力感。</p>
+<p>以前是爷爷家养了一头黑色黄牛，后来黄牛年老无法耕地后就卖了，换成我家买了一头黄牛犊养起来。经常都是我和哥哥去放牛，一早一晚各要放一回；我大部分假期都是陪着黄牛犊度过的。等哥哥打工后，我又开学了，剩下大部分时候自然是需要母亲来照顾它。</p>
+<p>一年后别人的牛犊都已经长得坚实强壮，但我家的牛犊却还是像个长不大的孩子，更别说耕地了。这下村里人拿这个打趣我，问我是不是放牛的时候贪玩没有让牛吃饱，不然怎么一直不长个呢？</p>
+<p>家里大人也不知道是什么原因，既然黄牛犊长得不够快就慢慢养吧，第二年虽然牛个子看起来还不是很高，但已经足够强壮，可以胜任耕地的工作了，于是我家终于有了一头能下地干活的耕牛，而农忙时节爷爷犁地也从老黑牛变成了小黄牛。</p>
+<p>半年后小黄牛怀孕了，我非常高兴，曾经放牛时摸着牛肚子，希望它诞下的小牛犊将来长得高大壮实。后来有一天父亲在牛棚忙活，是黄牛要下崽了，我也第一次见到了黄牛下崽的过程，我很快就开始放两头牛了。</p>
+<p>有一天放牛回家的时候我悠然自在地走在前面，等来到河边的时候想让牛喝点水，一转头发现手里只剩一根牵牛绳，哪还有那对母女的影子？我赶紧往回跑，在一稻田边找到正欢快地吃稻苗的母女俩。我气的拿个小鞭子打它们，骂它们这么不争气，然后垂头丧气的把牛牵回了家。按照母亲的叮嘱，第二天一大早放牛的时候拎了一小袋子化肥过去，在昨天被吃的稻苗那撒了一阵化肥；母亲特意交代说撒完化肥后，记得拿个小石头把袋子压在田埂上，这样田主人看到那矮一茬的稻苗后再看到装化肥的袋子就不会那么生气了。</p>
+<p>在我住校期间，家里的黄牛母女俩也是母亲的一个伴，但当我放学时看到母亲已经把牛卖了时，心情非常低落。我曾经听人说牛贩子会很残忍的对待牛，何况那个小牛犊还那么小。曾经想过要是小牛犊卖给村里谁养就好了，这样还能经常看见，但慢慢大家都不种田了，即使种田也会使用拖拉机。当人们都纷纷出去打工时，又怎么会有人继续在家放牛呢？</p>
+<p>等到暑假了，那天天气很好，母亲说让我陪她一起去打农药。那是一个偏僻山谷里的丘陵稻田，整个山谷稻田都是我家的，也是记在我的名下的。这片田大概一两亩多，却分成了五六块，还很容易干旱，属于被嫌弃的那种。</p>
+<p>母亲说如果将来我还是种地为生，这份田就是分给我了，我心中暗暗偷笑，我将来要考大学，谁还来种这一点点的田地啊。母亲总让我陪着去地里，是因为母亲有点害怕，这种偏僻的山间太静了，静的让人感觉冷飕飕的。我一直胆子比较大，敢一个人跑到偏僻山间密林给太公太婆扫墓，也曾经在这片山间田里一个人在瓜棚看护西瓜。</p>
+<p>以前陪母亲大多是耘田，耘田是在施肥前除掉杂草的步骤，否则化肥都给杂草吃干净了。家里有鱼塘的会把拔下来的杂草洗干净拿回去喂鱼，但大多时候只是把杂草用脚踩入泥土淹死罢了。因此，在夏天会看到这样一副场景，在田里一个个的人们戴着草帽，手里撑一根棍子，沿着插秧形成的路径规整的在田里走来走去，把杂草都踏入泥土，然后施肥。后来莳田都采用抛秧的方式，很少再使用插秧这种费人力又效率低的方式了；抛秧的结果自然很难形成规整的行间距，耘田也就少了；当人们都开始通过抛秧来“偷懒”的时候，又有多少人还有精力为了除草去耘田呢？</p>
+<p>这次是陪母亲来田里打农药，母亲说有我陪着不会那么害怕，加上最近身体不太好，我可以帮忙提点东西，路上有人说说话。进入初三后，天天在学校里应付繁重的学业，我都变得有点呆呆的。母亲在小溪水边勾兑好了农药，背着打药筒打药，我在边上找了棵树坐着看蚂蚁打架。</p>
+<p>等到了中午，烈日当空，看着母亲在地里干活，真是“谁知盘中餐，粒粒皆辛苦”！不一会儿母亲过来，疲惫的坐下说，感觉有点头晕目眩。可能是中暑，也可能是农药味道太恶臭把人熏晕了。休息了一会，母亲说，等明年我考上高中后，就不准备种地了，她也准备去外面打工，多挣点钱；我过几年要考大学，哥哥退伍回来后也没几年就要娶媳妇了，都是需要用钱的时候。我听了这些话，心中暗暗告诫自己，一定要努力啊。</p>
+<p>这一转眼已经和母亲分开十几年了，常常在梦里浮现陪母亲在田里干活的场景，那些年我的母亲真是太辛苦、太孤单了！</p>
+<p>在那个夏天，在烈日下，在田野边，我和母亲都曾满怀希望憧憬着一个美好的未来。</p>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-22 Tue，共385字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-01-23 Mon，共2147字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2022/11/21/man_pages_missing.html" title="Docker镜像里为什么Linux无法安装Man Pages？">http://www.lesliezhu.com/2022/11/21/man_pages_missing.html</a>
+        <a href="http://www.lesliezhu.com/2023/01/23/field_under_the_sun.html" title="在希望的田野上">http://www.lesliezhu.com/2023/01/23/field_under_the_sun.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -169,9 +142,9 @@ $ man <span class="m">3</span> nlopt
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2023/01/15/Freud_Three_Essays_On_The_Theory_Of_Sexuality.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>
