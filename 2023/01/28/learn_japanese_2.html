@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>Git如何管理子模块和第三方模块？</title>
+        <title>标准日本语(第1课):李先生是中国人</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>Git如何管理子模块和第三方模块？</h1>
+        <h1>标准日本语(第1课):李先生是中国人</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,73 +96,355 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/日语学习.html"><i class="日语学习"></i>日语学习</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
         <div id='content'>
-<h2>引言</h2>
-<p><code>Git</code>是广泛使用的版本管理工具，对于子模块或第三方模块可以这样管理：</p>
-<ul>
-<li><code>submodule</code>: 第三方模块</li>
-<li><code>subtree</code>: 子模块，大项目团队内部互相协作</li>
-</ul>
-<h2>第三方模块(submodule)</h2>
-<p>既然是第三方模块，自然这个模块基本上是由别人开发完成，而自己只是作为这个模块的使用者，不会和自己的项目代码互动协作。</p>
-<p>比如为项目添加<code>gtest</code>作为第三方库:</p>
-<div class="highlight"><pre><span></span>$ git submodule add https://github.com/google/googletest.git ./third_party/googletest
-
-or
-
-$ git submodule add https://github.com/google/googletest.git ./third_party/
-</pre></div>
-<p>它会自动把gtest代码clone下来，但对于本地项目本身来说，只是添加一个第三方模块记录文件(<code>.gitmodules</code>)而已:</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>submodule <span class="s2">"third_party/googletest"</span><span class="o">]</span>
-    <span class="nv">path</span> <span class="o">=</span> third_party/googletest
-    <span class="nv">url</span> <span class="o">=</span> https://github.com/google/googletest.git
-</pre></div>
-<p>保持本地项目和第三方模块之间的彼此独立, 后续拿到这个项目的时候自动获取依赖的第三方模块代码。</p>
-<p>如果某个第三方模块不再需要了，可以清除：</p>
-<div class="highlight"><pre><span></span>$ git submodule deinit third_party/llvm
-$ git rm --cached third_party/llvm
-$ vim .gitmodule  <span class="c1"># 可能需要手动删除内容</span>
-$ rm -rf .git/modules/third_parth/llvm  <span class="c1"># 可能需要手动删除目录</span>
-</pre></div>
-<h2>子模块(subtree)</h2>
+<h2>语法</h2>
+<h3>肯定句</h3>
 <blockquote>
-<p><a href="https://www.atlassian.com/git/tutorials/git-subtree">https://www.atlassian.com/git/tutorials/git-subtree</a></p>
+<p>名词 は　名词 です</p>
 </blockquote>
-<p>如果随着项目变大，想将一些功能模块独立变成子项目或子模块。</p>
-<p>比如某个人或团队只需要维护一个功能模块，而不需要去接触庞大的整个项目，那么把这个功能模块以子模块形式分享出去是比较好的。</p>
-<p>如果只是想将一部分功能变成子模块，后续彼此隔离，不会互相更新，则可以这样:</p>
-<div class="highlight"><pre><span></span>$ <span class="nb">cd</span> project-dir/
-$ git subtree split -P Test -b v-Test <span class="c1"># 将Test目录及记录变成一个分支</span>
-$ git pull origin v-Test <span class="c1"># 另建立项目pull该分支即可</span>
+<p>表示「什么是什么」，其中<code>〜は</code>是一个主语部分，虽然助词<code>は</code>罗马音是<code>ha</code>，但在这里读音要读成<code>わ(wa)</code>；然后<code>~です</code>是一个谓语部分。</p>
+<p>举例:</p>
+<div class="highlight"><pre><span></span>李さん　は　中国人(ちゆうごくじん)　です。（李先生是中国人。）
+わたし　は　日本人(にほんじん)　　　です。（我是日本人。)
+わたし　は　王(おう)　　　　　　   です。（我姓王。）
 </pre></div>
-<p>但一般情况下，这个子项目是要和庞大的整个项目保持互动的，可能会一起维护子项目后续更新，则要换一种方式。</p>
-<p>比如有目录Test，想将它独立变成一个子项目并保持原有所有相关历史记录，可以:</p>
-<div class="highlight"><pre><span></span>$ git remote add mod-Test git@github.com:LeslieZhu/mod-Test.git
-$ git subtree push --prefix<span class="o">=</span>sub/Test mod-Test master            <span class="c1"># 推送该子项目相关更新</span>
+<h2>否定句</h2>
+<blockquote>
+<p>名词　は  名词　では　　ありません。</p>
+</blockquote>
+<p>表示「什么不是什么」，后面部分是固定助词。</p>
+<p>举例:</p>
+<div class="highlight"><pre><span></span>森　さん　は　学生　　では　ありません。（森先生不是学习。）
+わたし　　は　日本人　では　ありません。 （我不是日本人。）
+わたし　　は　田中　　では　ありません。 （我不是田中。）
 </pre></div>
-<p>如果后续还会共同维护子项目，则可以:</p>
-<div class="highlight"><pre><span></span>$ git subtree pull --prefix<span class="o">=</span>sub/Test mod-Test master            <span class="c1"># 拉取子项目相关更新和详细记录</span>
-$ git subtree pull --prefix<span class="o">=</span>sub/Test mod-Test master --squash   <span class="c1"># 拉取子项目相关更新但所有记录合并为一条</span>
+<h2>疑问句与应答</h2>
+<blockquote>
+<p>名词 は 名词 ですか。</p>
+</blockquote>
+<p>表示「什么是什么吗？」，助词<code>か</code>在句尾表示疑问，但疑问句也不会使用问号<code>?</code></p>
+<p>面对疑问句，应答有三种:</p>
+<ul>
+<li>肯定：</li>
+</ul>
+<div class="highlight"><pre><span></span>Q:　あなた　は　小野　さん　ですか。 (您是小野先生吗？)
+A:　はい，小野です。               (是的，我是小野。)
+A:　はい，そうです。               (是，是的)
+</pre></div>
+<ul>
+<li>否定：</li>
+</ul>
+<div class="highlight"><pre><span></span>Q:　キムさん　は　ちゆうごくじん　ですか。      (金女士是中国人吗？)
+A:　いいえ，　ちゆうごくじん　では　ありますん。 (不，不是中国人。)
+A:　いいえ，　ちがいます。                    (不，不是)
+</pre></div>
+<ul>
+<li>不知道：</li>
+</ul>
+<div class="highlight"><pre><span></span>Q: 森さん　は　学生　ですか。 （森先生是学生吗？）
+A:　わかりません。　　　　　　（我不知道。）
+</pre></div>
+<h3>从属关系</h3>
+<blockquote>
+<p>名词 の　名词 [从属机构、国家] [属性]</p>
+</blockquote>
+<p>助词<code>の</code>表示前面词语是后面词语所从属的机构、国家或属性；日语中不论名词之间是什么关系，一般都加上<code>の</code>。</p>
+<p>举例:</p>
+<div class="highlight"><pre><span></span>李さん　は　JC企画　の　社員　です。　(李先生是JC策划公司的员工。)
+北京旅行社　は　中国　の　企业 です。 (北京旅行社是中国的企业。)
+わたし　の　父。　　　　　　　　　　　(我的父亲。)
+</pre></div>
+<h2>词语</h2>
+<h3>人称</h3>
+<ul>
+<li>第一人称：<code>わたし</code>，相当于「我」</li>
+<li>第二人称：<code>あなた</code>，相当于「你」</li>
+<li>第三人称：<code>あの人(ひと)</code>，相当于「那个人」</li>
+</ul>
+<p>举例:</p>
+<div class="highlight"><pre><span></span>わたし　は　李　です。　　　　(我姓李。)
+あの人　は　森さん　ですか。  (那个人是森先生吗？)
+</pre></div>
+<h3>~さん</h3>
+<p>称呼对方时，在不知道对方姓名但又必须招呼的时候，才会使用<code>あなた</code>这个第二人称，因为这个称呼会显得不太礼貌。</p>
+<ul>
+<li>一般称呼对方时，无论男女，都要在姓后面加上<code>さん</code>，表示「某某君」，不能用于自己的姓名后。</li>
+</ul>
+<p>举例:</p>
+<div class="highlight"><pre><span></span>A:　(あなた　は)　小野　さん　ですか。　(你是小野女生吗？)
+Q:　はい，小野　です。                (是的，我是小野。)
+</pre></div>
+<ul>
+<li>称呼小孩时常在名字后加上<code>ちゃん</code>:</li>
+</ul>
+<div class="highlight"><pre><span></span>太郎しゃん，こんにちは。　　　(太郎，你好。)
+</pre></div>
+<ul>
+<li>对于与自己年龄相当，或比自己年轻的男性，也可以使用<code>君(くん)</code>称呼:</li>
+</ul>
+<div class="highlight"><pre><span></span>森君　は　JC企画　の　社員　です。
+</pre></div>
+<p>在日语中的<code>先生</code>特指「老师」，不能使用<code>先生(せんせい)</code>代替<code>ちん</code>。</p>
+<h3>省略</h3>
+<p>日语中通过上下文可以明白的部分，一般会省略，如果不省略，会给人一种不自然或不礼貌的感觉。</p>
+<ul>
+<li>多省略第一、第二人称的主语，举例（括号中的一般省略）：</li>
+</ul>
+<div class="highlight"><pre><span></span>A: （あなたは）吉田さん　ですか。           
 
-$ git subtree push --prefix<span class="o">=</span>sub/Test mod-Test master            <span class="c1"># 推送该子项目相关更新</span>
+你是吉田先生吗？
+
+Q: いいえ，（わたしは）吉田じゃ　ありますん。（わたしは）森です。
+
+不，我不是吉田。我是森。
 </pre></div>
-<p>使用subtree方式不会在git中留下特殊记录文件，对于拿到这个项目的人来说，并不会知道还有子项目或父项目的存在，看到的只是一个实实在在的目录。</p>
-<h2>总结</h2>
-<p>第三方模块使用<code>submodule</code>，内部项目子模块使用<code>subtree</code>。</p>
+<h3>感叹词<code>あつ</code></h3>
+<p>一般吃惊或有所感触时发出的声音：</p>
+<div class="highlight"><pre><span></span>あつ！　森さん！
+
+哦，森先生！
+
+あつ，すみません。
+
+啊，对不起！
+</pre></div>
+<h3>寒暄语</h3>
+<p>类似汉语「请多关照」，一般用于介绍完自己姓名或公司名称后:</p>
+<div class="highlight"><pre><span></span>はじめまして，李です。どうぞ　よろしく　お願いします。
+
+初次见面，我姓李。请多关照。
+
+こちらこそ，どうぞ よろしく お願いします。
+
+我才要请你多多关照。
+</pre></div>
+<p>回答时，一般会先说<code>こちらこそ</code>。</p>
+<h3>会社员与社员</h3>
+<ul>
+<li><code>会社员</code>表示一种职业，表示有工作</li>
+<li><code>社员</code>表示某个具体公司的职员</li>
+</ul>
+<h2>生词表</h2>
+<table>
+<thead>
+<tr>
+<th>日语</th>
+<th>日语汉字</th>
+<th>对应含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ちゆうごくじん</td>
+<td>中国人</td>
+<td>中国人</td>
+</tr>
+<tr>
+<td>にほんじん</td>
+<td>日本人</td>
+<td>日本人</td>
+</tr>
+<tr>
+<td>かんこくじん</td>
+<td>韩国人</td>
+<td>韩国人</td>
+</tr>
+<tr>
+<td>がくせい</td>
+<td>学生</td>
+<td>学生</td>
+</tr>
+<tr>
+<td>せんせい</td>
+<td>先生</td>
+<td>老师</td>
+</tr>
+<tr>
+<td>らゆうがくせい</td>
+<td>留学生</td>
+<td>留学生</td>
+</tr>
+<tr>
+<td>しゃいん</td>
+<td>社員</td>
+<td>职员</td>
+</tr>
+<tr>
+<td>かいしゃいん</td>
+<td>会社員</td>
+<td>公司职员</td>
+</tr>
+<tr>
+<td>ちち</td>
+<td>父</td>
+<td>父亲</td>
+</tr>
+<tr>
+<td>あのひと</td>
+<td>あの人</td>
+<td>那个人</td>
+</tr>
+<tr>
+<td>わたし</td>
+<td></td>
+<td>我</td>
+</tr>
+<tr>
+<td>あなた</td>
+<td></td>
+<td>你</td>
+</tr>
+<tr>
+<td>どうも</td>
+<td></td>
+<td>非常，很</td>
+</tr>
+<tr>
+<td>はい</td>
+<td></td>
+<td>是 ，是的</td>
+</tr>
+<tr>
+<td>いいえ</td>
+<td></td>
+<td>不，不是</td>
+</tr>
+<tr>
+<td>あつ</td>
+<td></td>
+<td>哎呀</td>
+</tr>
+<tr>
+<td>り</td>
+<td>李</td>
+<td>专指姓李</td>
+</tr>
+<tr>
+<td>おう</td>
+<td>王</td>
+<td>专指姓王</td>
+</tr>
+<tr>
+<td>ちよう</td>
+<td>张</td>
+<td>姓张</td>
+</tr>
+<tr>
+<td>もり</td>
+<td>森</td>
+<td>姓森</td>
+</tr>
+<tr>
+<td>はやし</td>
+<td>林</td>
+<td>姓林</td>
+</tr>
+<tr>
+<td>おの</td>
+<td>小野</td>
+<td>姓小野</td>
+</tr>
+<tr>
+<td>よしだ</td>
+<td>吉田</td>
+<td>姓吉田</td>
+</tr>
+<tr>
+<td>たなか</td>
+<td>田中</td>
+<td>姓田中</td>
+</tr>
+<tr>
+<td>なかむら</td>
+<td>中村</td>
+<td>姓中村</td>
+</tr>
+<tr>
+<td>たろう</td>
+<td>太郎</td>
+<td>太郎</td>
+</tr>
+<tr>
+<td>キム</td>
+<td>金</td>
+<td>姓金</td>
+</tr>
+<tr>
+<td>ちゆうごく</td>
+<td>中国</td>
+<td>专指中国</td>
+</tr>
+<tr>
+<td>こんにちは</td>
+<td></td>
+<td>你好</td>
+</tr>
+<tr>
+<td>すみません</td>
+<td></td>
+<td>对不起；请问</td>
+</tr>
+<tr>
+<td>どうぞ</td>
+<td></td>
+<td>请</td>
+</tr>
+<tr>
+<td>よろしくお願いします</td>
+<td></td>
+<td>请多关照</td>
+</tr>
+<tr>
+<td>はじめまして</td>
+<td></td>
+<td>初次见面</td>
+</tr>
+<tr>
+<td>こちらこそ</td>
+<td></td>
+<td>我才要（请您。。。）</td>
+</tr>
+<tr>
+<td>そうです</td>
+<td></td>
+<td>是这样</td>
+</tr>
+<tr>
+<td>ちがいます</td>
+<td></td>
+<td>不是</td>
+</tr>
+<tr>
+<td>わかりません</td>
+<td></td>
+<td>不知道</td>
+</tr>
+<tr>
+<td>どうもすみません</td>
+<td></td>
+<td>实在对不起</td>
+</tr>
+<tr>
+<td>〜さん　〜ちゃん　〜くん</td>
+<td></td>
+<td>某某君、某某先生</td>
+</tr>
+</tbody>
+</table>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-17 Thu，共608字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-01-28 Sat，共924字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2022/11/17/git_subtree_and_submodule.html" title="Git如何管理子模块和第三方模块？">http://www.lesliezhu.com/2022/11/17/git_subtree_and_submodule.html</a>
+        <a href="http://www.lesliezhu.com/2023/01/28/learn_japanese_2.html" title="标准日本语(第1课):李先生是中国人">http://www.lesliezhu.com/2023/01/28/learn_japanese_2.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -175,9 +457,9 @@ $ git subtree push --prefix<span class="o">=</span>sub/Test mod-Test master     
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/11/20/TMOUT_env_variable_in_liunux.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2022/11/16/cpp_go_to_wrong_1.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2023/01/23/field_under_the_sun.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>
