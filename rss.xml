@@ -22,7 +22,29 @@
         </image>        
         
             <item>
-            <title> 标准日本语(第1课):李先生是中国人 </title>
+            <title> 制作rpm安装包文件 </title>
+            <link> http://www.lesliezhu.com/2022/10/24/yum_rpm.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/10/24/yum_rpm.html</guid>
+            <category><![CDATA[Linux操作与管理]]></category>
+            <pubDate>2023-01-30 Mon</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/10/24/yum_rpm.html</comments>
+            </item>
+            
+            <item>
+            <title> 标准日本语初级(第2课):これは本です </title>
+            <link> http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html</guid>
+            <category><![CDATA[日语学习]]></category>
+            <pubDate>2023-01-29 Sun</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html</comments>
+            </item>
+            
+            <item>
+            <title> 标准日本语初级(第1课):李先生是中国人 </title>
             <link> http://www.lesliezhu.com/2023/01/28/learn_japanese_2.html </link>
             <author><![CDATA[吴羽舒]]></author>
             <guid isPermaLink="true">http://www.lesliezhu.com/2023/01/28/learn_japanese_2.html</guid>

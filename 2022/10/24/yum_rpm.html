@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>妈，我想要一本字典！</title>
+        <title>制作rpm安装包文件</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -270,7 +270,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>妈，我想要一本字典！</h1>
+        <h1>制作rpm安装包文件</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -279,148 +279,338 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/南野集.html"><i class="南野集"></i>南野集</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id="content-reading">
+        <div id="content">
+
+<div id="table-of-contents">
+<h2>目录</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgc38e636">1. 制作rpm文件</a>
+<ul>
+<li><a href="#org052736a">1.1. 准备软件源文件</a></li>
+<li><a href="#orgecdb1fd">1.2. 创建SPEC文件</a></li>
+<li><a href="#org5c98af1">1.3. 构建RPM文件</a></li>
+<li><a href="#org52d1252">1.4. 安装软件包</a></li>
+<li><a href="#org4bdaf47">1.5. 卸载软件包</a></li>
+</ul>
+</li>
+<li><a href="#org016195e">2. 资源</a></li>
+</ul>
+</div>
+</div>
+<div class="outline-2" id="outline-container-orgc38e636">
+<h2 id="orgc38e636"><span class="section-number-2">1</span> 制作rpm文件</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+这里假设有一些二进制文件和相关Shell脚本，想打包为rpm格式实现一键自动安装。
+</p>
+<ul class="org-ul">
+<li>安装工具包</li>
+</ul>
+<pre class="example">
+$ sudo yum install rpm-build rpmdevtools
+</pre>
+<ul class="org-ul">
+<li>创建工作目录</li>
+</ul>
+<pre class="example">
+$ rpmdev-setuptree  # 默认创建~/rpmbuild/
+
+$ tree ~/rpmbuild/
+
+~/rpmbuild/
+├── BUILD
+├── BUILDROOT
+├── RPMS
+├── SOURCES
+├── SPECS
+└── SRPMS
+</pre>
+<p>
+如果更改一些默认设置，直接修改文件 <code>~/.rpmmacros</code>:
+</p>
+<pre class="example">
+%_topdir %(echo $HOME)/rpmbuild
+
+%_smp_mflags %( \
+    [ -z "$RPM_BUILD_NCPUS" ] \\\
+        &amp;&amp; RPM_BUILD_NCPUS="`/usr/bin/nproc 2&gt;/dev/null || \\\
+                             /usr/bin/getconf _NPROCESSORS_ONLN`"; \\\
+    if [ "$RPM_BUILD_NCPUS" -gt 16 ]; then \\\
+        echo "-j16"; \\\
+    elif [ "$RPM_BUILD_NCPUS" -gt 3 ]; then \\\
+        echo "-j$RPM_BUILD_NCPUS"; \\\
+    else \\\
+        echo "-j3"; \\\
+    fi )
+
+%__arch_install_post \
+    [ "%{buildarch}" = "noarch" ] || QA_CHECK_RPATHS=1 ; \
+    case "${QA_CHECK_RPATHS:-}" in [1yY]*) /usr/lib/rpm/check-rpaths ;; esac \
+    /usr/lib/rpm/check-buildroot
+</pre>
+</div>
+<div class="outline-3" id="outline-container-org052736a">
+<h3 id="org052736a"><span class="section-number-3">1.1</span> 准备软件源文件</h3>
+<div class="outline-text-3" id="text-1-1">
+<pre class="example">
+$ tree ~/rpmbuild/SOURCES/
+
+~/rpmbuild/SOURCES/
+├── test-1.0.0
+│   ├── Makefile
+│   └── test.exe
+└── test-1.0.0.tar.gz
+</pre>
+<p>
+主要文件是 <code>~/rpmbuild/SOURCES/test-1.0.0/Makefile</code> 规定了如何执行安装步骤:
+</p>
+<div class="source"><pre><span></span><span class="cp">ifdef DESTDIR</span>
+        <span class="nv">destDir</span><span class="o">=</span><span class="k">$(</span>DESTDIR<span class="k">)</span>/usr/local/Test/bin
+<span class="cp">else</span>
+        <span class="nv">destDir</span><span class="o">=</span>~/Test/bin
+<span class="cp">endif</span>
+
+<span class="nf">install</span><span class="o">:</span> <span class="n">test</span>.<span class="n">exe</span>
+        <span class="nb">test</span> -d <span class="k">$(</span>destDir<span class="k">)</span> <span class="o">||</span> mkdir -p <span class="k">$(</span>destDir<span class="k">)</span>
+        cp test.exe <span class="k">$(</span>destDir<span class="k">)</span>/test.exe
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">clean</span>
+
+<span class="nf">clean</span><span class="o">:</span>
+        rm -f <span class="k">$(</span>destDir<span class="k">)</span>/test.exe
+</pre></div>
 
 <p>
-这天是周日，也正好是母亲节，但媳妇却需要上班，无法陪孩子一起过节。
+之后将软件源文件目录打包为 <code>*.tar.gz</code> 格式文件。
+</p>
+</div>
+</div>
+<div class="outline-3" id="outline-container-orgecdb1fd">
+<h3 id="orgecdb1fd"><span class="section-number-3">1.2</span> 创建SPEC文件</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+使用 <code>vim</code> 打开 <code>*.spec</code> 后缀文件时会自动加载模板，源自于读取了模板文件 <code>/usr/share/vim/vimfiles/template.spec</code>.
 </p>
 <p>
-孩子五六岁了，早上和孩子一起洗漱的时候，孩子问：“妈妈呢？”
+如果自己要添加新模板则:
 </p>
+<pre class="example">
+$ vim /etc/vimrc
+
+autocmd BufNewFile *.spec 0r /usr/share/vim/vimfiles/template.spec  # 自带的模板规则
+autocmd BufNewFile *.test 0r /usr/share/vim/vimfiles/template.test  # 自定义的新增模板规则
+</pre>
 <p>
-我很高兴孩子会主动问起妈妈，也明白它为什么会这样问，因为一般周末的早上是妈妈陪他洗漱的。
+<code>~/rpmbuild/SPECS/test.spec</code> 内容:
 </p>
+<pre class="example">
+#
+# 以#符号开头的行是注释行
+# 2022-10-21
+# Author: LeslieZhu
+
+# 会创建目录: rpmbuild/BUILDROOT/%%(name)-%%(version)-%%(release).%%(arch)
+Name:	 test
+
+# 版本号
+Version: 1.0.0
+
+# 发布次数
+Release: 2
+
+Summary: A Test Program
+
+Group: TestTeam
+
+License: GPLv3
+
+# N/A: 表示没有
+URL: N/A
+
+# 构建目标架构
+BuildArch: x86_64
+
+# 用来构建RPM文件的源文件,如果不提供则使用下方的%files
+Source0: %{name}-%{version}.tar.gz
+
+# 构建的时候依赖的软件包
+BuildRequires: gcc,vim
+
+# 软件运行时需要的软件包
+Requires: gcc,vim
+
+%description
+
+This is a test program.
+
+# 测试安装目录
+BuildRoot: %_topdir/BUILDROOT
+
+# 构建软件包之前要做的事情
+%prep
+
+# 解压并cd,将%_sourcedir内容解压到%_builddir
+%setup -q
+
+
+%build
+# 如果有源码编译则一般是 ./configure %{?_smp_mflags}
+# make %{?_smp_mflags}
+
+%install
+
+make DESTDIR=%{buildroot} install
+
+
+%pre
+# rpm文件安装前
+echo install start....
+
+%post
+# rpm文件安装后
+echo install done
+
+%preun
+# 卸载前
+echo uninstall start...
+
+%postun
+# 卸载后
+echo uninstall done
+
+%clean
+# 清理
+echo clean start...
+make DESTDIR=%{buildroot} clean
+echo clean done...
+
+
+%files
+
+# /path/to/ 如果是某个目录则直接把目录写到这里即可
+/usr/local/Test/bin/test.exe
+
+%doc
+
+# /path/to/docfile 文档路径
+</pre>
 <p>
-我带点叹息说道：“妈妈去上班了啊。。。”
+此时目录结构:
 </p>
+<pre class="example">
+├── BUILD
+├── BUILDROOT
+├── RPMS
+├── SOURCES
+│   ├── test-1.0.0
+│   │   ├── Makefile
+│   │   └── test.exe
+│   └── test-1.0.0.tar.gz
+├── SPECS
+│   └── test.spec
+└── SRPMS
+</pre>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org5c98af1">
+<h3 id="org5c98af1"><span class="section-number-3">1.3</span> 构建RPM文件</h3>
+<div class="outline-text-3" id="text-1-3">
+<pre class="example">
+$ rpmbuild -ba SPECS/test.spec  # 二进制和src rpm文件
+$ rpmbuild -bb SPECS/test.spec  # 只生成二进制rpm文件
+$ rpmbuild -bs SPECS/test.spec  # 只生成src rpm文件
+</pre>
 <p>
-孩子望着我，追问道：“为什么要上班呢？今天不是母亲节吗？”
+目录文件:
 </p>
-<p>
-我一时不知如何回答。
-</p>
-<p>
-昨天晚上媳妇下班回来后，已经为家里做了一个蛋糕，就当是陪孩子过母亲节了。
-</p>
-<p>
-我说：“今天是母亲节啊，但妈妈需要去上班的；不过妈妈为你做好了蛋糕，妈妈是不是很爱你啊？”
-</p>
-<p>
-孩子高高兴兴的洗漱了。
-</p>
-<p>
-这段时间因为疫情，幼儿园迟迟不能开学，一直只能呆在家里过无比漫长的寒假。
-</p>
-<p>
-孩子是开心的，可以每天看电视和疯玩，但家长是崩溃的，比如我，既要在家里远程办公，还要打理孩子的生活起居。
-</p>
-<p>
-如果孩子比较听话好管也就罢了，偏偏自己孩子是个不服管教的调皮孩子，一天到晚想着看电视，不爱学习。
-</p>
-<p>
-但好在家里就我一个大人，可以一言堂，也可以万事商量着来，目的就是在自己得空的时候，抓紧一点孩子的学习。
-</p>
-<p>
-目前阶段主要是简单的数学加减法和汉字拼音，其它的也实在没有精力和能力来教了。
-</p>
-<p>
-照例，吃完午饭我出了一张小试卷，包含写数字和加减法，孩子很不情愿的在推脱不了的情况下，乖乖完成了。
-</p>
-<p>
-看着写的七扭八拐的数字，只能叹一口气，让他自己写上日期、姓名，然后自己给自己打分，照例都要打上100分，否则就要哭鼻子。
-</p>
-<p>
-这样，一天的学习就算完了，但我的折磨才刚刚开始。
-</p>
-<p>
-三四岁的时候给他买了一套大英百科全书，他天天翻，各种问，莫名其妙的就喜欢了各种蛇。
-</p>
-<p>
-一天到晚找机会让我给他查各种蛇的图片和视频看，比如叶鼻蛇、笄蛭。
-</p>
-<p>
-在我查的时候，他还一副教书先生的样说：“笄是竹字头的，蛭是水蛭的蛭，知道了没有？”
-</p>
-<p>
-把我气得说不出话来，后来我就拿一张纸，写上“笄蛭”两个字，然后写上拼音；然后告诉他，你自己去电脑上查。
-</p>
-<p>
-他就畏畏缩缩、反复确认拼音没打错后，查到一个“笄蛭”开心的不得了。
-</p>
-<p>
-我也为自己的机智暗暗自喜，但后面的烦恼随之而来。
-</p>
-<p>
-有一次他看一个管水母的视频，上面有一个英文单词，问我是什么意思。
-</p>
-<p>
-我心想孩子这么好学，要好好引导，就用手机打开谷歌翻译的照相翻译功能，对照视频上的英文就自动看到翻译了。
-</p>
-<p>
-但后面事态超出了我的预估，他又看到很多视频里面的英文单词，非要我告诉是什么意思，但翻译也翻译不出来，因为是非常专业的生物术语单词。
-</p>
-<p>
-这样的事情每天在上演，孩子每天让我查东查西，但他自己的拼音能力却并没有什么提高，我想是方法不对。
-</p>
-<p>
-于是，我跟他说：“我给你买一本字典好不好，你想查什么你就去上面看，看到拼音后自己就可以在电脑上查了。”
-</p>
-<p>
-他欣然答应。
-</p>
-<p>
-很快，他得到了一本字典。
-</p>
-<p>
-看着这本字典，我想到了自己的母亲，她也曾给我买过一本字典。
-</p>
-<p>
-那是2001年，从小学升初中, 那天正好是报名开学的日子。
-</p>
-<p>
-从学校报到完后，回家时路过集市，本想说给我买件衣服开学穿，但看来看去都不喜欢。
-</p>
-<p>
-路过集市边上的中心小学，小学门口有个老大爷摆摊卖一些学习资料和书籍，我看中了一本新华字典。
-</p>
-<p>
-翻了翻，对母亲说：“妈，我想要一本字典！”
-</p>
-<p>
-母亲看出了我想买的意思，问：“你们上学需要字典吗？”
-</p>
-<p>
-我怏怏的说：“有字典当然好，可以查一些不认识的字，但大部分字我都认识了。”
-</p>
-<p>
-母亲问了价钱，是五块钱一本，犹豫了一下还是买了。
-</p>
-<p>
-那本字典陪着我度过了初中时期。
-</p>
-<p>
-那时候书本上已经有了文言文，自己也看了很多小说，虽然这本字典并没有发挥太大的作用，但母亲对我学习的支持却记在心头。
-</p>
-<p>
-时过境迁，物是人非，那已经是二十年前的事情了。
-</p>
-<p>
-真怀念那些可以脱口而出叫一声“妈”的岁月！
-</p>
+<pre class="example">
+├── BUILD
+│   └── test-1.0.0
+│       ├── debugfiles.list
+│       ├── debuglinks.list
+│       ├── debugsources.list
+│       ├── elfbins.list
+│       ├── Makefile
+│       └── test.exe
+├── BUILDROOT
+│   └── test-1.0.0-2.x86_64
+│       └── usr
+│           └── local
+│               └── Test
+│                   └── bin
+├── RPMS
+│   └── x86_64
+│       ├── test-1.0.0-2.x86_64.rpm
+│       └── test-debuginfo-1.0.0-2.x86_64.rpm
+├── SOURCES
+│   ├── test-1.0.0
+│   │   ├── Makefile
+│   │   └── test.exe
+│   └── test-1.0.0.tar.gz
+├── SPECS
+│   └── test.spec
+└── SRPMS
+</pre>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org52d1252">
+<h3 id="org52d1252"><span class="section-number-3">1.4</span> 安装软件包</h3>
+<div class="outline-text-3" id="text-1-4">
+<pre class="example">
+$ sudo rpm -ivh RPMS/x86_64/test-1.0.0-2.x86_64.rpm
+
+Preparing...                          ################################# [100%]
+install start....
+Updating / installing...
+   1:test-1.0.0-2                     ################################# [100%]
+install done
+
+$ ls /usr/local/Test/bin/test.exe
+
+/usr/local/Test/bin/test.exe
+</pre>
+</div>
+</div>
+<div class="outline-3" id="outline-container-org4bdaf47">
+<h3 id="org4bdaf47"><span class="section-number-3">1.5</span> 卸载软件包</h3>
+<div class="outline-text-3" id="text-1-5">
+<pre class="example">
+$ sudo rpm -e test-1.0.0-2
+uninstall start...
+uninstall done
+
+$ ll /usr/local/Test/bin/
+total 0
+</pre>
+</div>
+</div>
+</div>
+<div class="outline-2" id="outline-container-org016195e">
+<h2 id="org016195e"><span class="section-number-2">2</span> 资源</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li><a href="https://rpm.org/index.html">rpm.org</a></li>
+<li><a href="https://rpm-software-management.github.io/rpm/manual/spec.html">rpm spec doc</a></li>
+<li><a href="https://blog.csdn.net/nirendao/article/details/79302135">如何制作一个rpm文件</a></li>
+<li><a href="https://blog.csdn.net/u012373815/article/details/73257754">rpmbuild制作rpm 包</a></li>
+</ul>
+</div>
+</div>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2020-05-10 Sun，共1298字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-01-30 Mon，共417字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2020/05/10/I_want_a_dictionary.html" title="妈，我想要一本字典！">http://www.lesliezhu.com/2020/05/10/I_want_a_dictionary.html</a>
+        <a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html" title="制作rpm安装包文件">http://www.lesliezhu.com/2022/10/24/yum_rpm.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -433,9 +623,9 @@
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/10/22/cpp_1.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2019/10/17/积雨云.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>
