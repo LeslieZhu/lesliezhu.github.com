@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> Protocol Buffers:谷歌开源的数据交换格式协议 </title>
+            <link> http://www.lesliezhu.com/2023/01/31/protobuf.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2023/01/31/protobuf.html</guid>
+            <category><![CDATA[C++学习与实践]]></category>
+            <pubDate>2023-01-31 Tue</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2023/01/31/protobuf.html</comments>
+            </item>
+            
+            <item>
             <title> 制作rpm安装包文件 </title>
             <link> http://www.lesliezhu.com/2022/10/24/yum_rpm.html </link>
             <author><![CDATA[吴羽舒]]></author>
