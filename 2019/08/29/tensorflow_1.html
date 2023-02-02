@@ -1,0 +1,509 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>源码编译TensorFlow为C++ API动态库</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="minyilife@use-wechat.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        <style></style>
+        </head>
+        
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>源码编译TensorFlow为C++ API动态库</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/机器学习.html"><i class="机器学习"></i>机器学习</a> , <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        <div id='content'>
+<h2>引言</h2>
+<p>根据文档 <a href="https://tensorflow.google.cn/install">https://tensorflow.google.cn/install</a> 进行TensorFlow的安装时，要特别注意环境依赖的版本号，如果某个依赖项版本号不一致就会出现问题，比如使用的Python版本、Bazel版本、ProtocolBuffers版本等。</p>
+<p>如果是通过Pip安装Python库的形式会容易一些，但如果想从源码编译，尤其是想编译出C/C++ API动态库形式就会比较麻烦，即使编译成功还要避免和其它库出现ABI冲突，参考:  <a href="https://github.com/rangsimanketkaew/tensorflow-cpp-api">https://github.com/rangsimanketkaew/tensorflow-cpp-api</a> 可以节省很多时间。</p>
+<h2>Pip安装(TersorFlow 2)</h2>
+<p>目前支持Python3.6~3.9:</p>
+<div class="highlight"><pre><span></span>$ sudo apt update
+$ sudo apt install python3-dev python3-pip python3-venv
+
+$ python3 --version
+$ pip3 --version
+
+# Requires the latest pip
+$ pip install --upgrade pip
+
+# Current stable release for CPU and GPU
+$ pip install tensorflow
+
+# Or try the preview build (unstable)
+$ pip install tf-nightly
+</pre></div>
+<p>验证安装成功:</p>
+<div class="highlight"><pre><span></span>$ ipython
+
+In [1]: import tensorflow as tf
+This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+
+In [2]:  tf.version.VERSION
+Out[2]: '2.11.0'
+
+In [3]: print(tf.reduce_sum(tf.random.normal([1000, 1000])))
+tf.Tensor(229.19952, shape=(), dtype=float32)
+</pre></div>
+<h2>Docker安装</h2>
+<div class="highlight"><pre><span></span>$ docker pull tensorflow/tensorflow:latest  # Download latest stable image
+$ docker run -it -p 8888:8888 tensorflow/tensorflow:latest-jupyter  # Start Jupyter server
+</pre></div>
+<h2>源码安装</h2>
+<p>进行源码安装要先注意几个问题：</p>
+<ul>
+<li>根据 <a href="https://tensorflow.google.cn/install/pip?hl=zh-cn%EF%BC%89">https://tensorflow.google.cn/install/pip?hl=zh-cn%EF%BC%89</a> 官方编译好的软件包，大概知道TensorFlow版本和Python版本之间是否支持，比如Python3.7可以使用r2.6分支</li>
+<li>本地安装的Bazel版本，这个只要源码分支确定了，编译的时候会自动检查版本是否一致</li>
+<li>依赖项（比如protobuf）是否使用源码里面自带版本，还是使用本地系统另外安装的版本，它们直接版本差异可能导致后面编译的动态库使用问题</li>
+</ul>
+<p>使用r2.6分支进行源码编译:</p>
+<div class="highlight"><pre><span></span>$ git clone git@github.com:tensorflow/tensorflow.git
+$ cd tensorflow/
+
+$ git checkout r2.6
+</pre></div>
+<p>查看该分支依赖的protobuf版本:</p>
+<div class="highlight"><pre><span></span>$ grep -i protobuf tensorflow/workspace2.bzl
+protobuf-3.9.2
+</pre></div>
+<p>因为本地已经安装的版本不一致，需要降级安装3.9.2:</p>
+<div class="highlight"><pre><span></span>$ protoc --version
+libprotoc 3.14.0
+
+$ git clone https://github.com/protocolbuffers/protobuf.git
+$ git checkotu v3.9.2
+$ ./autogen.sh
+$ ./configure
+$ make 
+$ make install
+
+$ protoc --version
+libprotoc 3.9.2
+</pre></div>
+<p>现在可以开始编译:</p>
+<div class="highlight"><pre><span></span>$ bazel --version
+bazel 3.7.2
+
+$ ./configure  # 这次都选N
+
+$ bazel build --config=opt //tensorflow:libtensorflow.so    # C
+$ bazel build --config=opt //tensorflow:libtensorflow_cc.so # C++
+$ bazel build --config=cuda //tensorflow:libtensorflow_cc.so # with CUDA
+$ bazel build --config=opt //tensorflow:libtensorflow_framework.so # framework base
+$ bazel build --config=opt //tensorflow:install_headers     # headers
+
+$ ls -1 bazel-bin/tensorflow/libtensorflow*.so*
+
+$ bazel build --config=opt //tensorflow/tools/lib_package:libtensorflow
+$ ls -1 bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz
+
+$ bazel build //tensorflow/tools/pip_package:build_pip_package # py
+$ ls -1 bazel-bin/tensorflow/tools/pip_package/build_pip_package
+$ mkdir tensorflow_pkg
+$ ./bazel-bin/tensorflow/tools/pip_package/build_pip_package ./tensorflow_pkg
+$ ls -1 ./tensorflow_pkg/tensorflow-2.9.3-cp37-cp37m-linux_x86_64.whl
+$ pip3 install --user ./tensorflow_pkg/tensorflow-2.9.3-cp37-cp37m-linux_x86_64.whl
+</pre></div>
+<p>对python, bazel等版本不一致问题都可能导致出问题，参考: <a href="https://github.com/rangsimanketkaew/tensorflow-cpp-api">https://github.com/rangsimanketkaew/tensorflow-cpp-api</a></p>
+<h2>设置API路径和变量</h2>
+<p>先设置头文件和链接库文件:</p>
+<div class="highlight"><pre><span></span>$ mkdir /usr/local/tensorflow/lib/
+
+$ rsync -av bazel-bin/tensorflow/include  /usr/local/tensorflow/
+$ rsync -av bazel-bin/tensorflow/libtensorflow*.so*  /usr/local/tensorflow/lib/
+$ export LD_LIBRARY_PATH=/usr/local/tensorflow/lib 
+
+# for Mac
+$ rsync -av bazel-bin/tensorflow/libtensorflow*.dylib*  /usr/local/tensorflow/lib/
+$ export DYLD_LIBRARY_PATH=/usr/local/tensorflow/lib
+</pre></div>
+<p>特别说明一下，如果是在Mac电脑上进行的，却只将<code>.so</code>共享库文件放到指定位置，没有将<code>.dylib</code>文件一起放过去，会遇到奇奇怪怪的问题:</p>
+<div class="highlight"><pre><span></span>$ otool -L test
+test:
+    @rpath/libtensorflow_cc.so.2 (compatibility version 0.0.0, current version 0.0.0)
+    @rpath/libtensorflow_framework.so.2 (compatibility version 0.0.0, current version 0.0.0)
+    /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 1300.23.0)
+    /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1311.100.3)
+
+$ ./test
+dyld[54114]: Library not loaded: @rpath/libtensorflow_framework.2.dylib
+  Referenced from: /usr/local/tensorflow/lib/libtensorflow_cc.so.2.6.5
+  Reason: tried: '/usr/local/tensorflow/lib//libtensorflow_framework.2.dylib' (no such file), 
+  '/usr/local/tensorflow/lib/../_solib_darwin_x86_64/_U_S_Stensorflow_Clibtensorflow_Uc
+  c.so.2.6.5___Utensorflow/libtensorflow_framework.2.dylib' (no such file), '/usr/local/ten
+  sorflow/lib/libtensorflow_framework.2.dylib' (no such file), '/usr/local/lib/libtensorflo
+  w_framework.2.dylib' (no such file), '/usr/lib/libtensorflow_framework.2.dylib' (no such file)
+</pre></div>
+<p>明明使用的是<code>.so</code>文件，却说找不到<code>.dylib</code>，究其根本，原因是:</p>
+<div class="highlight"><pre><span></span>$ otool -L /usr/local/tensorflow/lib/libtensorflow_cc.so.2.6.5
+/usr/local/tensorflow/lib/libtensorflow_cc.so.2.6.5:
+    @rpath/libtensorflow_cc.so.2 (compatibility version 0.0.0, current version 0.0.0)
+    /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 1300.23.0)
+    @rpath/libtensorflow_framework.2.dylib (compatibility version 0.0.0, current version 0.0.0)
+    /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1311.100.3)
+    /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 1858.112.0)
+    /System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 60158.100.133)
+    /System/Library/Frameworks/IOKit.framework/Versions/A/IOKit (compatibility version 1.0.0, current version 275.0.0)
+    /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 1858.112.0)
+    /usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+</pre></div>
+<p>可以看到虽然这是一个<code>.so</code>文件，但其实它底下依赖了<code>.dylib</code>文件的；如果只是按照其他的教程亦步亦趋只将<code>.so</code>复制过去，就会发现能够顺利编译成功却又无法运行，徒增烦恼。</p>
+<h2>调用C API</h2>
+<ul>
+<li>test_c.c:</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;tensorflow/c/c_api.h&gt;</span><span class="cp"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="n">printf</span><span class="p">(</span><span class="s">"Hello from TensorFlow C library version %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">TF_Version</span><span class="p">());</span><span class="w"></span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>编译:</p>
+<div class="highlight"><pre><span></span>$ gcc test_c.c -I/usr/local/tensorflow/include/ -L/usr/local/tensorflow/lib/ -ltensorflow -ltensorflow_framework -o test_c
+$ ./test_c
+Hello from TensorFlow C library version 2.6.5
+</pre></div>
+<h2>调用C++ API</h2>
+<ul>
+<li>test_c++.cpp:</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;tensorflow/core/platform/env.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;tensorflow/core/public/session.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">tensorflow</span><span class="p">;</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Session</span><span class="o">*</span><span class="w"> </span><span class="n">session</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewSession</span><span class="p">(</span><span class="n">SessionOptions</span><span class="p">(),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">session</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">status</span><span class="p">.</span><span class="n">ok</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">status</span><span class="p">.</span><span class="n">ToString</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Session successfully created.</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>编译运行:</p>
+<div class="highlight"><pre><span></span>$ g++ -std=c++17 test_c++.cpp -I/usr/local/tensorflow/include/ -L/usr/local/tensorflow/lib/ -ltensorflow_cc -ltensorflow_framework -o test_c++
+$ ./test_c++
+This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  SSE4.2 AVX AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+Session successfully created.
+</pre></div>
+<h2>直接和TF源码一起编译</h2>
+<p>还有一种方法就是不提前编译动态库，而是直接在TF源码里面一起编译，就可以直接编译为可执行程序，也可以编译为动态库；这个好处是依赖动态库少方便部署，却包含了大量不需要的东西导致文件很大，而且编译也很慢。</p>
+<p>比如，使用这样的目录结果:</p>
+<div class="highlight"><pre><span></span>tensorflow-src/tensorflow/test-tf/
+tensorflow-src/tensorflow/test-tf/BUILD
+tensorflow-src/tensorflow/test-tf/test-tf.cpp
+</pre></div>
+<ul>
+<li>test-tf/BUILD:</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="n">cc_binary</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"test-tf"</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">srcs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s">"test-tf.cpp"</span><span class="p">],</span><span class="w"></span>
+<span class="w">    </span><span class="n">deps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">        </span><span class="s">"//tensorflow/core:tensorflow"</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="p">],</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</pre></div>
+<ul>
+<li>test-tf/test-tf.cpp:</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"tensorflow/core/platform/env.h"</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"tensorflow/core/public/session.h"</span><span class="cp"></span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">tensorflow</span><span class="p">;</span><span class="w"></span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="n">Session</span><span class="o">*</span><span class="w"> </span><span class="n">session</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">Status</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewSession</span><span class="p">(</span><span class="n">SessionOptions</span><span class="p">(),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">session</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">status</span><span class="p">.</span><span class="n">ok</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">status</span><span class="p">.</span><span class="n">ToString</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Session successfully created.</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
+</pre></div>
+<ul>
+<li>编译:</li>
+</ul>
+<div class="highlight"><pre><span></span>$ cd ~/tensorflow-src/
+$ ./configure
+$ cd tensorflow/test-tf/
+$ bazel build --config=opt :test-tf
+$ cd ~/tensorflow-src/bazel-bin/tensorflow/test-tf/
+$ ./test-tf
+</pre></div>
+<h2>总结</h2>
+<p>TensorFlow支持最好的是Python，而C++是没有官方直接提供下载版本的，但为了线下用Python得到训练模型结果，然后在线上用C++开发的系统来使用，又的确是一个需求；过程虽然曲折，但也是必由之路!</p>
+<h2>资料</h2>
+<ul>
+<li>仓库: <a href="https://github.com/tensorflow/tensorflow">https://github.com/tensorflow/tensorflow</a></li>
+<li>文档: <a href="https://tensorflow.google.cn/?hl=zh-cn">https://tensorflow.google.cn/?hl=zh-cn</a></li>
+<li>教程: <a href="https://tensorflow.google.cn/tutorials?hl=zh-cn">https://tensorflow.google.cn/tutorials?hl=zh-cn</a></li>
+<li>编译动态库: <a href="https://github.com/rangsimanketkaew/tensorflow-cpp-api">https://github.com/rangsimanketkaew/tensorflow-cpp-api</a></li>
+<li><a href="https://github.com/LeslieZhu/tensorflow-cpp-api/blob/main/compile_tensorflow_cpp.md">https://github.com/LeslieZhu/tensorflow-cpp-api/blob/main/compile_tensorflow_cpp.md</a></li>
+<li><a href="https://github.com/chiphuyen/stanford-tensorflow-tutorials">https://github.com/chiphuyen/stanford-tensorflow-tutorials</a></li>
+<li><a href="https://web.stanford.edu/class/cs20si/syllabus.html">https://web.stanford.edu/class/cs20si/syllabus.html</a></li>
+<li><a href="http://cs231n.github.io/python-numpy-tutorial/">http://cs231n.github.io/python-numpy-tutorial/</a></li>
+<li><a href="https://blog.csdn.net/asialee_bird/article/details/100990483">https://blog.csdn.net/asialee_bird/article/details/100990483</a></li>
+<li><a href="https://cloud.tencent.com/developer/article/1006107">https://cloud.tencent.com/developer/article/1006107</a></li>
+<li><a href="https://iq.opengenus.org/build-tensorflow-cpp-library/">https://iq.opengenus.org/build-tensorflow-cpp-library/</a></li>
+<li><a href="https://jacobgil.github.io/deeplearning/tensorflow-cpp">https://jacobgil.github.io/deeplearning/tensorflow-cpp</a></li>
+<li><a href="https://www.cnblogs.com/hrlnw/p/7383951.html">https://www.cnblogs.com/hrlnw/p/7383951.html</a></li>
+<li><a href="https://medium.com/@jimfleming/loading-a-tensorflow-graph-with-the-c-api-4caaff88463f">https://medium.com/@jimfleming/loading-a-tensorflow-graph-with-the-c-api-4caaff88463f</a></li>
+</ul>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-02-02 Thu，共718字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html" title="源码编译TensorFlow为C++ API动态库">http://www.lesliezhu.com/2019/08/29/tensorflow_1.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li><li><a href="http://www.lesliezhu.com/2023/01/28/learn_japanese_2.html"><i class="fa fa-file-o"></i>标准日本语初级(第1课):李先生是中国人</a></li><li><a href="http://www.lesliezhu.com/2023/01/23/field_under_the_sun.html"><i class="fa fa-file-o"></i>在希望的田野上</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>29</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/机器学习.html">机器学习<span>1</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>50</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+            <li><a href="https://github.com/ledge-lang" title="Ledge: 正在开发的一个编程语言" target="_blank"><i class="fa fa-code-fork"></i>Ledge: 正在开发的一个编程语言</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014-2023 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        
