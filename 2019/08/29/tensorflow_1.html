@@ -141,7 +141,7 @@ $ docker run -it -p 8888:8888 tensorflow/tensorflow:latest-jupyter  # Start Jupy
 <ul>
 <li>根据 <a href="https://tensorflow.google.cn/install/pip?hl=zh-cn%EF%BC%89">https://tensorflow.google.cn/install/pip?hl=zh-cn%EF%BC%89</a> 官方编译好的软件包，大概知道TensorFlow版本和Python版本之间是否支持，比如Python3.7可以使用r2.6分支</li>
 <li>本地安装的Bazel版本，这个只要源码分支确定了，编译的时候会自动检查版本是否一致</li>
-<li>依赖项（比如protobuf）是否使用源码里面自带版本，还是使用本地系统另外安装的版本，它们直接版本差异可能导致后面编译的动态库使用问题</li>
+<li>依赖项（比如protobuf）是否使用源码里面自带版本，还是使用本地系统另外安装的版本，它们之间版本差异可能导致后面编译的动态库使用问题</li>
 </ul>
 <p>使用r2.6分支进行源码编译:</p>
 <div class="highlight"><pre><span></span>$ git clone git@github.com:tensorflow/tensorflow.git
@@ -283,8 +283,8 @@ To enable them in other operations, rebuild TensorFlow with the appropriate comp
 Session successfully created.
 </pre></div>
 <h2>直接和TF源码一起编译</h2>
-<p>还有一种方法就是不提前编译动态库，而是直接在TF源码里面一起编译，就可以直接编译为可执行程序，也可以编译为动态库；这个好处是依赖动态库少方便部署，却包含了大量不需要的东西导致文件很大，而且编译也很慢。</p>
-<p>比如，使用这样的目录结果:</p>
+<p>还有一种方法就是不提前编译动态库，而是直接在TF源码里面一起编译，就可以直接编译为可执行程序，也可以编译为动态库；这个好处是依赖动态库少，方便部署，却包含了大量不需要的东西导致文件很大，而且编译也很慢。</p>
+<p>比如，使用这样的目录结构:</p>
 <div class="highlight"><pre><span></span>tensorflow-src/tensorflow/test-tf/
 tensorflow-src/tensorflow/test-tf/BUILD
 tensorflow-src/tensorflow/test-tf/test-tf.cpp
