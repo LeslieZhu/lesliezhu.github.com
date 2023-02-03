@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> TensorFlow读取.pb模型文件并预测图片 </title>
+            <link> http://www.lesliezhu.com/2023/02/03/tensorflow_2.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2023/02/03/tensorflow_2.html</guid>
+            <category><![CDATA[C++学习与实践]]></category><category><![CDATA[机器学习]]></category>
+            <pubDate>2023-02-03 Fri</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2023/02/03/tensorflow_2.html</comments>
+            </item>
+            
+            <item>
             <title> 源码编译TensorFlow为C++ API动态库 </title>
             <link> http://www.lesliezhu.com/2019/08/29/tensorflow_1.html </link>
             <author><![CDATA[吴羽舒]]></author>
