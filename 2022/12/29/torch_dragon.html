@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>Docker镜像里为什么Linux无法安装Man Pages？</title>
+        <title>火把龙</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>Docker镜像里为什么Linux无法安装Man Pages？</h1>
+        <h1>火把龙</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,67 +96,39 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/南野集.html"><i class="南野集"></i>南野集</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id='content'>
-<h2>引言</h2>
-<p><code>Man Pages</code>是Linux系统常用的在线文档手册。</p>
-<p>常说在Linux里不需要记住软件命令的用法，只要会<code>找男人</code>就行了，指的就是查看这个<code>man pages</code>文档。</p>
-<p>Docker是比较常用的容器，常用于部署应用或作为开发环境，但一般的Docker镜像为了减少体积，不会带有<code>Man Pages</code>文档手册。</p>
-<p>有时候哪怕按照一般的做法使用<code>yum</code>安装了<code>man-pages</code>软件包，发现还是没有按预期安装文档，这是怎么回事呢？</p>
-<h2>man pages文档手册</h2>
-<p>一般情况下，这样安装<code>man-pages</code>软件包以下载文档手册的:</p>
-<div class="highlight"><pre><span></span>$ yum install man man-pages man-db
-
-$ mandb <span class="c1"># 更新man文档手册的索引信息</span>
-
-$ man strcpy <span class="c1"># 查看strcpy文档手册</span>
-</pre></div>
-<p>假设现在要查看<code>nlopt</code>相关的文档，但不知道哪个软件包包含有这份文档手册，则可以这样查看:</p>
-<div class="highlight"><pre><span></span>$ man nlopt
-No manual entry <span class="k">for</span> nlopt
-
-$ yum whatprovides */nlopt.*.gz
-
-NLopt-devel-2.4.2-2.el7.x86_64 : Development files <span class="k">for</span> NLopt
-Repo        : epel
-Matched from:
-Filename    : /usr/share/man/man3/nlopt.3.gz
-
-$ yum install NLopt-devel
-
-or
-
-$ yum reinstall NLopt-devel
-
-$ man -w nlopt <span class="c1"># 找到文档具体位置</span>
-/usr/share/man/man3/nlopt.3.gz
-
-$ man nlopt <span class="c1"># 查看文档</span>
-
-$ man <span class="m">3</span> nlopt
-</pre></div>
-<p>找到软件包名字后，安装软件就会有下载对应文档，进而可以通过<code>man</code>命令查看了。</p>
-<p>当然有的软件包提供的文档不是<code>man-page</code>格式，而是<code>info</code>格式，那就另当别论。</p>
-<h2>yum无法下载文档</h2>
-<p>前面讲到Docker镜像为了减少大小，一般是不会下载软件文档的，即使后面重新安装了软件，会发现软件虽然安装了但文档却没有下载，这是通过<code>/etc/yum.conf</code>来设置的:</p>
-<div class="highlight"><pre><span></span><span class="k">[main]</span><span class="w"></span>
-<span class="na">//...</span><span class="w"></span>
-<span class="na">tsflags</span><span class="o">=</span><span class="s">nodocs</span><span class="w"></span>
-</pre></div>
-<p>将这行配置注释后，使用<code>yum</code>安装软件时就会自动下载文档了；其实这个选项是传递给了<code>rpm</code>命令，参看: <a href="https://jsmith.fedorapeople.org/drafts/SMG/html/Software_Management_Guide/ch06s22.html">yum-plugin-tsflags</a></p>
+        <div id='content-reading'>
+<p>疫情后第一个春节，西安各大景点的游客人山人海，爱热闹却又怕人多的我就一直在家歇着；元宵夜，当窗外此起彼伏的烟花爆竹声传来时，还是禁不住的又一次想起来了家乡的火把龙。</p>
+<p>小时候，只是跟着大人在元宵前一天走路去一个地方看舞龙表演，那是一个在山里的小村子，都是村里的青壮年来进行表演。表演的地方不大，是在一个小河边草地上，据说很久以前这里是有一个龙王庙的。男人们在山下河边放鞭炮，妇女们则带着孩子在远远的山坡上望着，之所以要躲在远远的，绝不仅仅是怕爆竹声，而是怕一种叫“神铳”的东西。所谓的神铳，是手举一根长长的棍子，棍子顶部是一个铁块做成的腔体，腔体填满火药，再用木片夯实，一旦点燃引爆会发出震耳欲聋的声音。</p>
+<p>小时候对这种神铳是十分好奇的，因为家人们交代，捡到神铳爆破后散落的木片就会带来好运气；这个木皮有一个专属名字叫“神铳尖”，捡到它不仅会带来好运，把它放到鸡窝里还可以多下鸡蛋。每次我都期望可以捡到一两片神铳尖，但一次都没捡到过。</p>
+<p>舞龙表演舞的是火把龙，制作比较简单，一根木棍上面插一捆稻草，稻草上再插几根线香就组成了一节龙，然后组成一个舞龙的小队伍。舞龙的规程也不复杂，火把龙会和一头纸糊的漂亮鲤鱼缠斗一番，达到辛弃疾诗词里面的“一夜鱼龙舞”效果，最后的最后把火把龙一把火烧了，献给龙王以驱邪祈福；那个鲤鱼自然是不烧的，一方面制作起来不易，另一方面带回去正好有“年年有余”的寓意。</p>
+<p>以往等到舞龙到天色已晚时候，小孩就会跟着大人走路回家了，因为路途不算太近，因此我几乎从来没有完整看完过；到了我读初一时候那年，因为几个班上同学就是这个村子里的，在一起玩闹着，我终于坚持到了最后，正要和伙伴一起回家的时候，附近的村民都过来叫我们到家里去喝茶吃饭。怀着忐忑好奇的心情被带到了一户村民家，真是热情好客的客家人啊，主人嘴里说着没有什么菜，桌上却摆满了一桌子好吃的。我简简单单吃了一点，然后好奇的听其它大人寒暄。。。。。</p>
+<p>初二的一天上午，班主任走进教室，说“你，你，你，还有那个谁，到教室外面站成一排”，被指到的同学都满脸疑惑的走出来；班主任又左看右看，高的在前，矮的在后，最后叫几个稍微矮一些的回去教室。然后，班主任宣布市里举办文艺表演活动，各乡镇都要选送一支表演节目，我们乡镇选的是火把龙表演。于是，个子还算中等偏上的我也成了火把龙表演队伍的一员。</p>
+<p>那年是2002年前后，猜想不是庆祝入世就是庆祝申奥成功。我们一队大概十个人，怀着异常兴奋的心情来到乡政府边上的中心小学，接待我们的是一个乡干部负责带队，另一个是从村子里请来的老把式做教练。</p>
+<p>炎热的夏天，上午练习一会大家就感觉疲惫不堪，这种疲惫主要来自于过高期望后的失望。以前好奇的舞龙表演变成手里的一根棍子插捆稻草，然后所有动作就是左摆一下，又摆一下，单调而重复；唯一可以慰藉的是不用上课，在外面吹风聊天总比在教室做题有趣吧。如果说还有什么值得欣慰的，那就是午饭是在乡政府食堂吃饭，那个厨子我早就听说过，但终于是在乡政府吃上他做的饭了。如果在那个夏天，你突然走进乡政府后面大院，会看到一群精瘦的初中生，抱着饭盆狼吞虎咽，那真是一个宁静的夏天啊！</p>
+<p>周五就要去市里表演，给我们的训练时间真心不多，但越是着急就越出问题。先是不断出现稻草松动问题，不是稻草从棍子上甩出去就是棍子插的窟窿太大直接刺穿了；教练也没有办法，因为以前也就表演一两个小时就一把火烧了，哪里会这样持续使用好几天，只能叫我们换个角度重新插上，实在不行只能换一捆新稻草了。</p>
+<p>既然要表演自然会有表演服，但怕提前发给我们表演服会被弄脏，就只发了表演的鞋子，一双朴实无华的布鞋。看着这双老奶奶辈才会穿的布鞋，实在对表演服会省钱到哪种程度充满了好奇。但发完鞋子刚一个上午就出问题了，有个大个子太投入导致用力过猛，鞋子直接破了。负责人笑着说这只是表演的鞋子，质量不是很好，以后大家训练还是穿自己的鞋子，等到表演那天再穿上表演布鞋。</p>
+<p>就这样练习了三四天，周五一大早穿上布鞋到中心小学集合，每人发了一身衣服，是那种薄薄的一层纱布似的衣服，颜色是灰黑色，穿起来有点像道士，总之有点滑稽，没有什么喜庆亮丽的感觉，处处显得朴实无华。坐上大巴一路驰骋，我就算第一次进城了，大巴把我们拉到一个类似体育场的地方，已经能听到运动进行曲的广播声。后来我读高中的时候，才知道那地方是少年宫和市体育场。</p>
+<p>到了后，简单熟悉了下场地和表演流程，接着就是漫长的等待，等到所有乡镇的队伍到齐后，会进行一次预演。预演的时候，看到了其它乡镇的表演队伍，他（她）们都穿的光鲜亮丽，红色镶嵌着黄色，黄色夹杂着绿色，绿色又带着蓝色，让人目不暇接、眼花缭乱；细看之下，表演鹬蚌相争渔翁得利故事的，表演哪吒闹海的，表演鲤鱼跃龙门的。。。那个时候，我突然因为自己举着一捆稻草有一点点不好意思，同学们也都心思差不多，一言不发。</p>
+<p>预演好不容易结束了，就有点大学军训汇报表演一般，一个个队伍经过，台上主持人播报这是某某乡镇的某某表演，如何如何不一而足。负责人带我们吃饭，吃的是炒粉，一上午忙活大家早就饿了，吃着酸辣的江西炒米粉，胃口大开。吃饭的时候，负责人和教练讨论，说预演看下来别的乡镇花了不少经费，我们的火把龙好像有点简陋，让教练想想办法突出点特色；教练说乡下表演时会在稻草上插满点燃的线香，到了傍晚时分开始表演就会特别好看，只看到火光真像一条龙，但这次表演不是“敬神”，恐怕不能插几根线香吧。负责人想了想，说自己有个办法，他跑到边上少年宫买了几捆荧光棒，让我们表演的时候插到稻草上，还说这是秘密武器。</p>
+<p>到了晚上，我们在后台焦急的等待着，负责人和教练帮我们狠狠的甩荧光棒，然后在稻草上插好，给我们打气鼓励，不要慌，跟着龙头的节奏来。我在后台真想跑到台下看表演啊，预演的时候只看了个其它乡镇表演队的造型展示，没看到具体的表演内容，想来一定十分精彩。终于听到叫我们乡镇名字了，大脑一片空白，跟着大伙上台了，火把龙舞起来了，向左摆，向右摆，然后又稀里糊涂的就表演结束了。回到后台我的心跳还是小鹿乱撞，说不出是兴奋还是害怕。本以为要等大会结束看打分名次什么的，却听到负责人和教练交代说，回去就麻烦教练在学校门口把学生们放回学校云云。</p>
+<p>我们坐上大巴就月夜回乡了。</p>
+<p>车子摇摇晃晃，大家还在激动的分享自己在台上看到了什么、想到了什么；教练说大家表演非常成功，乡里也非常感谢我们这些学生们的努力，然后一会到学校门口下车时把衣服和火把龙留下，鞋子就当是发给大家的纪念品。</p>
+<p>车子到了学校门口已经是夜里十一点多，同学们留下衣服和火把龙，穿着布鞋一路跑向寝室。有的同学手里抓着几根荧光棒好像孙悟空摘到了仙桃上蹿下跳，惹得忘记拿荧光棒的同学后悔不已。</p>
+<p>回到寝室，其它同学都已经呼呼大睡，我在大通铺挤出一个位置，也不洗漱，衣服没脱就躺下望着窗外洒入的月光，摸了摸兜里的荧光棒，一阵倦意袭来，竞又是一个甜美的梦乡！</p>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-22 Tue，共385字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-02-08 Wed，共2542字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2022/11/21/man_pages_missing.html" title="Docker镜像里为什么Linux无法安装Man Pages？">http://www.lesliezhu.com/2022/11/21/man_pages_missing.html</a>
+        <a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html" title="火把龙">http://www.lesliezhu.com/2022/12/29/torch_dragon.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -169,9 +141,9 @@ $ man <span class="m">3</span> nlopt
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/11/13/writing_an_interpreter_in_cpp_3.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>

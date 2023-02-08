@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> 火把龙 </title>
+            <link> http://www.lesliezhu.com/2022/12/29/torch_dragon.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/12/29/torch_dragon.html</guid>
+            <category><![CDATA[南野集]]></category>
+            <pubDate>2023-02-08 Wed</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/12/29/torch_dragon.html</comments>
+            </item>
+            
+            <item>
             <title> TensorFlow读取.pb模型文件并预测图片 </title>
             <link> http://www.lesliezhu.com/2023/02/03/tensorflow_2.html </link>
             <author><![CDATA[吴羽舒]]></author>
