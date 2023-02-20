@@ -297,14 +297,14 @@ pImpl习惯用法，即pointer to implementation，指的是以指针的方式�
 <p>
 比如:
 </p>
-<div class="source"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Widget</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">Widget</span><span class="p">();</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Widget</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">Widget</span><span class="p">();</span>
 <span class="w">    </span><span class="c1">//...</span>
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>
@@ -318,15 +318,15 @@ pImpl习惯用法可以降低依赖以提升编译速度，如:
 </p>
 <div class="source"><pre><span></span><span class="c1">// Widget.hpp</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Widget</span><span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">Widget</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="o">~</span><span class="n">Widget</span><span class="p">();</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Widget</span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">Widget</span><span class="p">();</span>
+<span class="w">    </span><span class="o">~</span><span class="n">Widget</span><span class="p">();</span>
 <span class="w">    </span><span class="c1">//...</span>
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
 <span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Impl</span><span class="p">;</span><span class="w">  </span><span class="c1">// 用一个结构体来存储实现部分</span>
 <span class="w">    </span><span class="n">Impl</span><span class="w"> </span><span class="o">*</span><span class="n">pImpl</span><span class="p">;</span><span class="w">  </span><span class="c1">// 用一个指针来访问实现部分</span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 </pre></div>
 
 <p>
@@ -337,31 +337,31 @@ Widget::Impl是一个内部的非完整类型，而这里的技巧就在于用�
 </p>
 <div class="source"><pre><span></span><span class="c1">// Widget.cpp</span>
 
-<span class="k">struct</span><span class="w"> </span><span class="nc">Widget</span><span class="o">::</span><span class="n">Impl</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Widget</span><span class="o">::</span><span class="n">Impl</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="n">Widget</span><span class="p">()</span><span class="w"></span>
-<span class="o">:</span><span class="w"> </span><span class="n">pImpl</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Impl</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">Widget</span><span class="p">()</span>
+<span class="o">:</span><span class="w"> </span><span class="n">pImpl</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Impl</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="p">}</span>
 
-<span class="o">~</span><span class="n">Widget</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">delete</span><span class="w"> </span><span class="n">pImpl</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="o">~</span><span class="n">Widget</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">delete</span><span class="w"> </span><span class="n">pImpl</span><span class="p">;</span>
+<span class="p">}</span>
 
 <span class="c1">// main.cpp</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Widget.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Widget.hpp&quot;</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Widget</span><span class="w"> </span><span class="n">w</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="n">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Widget</span><span class="w"> </span><span class="n">w</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
@@ -369,33 +369,33 @@ Widget::Impl是一个内部的非完整类型，而这里的技巧就在于用�
 </p>
 <div class="source"><pre><span></span><span class="c1">// Widget.hpp</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Widget</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">Widget</span><span class="p">();</span><span class="w"></span>
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Impl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pImpl</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Widget</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">Widget</span><span class="p">();</span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Impl</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pImpl</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="c1">// Widget.cpp</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Widget.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Widget.hpp&quot;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 
-<span class="k">struct</span><span class="w"> </span><span class="nc">Widget</span><span class="o">::</span><span class="n">Impl</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Widget</span><span class="o">::</span><span class="n">Impl</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="n">Widget</span><span class="o">::</span><span class="n">Widget</span><span class="p">()</span><span class="w"></span>
-<span class="o">:</span><span class="w"> </span><span class="n">pImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="p">())</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">Widget</span><span class="o">::</span><span class="n">Widget</span><span class="p">()</span>
+<span class="o">:</span><span class="w"> </span><span class="n">pImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
@@ -403,33 +403,33 @@ Widget::Impl是一个内部的非完整类型，而这里的技巧就在于用�
 </p>
 <div class="source"><pre><span></span><span class="c1">// Widget.hpp</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Widget</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">Widget</span><span class="p">();</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Widget</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">Widget</span><span class="p">();</span>
 <span class="w">    </span><span class="o">~</span><span class="n">Widget</span><span class="p">();</span><span class="w"> </span><span class="c1">// 不使用编译器自动生成的析构函数</span>
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Impl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pImpl</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Impl</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pImpl</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="c1">// Widget.cpp</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Widget.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Widget.hpp&quot;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 
-<span class="k">struct</span><span class="w"> </span><span class="nc">Widget</span><span class="o">::</span><span class="n">Impl</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Widget</span><span class="o">::</span><span class="n">Impl</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="n">Widget</span><span class="o">::</span><span class="n">Widget</span><span class="p">()</span><span class="w"></span>
-<span class="o">:</span><span class="w"> </span><span class="n">pImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="p">())</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">Widget</span><span class="o">::</span><span class="n">Widget</span><span class="p">()</span>
+<span class="o">:</span><span class="w"> </span><span class="n">pImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="p">}</span>
 
 <span class="n">Widget</span><span class="o">::~</span><span class="n">Widget</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w">   </span><span class="c1">// 还是使用编译自动产生的默认析构函数，但此时已经知道Impl的完整定义了。</span>
 </pre></div>
@@ -442,11 +442,11 @@ Widget::Impl是一个内部的非完整类型，而这里的技巧就在于用�
 </p>
 <div class="source"><pre><span></span><span class="c1">// Widget.hpp</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Widget</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">Widget</span><span class="p">();</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Widget</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">Widget</span><span class="p">();</span>
 <span class="w">    </span><span class="o">~</span><span class="n">Widget</span><span class="p">();</span><span class="w">   </span><span class="c1">// 析构函数</span>
 
 <span class="w">    </span><span class="n">Widget</span><span class="p">(</span><span class="n">Widget</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">);</span><span class="w">  </span><span class="c1">// 移动构造函数</span>
@@ -455,44 +455,44 @@ Widget::Impl是一个内部的非完整类型，而这里的技巧就在于用�
 <span class="w">    </span><span class="n">Widget</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">);</span><span class="w">   </span><span class="c1">// 复制构造函数 </span>
 <span class="w">    </span><span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">);</span><span class="w"> </span><span class="c1">// 复制赋值运算符</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Impl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pImpl</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Impl</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pImpl</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="c1">// Widget.cpp</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Widget.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Widget.hpp&quot;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 
-<span class="k">struct</span><span class="w"> </span><span class="nc">Widget</span><span class="o">::</span><span class="n">Impl</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Widget</span><span class="o">::</span><span class="n">Impl</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="n">Widget</span><span class="o">::</span><span class="n">Widget</span><span class="p">()</span><span class="w"></span>
-<span class="o">:</span><span class="w"> </span><span class="n">pImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="p">())</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">Widget</span><span class="o">::</span><span class="n">Widget</span><span class="p">()</span>
+<span class="o">:</span><span class="w"> </span><span class="n">pImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="p">}</span>
 
-<span class="n">Widget</span><span class="o">::~</span><span class="n">Widget</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w"></span>
+<span class="n">Widget</span><span class="o">::~</span><span class="n">Widget</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
 
-<span class="n">Widget</span><span class="o">::</span><span class="n">Widget</span><span class="p">(</span><span class="n">Widget</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w"></span>
-<span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="n">Widget</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">Widget</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w"></span>
+<span class="n">Widget</span><span class="o">::</span><span class="n">Widget</span><span class="p">(</span><span class="n">Widget</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+<span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="n">Widget</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">Widget</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
 
-<span class="n">Widget</span><span class="o">::</span><span class="n">Widget</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"></span>
-<span class="o">:</span><span class="w"> </span><span class="n">pImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="p">(</span><span class="o">*</span><span class="n">rhs</span><span class="p">.</span><span class="n">pImpl</span><span class="p">))</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">Widget</span><span class="o">::</span><span class="n">Widget</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+<span class="o">:</span><span class="w"> </span><span class="n">pImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Impl</span><span class="o">&gt;</span><span class="p">(</span><span class="o">*</span><span class="n">rhs</span><span class="p">.</span><span class="n">pImpl</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="p">}</span>
 
-<span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="n">Widget</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">   </span><span class="o">*</span><span class="n">pImpl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">rhs</span><span class="p">.</span><span class="n">pImpl</span><span class="p">;</span><span class="w"></span>
-<span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="n">Widget</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Widget</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="o">*</span><span class="n">pImpl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">rhs</span><span class="p">.</span><span class="n">pImpl</span><span class="p">;</span>
+<span class="w">   </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
@@ -500,20 +500,20 @@ Widget::Impl是一个内部的非完整类型，而这里的技巧就在于用�
 </p>
 <div class="source"><pre><span></span><span class="c1">// main.cpp</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Widget.hpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Widget.hpp&quot;</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Widget</span><span class="w"> </span><span class="n">w</span><span class="p">;</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Widget</span><span class="w"> </span><span class="n">w</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">Widget</span><span class="w"> </span><span class="n">w1</span><span class="p">(</span><span class="n">w</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">Widget</span><span class="w"> </span><span class="n">w2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">w</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">Widget</span><span class="w"> </span><span class="n">w1</span><span class="p">(</span><span class="n">w</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Widget</span><span class="w"> </span><span class="n">w2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">w</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">w3</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">w</span><span class="p">));</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">w4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">w3</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">w3</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">w</span><span class="p">));</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">w4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">w3</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
@@ -554,7 +554,7 @@ Widget::Impl是一个内部的非完整类型，而这里的技巧就在于用�
             <div class="pagination">
             <ul class="pagination">
             <li class="prev"><a href="http://www.lesliezhu.com/2022/10/26/cpp_5.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
-            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
             <li class="next"><a href="http://www.lesliezhu.com/2022/10/25/cpp_3.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>

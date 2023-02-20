@@ -327,25 +327,25 @@ vector足够灵活、高效，应该作为默认容器；尽量避免容器的�
 <p>
 但vector为了保证高效以应用到性能关键的程序中，不会进行下标越界检查，比如:
 </p>
-<div class="source"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
-<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span><span class="w"></span>
-<span class="w">    </span><span class="k">try</span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vData</span><span class="p">;</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(){</span>
+<span class="w">    </span><span class="k">try</span><span class="p">{</span>
+<span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vData</span><span class="p">;</span>
 
 <span class="w">        </span><span class="c1">//int i = vData[vData.size()];</span>
 <span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vData</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="n">vData</span><span class="p">.</span><span class="n">size</span><span class="p">());</span><span class="w"> </span><span class="c1">// 推荐使用at()方法而不是下标访问</span>
 
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="p">(</span><span class="n">out_of_range</span><span class="o">&amp;</span><span class="w"> </span><span class="n">err</span><span class="p">){</span><span class="w"></span>
-<span class="w">      </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;range error</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="p">(...){</span><span class="w"></span>
-<span class="w">      </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;unknow exception</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="p">(</span><span class="n">out_of_range</span><span class="o">&amp;</span><span class="w"> </span><span class="n">err</span><span class="p">){</span>
+<span class="w">      </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;range error</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="p">(...){</span>
+<span class="w">      </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;unknow exception</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 
 </div>
@@ -356,25 +356,25 @@ vector足够灵活、高效，应该作为默认容器；尽量避免容器的�
 <p>
 如果希望在一个序列中添加、删除元素而不需要移动其他元素，则选择list，它是双向链表。
 </p>
-<div class="source"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;list&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
+<div class="source"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;list&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;algorithm&gt;</span>
 
-<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">list</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">data</span><span class="p">){</span><span class="w"></span>
-<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="o">:</span><span class="n">data</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">list</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">data</span><span class="p">){</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="o">:</span><span class="n">data</span><span class="p">)</span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;,&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">list</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lData</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">};</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">list</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lData</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">};</span>
 <span class="w">    </span><span class="n">display</span><span class="p">(</span><span class="n">lData</span><span class="p">);</span><span class="w"> </span><span class="c1">// 10,2,3,5,8,1,</span>
 
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">lData</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">lData</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="mi">3</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">lData</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">lData</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="mi">8</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">lData</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">lData</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="mi">3</span><span class="p">);</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find</span><span class="p">(</span><span class="n">lData</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">lData</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="mi">8</span><span class="p">);</span>
 
 <span class="w">    </span><span class="n">lData</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="mi">12</span><span class="p">);</span><span class="w"> </span><span class="c1">// 在迭代器p前面插入值</span>
 <span class="w">    </span><span class="n">display</span><span class="p">(</span><span class="n">lData</span><span class="p">);</span><span class="w"> </span><span class="c1">// 10,2,12,3,5,8,1,</span>
@@ -385,8 +385,8 @@ vector足够灵活、高效，应该作为默认容器；尽量避免容器的�
 <span class="w">    </span><span class="n">lData</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">q</span><span class="p">);</span><span class="w"> </span><span class="c1">// p,q并没有因为前面insert操作而失效</span>
 <span class="w">    </span><span class="n">display</span><span class="p">(</span><span class="n">lData</span><span class="p">);</span><span class="w"> </span><span class="c1">// 10,2,12,5,1,</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
@@ -430,53 +430,53 @@ underorder_map的操作和map没太大区别，区别在于不是用一个有序
 <p>
 比如:
 </p>
-<div class="source"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unordered_map&gt;</span><span class="cp"></span>
+<div class="source"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unordered_map&gt;</span>
 
-<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 
-<span class="k">struct</span><span class="w"> </span><span class="nc">Record</span><span class="p">{</span><span class="w"></span>
-<span class="w">   </span><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">RHash</span><span class="p">;</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Record</span><span class="p">{</span>
+<span class="w">   </span><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">RHash</span><span class="p">;</span>
 
-<span class="w">   </span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span><span class="w"></span>
-<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">;</span><span class="w"></span>
+<span class="w">   </span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="n">age</span><span class="p">;</span>
 
-<span class="w">   </span><span class="n">Record</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="n">name</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="n">age</span><span class="p">(</span><span class="n">i</span><span class="p">){}</span><span class="w"></span>
+<span class="w">   </span><span class="n">Record</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="n">name</span><span class="p">(</span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="n">age</span><span class="p">(</span><span class="n">i</span><span class="p">){}</span>
 
-<span class="w">   </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Record</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">       </span><span class="k">return</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">age</span><span class="p">;</span><span class="w"></span>
-<span class="w">   </span><span class="p">}</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">   </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Record</span><span class="o">&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">       </span><span class="k">return</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">age</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">age</span><span class="p">;</span>
+<span class="w">   </span><span class="p">}</span>
+<span class="p">};</span>
 
-<span class="k">struct</span><span class="w"> </span><span class="nc">RHash</span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">Record</span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hash</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()(</span><span class="n">r</span><span class="p">.</span><span class="n">name</span><span class="p">)</span><span class="o">^</span><span class="n">hash</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()(</span><span class="n">r</span><span class="p">.</span><span class="n">age</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">RHash</span><span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="k">const</span><span class="w"> </span><span class="n">Record</span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">hash</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()(</span><span class="n">r</span><span class="p">.</span><span class="n">name</span><span class="p">)</span><span class="o">^</span><span class="n">hash</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()(</span><span class="n">r</span><span class="p">.</span><span class="n">age</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Record</span><span class="p">,</span><span class="kt">int</span><span class="p">,</span><span class="n">RHash</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">data</span><span class="p">){</span><span class="w"></span>
-<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;unordered map: &quot;</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="o">:</span><span class="n">data</span><span class="p">)</span><span class="w"></span>
-<span class="w">       </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;(&quot;</span><span class="o">&lt;&lt;</span><span class="n">x</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">name</span><span class="o">&lt;&lt;</span><span class="s">&quot;,&quot;</span><span class="o">&lt;&lt;</span><span class="n">x</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">age</span><span class="o">&lt;&lt;</span><span class="s">&quot;)&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;-&gt;&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">second</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;;&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Record</span><span class="p">,</span><span class="kt">int</span><span class="p">,</span><span class="n">RHash</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">data</span><span class="p">){</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;unordered map: &quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="o">:</span><span class="n">data</span><span class="p">)</span>
+<span class="w">       </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;(&quot;</span><span class="o">&lt;&lt;</span><span class="n">x</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">name</span><span class="o">&lt;&lt;</span><span class="s">&quot;,&quot;</span><span class="o">&lt;&lt;</span><span class="n">x</span><span class="p">.</span><span class="n">first</span><span class="p">.</span><span class="n">age</span><span class="o">&lt;&lt;</span><span class="s">&quot;)&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;-&gt;&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">second</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;;&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="n">unordered_map</span><span class="o">&lt;</span><span class="n">Record</span><span class="p">,</span><span class="kt">int</span><span class="p">,</span><span class="n">RHash</span><span class="o">&gt;</span><span class="w"> </span><span class="n">uData</span><span class="p">{{{</span><span class="s">&quot;David&quot;</span><span class="p">,</span><span class="mi">26</span><span class="p">},</span><span class="mi">123</span><span class="p">}};</span><span class="w"> </span><span class="c1">// 使用自定义哈希函数</span>
 <span class="w">    </span><span class="n">display</span><span class="p">(</span><span class="n">uData</span><span class="p">);</span><span class="w"> </span><span class="c1">// (David,26)-&gt;123;</span>
 
-<span class="w">    </span><span class="n">uData</span><span class="p">[</span><span class="n">Record</span><span class="p">(</span><span class="s">&quot;Tom&quot;</span><span class="p">,</span><span class="mi">30</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">456</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">uData</span><span class="p">[</span><span class="n">Record</span><span class="p">(</span><span class="s">&quot;Tom&quot;</span><span class="p">,</span><span class="mi">30</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">456</span><span class="p">;</span>
 <span class="w">    </span><span class="n">display</span><span class="p">(</span><span class="n">uData</span><span class="p">);</span><span class="w"> </span><span class="c1">// (Tom,30)-&gt;456;(David,26)-&gt;123;</span>
 
-<span class="w">    </span><span class="n">uData</span><span class="p">[</span><span class="n">Record</span><span class="p">(</span><span class="s">&quot;Leslie&quot;</span><span class="p">,</span><span class="mi">35</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">578</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">uData</span><span class="p">[</span><span class="n">Record</span><span class="p">(</span><span class="s">&quot;Leslie&quot;</span><span class="p">,</span><span class="mi">35</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">578</span><span class="p">;</span>
 <span class="w">    </span><span class="n">display</span><span class="p">(</span><span class="n">uData</span><span class="p">);</span><span class="w"> </span><span class="c1">// (Leslie,35)-&gt;578;(Tom,30)-&gt;456;(David,26)-&gt;123;</span>
 
-<span class="w">    </span><span class="n">uData</span><span class="p">[</span><span class="n">Record</span><span class="p">(</span><span class="s">&quot;Zhu&quot;</span><span class="p">,</span><span class="mi">40</span><span class="p">)];</span><span class="w"></span>
+<span class="w">    </span><span class="n">uData</span><span class="p">[</span><span class="n">Record</span><span class="p">(</span><span class="s">&quot;Zhu&quot;</span><span class="p">,</span><span class="mi">40</span><span class="p">)];</span>
 <span class="w">    </span><span class="n">display</span><span class="p">(</span><span class="n">uData</span><span class="p">);</span><span class="w"> </span><span class="c1">// (Zhu,40)-&gt;0;(Leslie,35)-&gt;578;(Tom,30)-&gt;456;(David,26)-&gt;123;</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 
 </div>
@@ -506,7 +506,7 @@ underorder_map的操作和map没太大区别，区别在于不是用一个有序
             <div class="pagination">
             <ul class="pagination">
             <li class="prev"><a href="http://www.lesliezhu.com/2022/10/26/cpp_6.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
-            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
             <li class="next"><a href="http://www.lesliezhu.com/2022/10/26/cpp_4.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>

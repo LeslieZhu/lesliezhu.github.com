@@ -303,7 +303,7 @@ lambda表达式是一个可执行的代码单元，可以看作是一个匿名�
 <p>
 定义语法:
 </p>
-<div class="source"><pre><span></span><span class="p">[</span><span class="n">capture</span><span class="w"> </span><span class="n">list</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="n">parameter</span><span class="w"> </span><span class="n">list</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="p">[</span><span class="n">capture</span><span class="w"> </span><span class="n">list</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="n">parameter</span><span class="w"> </span><span class="n">list</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="p">}</span>
 </pre></div>
 
 <p>
@@ -317,7 +317,7 @@ lambda表达式是一个可执行的代码单元，可以看作是一个匿名�
 <p>
 比如:
 </p>
-<div class="source"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="k">auto</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// 等效</span>
 </pre></div>
@@ -328,7 +328,7 @@ lambda表达式是一个可执行的代码单元，可以看作是一个匿名�
 <p>
 比如:
 </p>
-<div class="source"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">cosnt</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">cosnt</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 </pre></div>
 
 <p>
@@ -342,11 +342,11 @@ lambda表达式定义的函数参数没有默认值，意味着每次必须提�
 <p>
 比如:
 </p>
-<div class="source"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">sz1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span><span class="p">;</span><span class="w"></span>
-<span class="kt">int</span><span class="w"> </span><span class="n">sz2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2048</span><span class="p">;</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">sz1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1024</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">sz2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2048</span><span class="p">;</span>
 
-<span class="k">auto</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">sz1</span><span class="p">,</span><span class="n">sz2</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">sz1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">sz2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="k">auto</span><span class="w"> </span><span class="n">wc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find_if</span><span class="p">(</span><span class="n">words</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">words</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="n">sz</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">sz</span><span class="p">;</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
+<span class="k">auto</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">sz1</span><span class="p">,</span><span class="n">sz2</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">sz1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">sz2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">wc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find_if</span><span class="p">(</span><span class="n">words</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">words</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="n">sz</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">sz</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
 </pre></div>
 
 <p>
@@ -355,7 +355,7 @@ lambda表达式定义的函数参数没有默认值，意味着每次必须提�
 <p>
 比如:
 </p>
-<div class="source"><pre><span></span><span class="n">for_each</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span><span class="w"> </span><span class="n">words</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="p">;</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="n">for_each</span><span class="p">(</span><span class="n">wc</span><span class="p">,</span><span class="w"> </span><span class="n">words</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
 </pre></div>
 
 <p>
@@ -367,23 +367,23 @@ lambda表达式定义的函数参数没有默认值，意味着每次必须提�
 <p>
 局部变量进入匿名函数使用传值或引用，比如:
 </p>
-<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">fnc1</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">fnc1</span><span class="p">()</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w">    </span><span class="c1">// local variable</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">v1</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">v1</span><span class="p">;</span><span class="w"> </span><span class="p">};</span><span class="w"> </span><span class="c1">// copy v1 into f</span>
 
-<span class="w">    </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">();</span><span class="w"> </span><span class="c1">// j=42, not 0</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">func2</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">func2</span><span class="p">()</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="n">size</span><span class="w"> </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"> </span><span class="c1">// local variable</span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">v1</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">v1</span><span class="p">;</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">v1</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">v1</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
 
-<span class="w">    </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f2</span><span class="p">();</span><span class="w"> </span><span class="c1">// j=0, not 42</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
@@ -406,26 +406,26 @@ lambda表达式定义的函数参数没有默认值，意味着每次必须提�
 <p>
 比如:
 </p>
-<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">fcn3</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">fcn3</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">f1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">v1</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">++</span><span class="n">v1</span><span class="p">;</span><span class="w"> </span><span class="p">};</span><span class="w"> </span><span class="c1">// error: 传值形式不能改变捕获变量的值</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="n">v1</span><span class="p">]()</span><span class="w"> </span><span class="k">mutable</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">++</span><span class="n">v1</span><span class="p">;</span><span class="w"> </span><span class="p">};</span><span class="w"> </span><span class="c1">// right: 使用了mutable标记</span>
-<span class="w">    </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f2</span><span class="p">();</span><span class="w"> </span><span class="c1">// j = 43</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">fcn</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">v2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">fcn</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">v2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span>
 
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">f1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">v1</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">++</span><span class="n">v1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// right</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">f2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="n">v2</span><span class="p">]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">++</span><span class="n">v2</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// error: v2 is const</span>
 
-<span class="w">    </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">v1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f1</span><span class="p">();</span><span class="w"> </span><span class="c1">// j = 1</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
@@ -440,14 +440,14 @@ lambda表达式定义的函数参数没有默认值，意味着每次必须提�
 如果匿名函数体只有一条return语句，那么最终匿名函数的返回类型由这个return语句决定:
 </p>
 <div class="source"><pre><span></span><span class="n">transform</span><span class="p">(</span><span class="n">vi</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">vi</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="n">vi</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span>
-<span class="w">                                </span><span class="p">[](</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">-1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
+<span class="w">                                </span><span class="p">[](</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">-1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
 </pre></div>
 
 <p>
 如果匿名函数体有多条return语句，那么最终匿名函数的返回列席是void:
 </p>
 <div class="source"><pre><span></span><span class="n">transform</span><span class="p">(</span><span class="n">vi</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">vi</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="n">vi</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span>
-<span class="w">                                </span><span class="p">[](</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">){</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
+<span class="w">                                </span><span class="p">[](</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">){</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
 </pre></div>
 
 <p>
@@ -455,7 +455,7 @@ lambda表达式定义的函数参数没有默认值，意味着每次必须提�
 </p>
 <div class="source"><pre><span></span><span class="n">transform</span><span class="p">(</span><span class="n">vi</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">vi</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="n">vi</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span>
 <span class="w">                                </span><span class="p">[](</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span>
-<span class="w">                                </span><span class="p">{</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">});</span><span class="w"></span>
+<span class="w">                                </span><span class="p">{</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
 </pre></div>
 
 </div>
@@ -485,7 +485,7 @@ lambda表达式定义的函数参数没有默认值，意味着每次必须提�
             <div class="pagination">
             <ul class="pagination">
             <li class="prev"><a href="http://www.lesliezhu.com/2022/10/31/cpp_7.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
-            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
             <li class="next"><a href="http://www.lesliezhu.com/2022/10/26/cpp_5.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>

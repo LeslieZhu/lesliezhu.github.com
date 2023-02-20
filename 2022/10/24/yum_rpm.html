@@ -368,19 +368,19 @@ $ tree ~/rpmbuild/SOURCES/
 主要文件是 <code>~/rpmbuild/SOURCES/test-1.0.0/Makefile</code> 规定了如何执行安装步骤:
 </p>
 <div class="source"><pre><span></span><span class="cp">ifdef DESTDIR</span>
-        <span class="nv">destDir</span><span class="o">=</span><span class="k">$(</span>DESTDIR<span class="k">)</span>/usr/local/Test/bin
+<span class="w">        </span><span class="nv">destDir</span><span class="o">=</span><span class="k">$(</span>DESTDIR<span class="k">)</span>/usr/local/Test/bin
 <span class="cp">else</span>
-        <span class="nv">destDir</span><span class="o">=</span>~/Test/bin
+<span class="w">        </span><span class="nv">destDir</span><span class="o">=</span>~/Test/bin
 <span class="cp">endif</span>
 
-<span class="nf">install</span><span class="o">:</span> <span class="n">test</span>.<span class="n">exe</span>
-        <span class="nb">test</span> -d <span class="k">$(</span>destDir<span class="k">)</span> <span class="o">||</span> mkdir -p <span class="k">$(</span>destDir<span class="k">)</span>
-        cp test.exe <span class="k">$(</span>destDir<span class="k">)</span>/test.exe
+<span class="nf">install</span><span class="o">:</span><span class="w"> </span><span class="n">test</span>.<span class="n">exe</span>
+<span class="w">        </span><span class="nb">test</span><span class="w"> </span>-d<span class="w"> </span><span class="k">$(</span>destDir<span class="k">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="k">$(</span>destDir<span class="k">)</span>
+<span class="w">        </span>cp<span class="w"> </span>test.exe<span class="w"> </span><span class="k">$(</span>destDir<span class="k">)</span>/test.exe
 
-<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">clean</span>
+<span class="nf">.PHONY</span><span class="o">:</span><span class="w"> </span><span class="n">clean</span>
 
 <span class="nf">clean</span><span class="o">:</span>
-        rm -f <span class="k">$(</span>destDir<span class="k">)</span>/test.exe
+<span class="w">        </span>rm<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>destDir<span class="k">)</span>/test.exe
 </pre></div>
 
 <p>
@@ -624,7 +624,7 @@ total 0
             <div class="pagination">
             <ul class="pagination">
             <li class="prev"><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
-            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
             <li class="next"><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>

@@ -352,22 +352,22 @@ $ g++ -std=c++17 file.cpp
 检验变量是否为 <code>0</code> 或 <code>nullptr</code> 尽量采用简洁形式:
 </p>
 <div class="source"><pre><span></span><span class="k">while</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="c1">// 等同: while(*p != 0)</span>
-<span class="p">{</span><span class="w"></span>
+<span class="p">{</span>
 <span class="w">  </span><span class="c1">//...</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 
 <span class="k">if</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w">  </span><span class="c1">// 等同: if(p != nullptr)</span>
-<span class="p">{</span><span class="w"></span>
+<span class="p">{</span>
 <span class="w">  </span><span class="c1">//...</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="n">do_something</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">())</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="n">do_something</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">())</span>
+<span class="w">    </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// n != 0</span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 
 </div>
@@ -378,40 +378,40 @@ $ g++ -std=c++17 file.cpp
 <p>
 比如有这样一个联合的定义:
 </p>
-<div class="source"><pre><span></span><span class="k">enum</span><span class="w"> </span><span class="nc">Type</span><span class="w"> </span><span class="p">{</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="k">enum</span><span class="w"> </span><span class="nc">Type</span><span class="w"> </span><span class="p">{</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="n">num</span><span class="w"> </span><span class="p">};</span>
 
-<span class="k">union</span><span class="w"> </span><span class="nc">Value</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Node</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">union</span><span class="w"> </span><span class="nc">Value</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Node</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="k">struct</span><span class="w"> </span><span class="nc">Entry</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Type</span><span class="w"> </span><span class="n">t</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">Value</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Entry</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Type</span><span class="w"> </span><span class="n">t</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Value</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">Entry</span><span class="o">*</span><span class="w"> </span><span class="n">pe</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">pe</span><span class="o">-&gt;</span><span class="n">t</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">num</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">pe</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">i</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">Entry</span><span class="o">*</span><span class="w"> </span><span class="n">pe</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">pe</span><span class="o">-&gt;</span><span class="n">t</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">num</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">pe</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">i</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
 尽量少使用这种原始union形式，改为使用标准库类型variant，并且应该封装到一个类内部从而只为它服务:
 </p>
-<div class="source"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;variant&gt;</span><span class="cp"></span>
+<div class="source"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;variant&gt;</span>
 
-<span class="k">struct</span><span class="w"> </span><span class="nc">Entry</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Type</span><span class="w"> </span><span class="n">t</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">Node</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Entry</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Type</span><span class="w"> </span><span class="n">t</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">Node</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">Entry</span><span class="o">*</span><span class="w"> </span><span class="n">pe</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pe</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">)){</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pe</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">Entry</span><span class="o">*</span><span class="w"> </span><span class="n">pe</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">holds_alternative</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pe</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">)){</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pe</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 
 </div>
@@ -434,11 +434,11 @@ $ g++ -std=c++17 file.cpp
 </p>
 <div class="source"><pre><span></span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="p">;</span><span class="w">  </span><span class="c1">// 可以前置声明</span>
 
-<span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">red</span><span class="p">,</span><span class="w"> </span><span class="n">green</span><span class="p">,</span><span class="w"> </span><span class="n">blue</span><span class="p">};</span><span class="w"></span>
-<span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Color2</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">red</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">green</span><span class="p">,</span><span class="w"> </span><span class="n">blue</span><span class="p">};</span><span class="w"></span>
+<span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Color</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">red</span><span class="p">,</span><span class="w"> </span><span class="n">green</span><span class="p">,</span><span class="w"> </span><span class="n">blue</span><span class="p">};</span>
+<span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Color2</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">red</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">green</span><span class="p">,</span><span class="w"> </span><span class="n">blue</span><span class="p">};</span>
 
-<span class="n">Color</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Color</span><span class="o">::</span><span class="n">green</span><span class="p">;</span><span class="w"></span>
-<span class="n">Color2</span><span class="w"> </span><span class="n">col2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Color2</span><span class="o">::</span><span class="n">green</span><span class="p">;</span><span class="w"></span>
+<span class="n">Color</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Color</span><span class="o">::</span><span class="n">green</span><span class="p">;</span>
+<span class="n">Color2</span><span class="w"> </span><span class="n">col2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Color2</span><span class="o">::</span><span class="n">green</span><span class="p">;</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="n">col_i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">Color</span><span class="o">::</span><span class="n">green</span><span class="p">);</span><span class="w"> </span><span class="c1">// 1, 需要显式转换为int</span>
 <span class="kt">int</span><span class="w"> </span><span class="n">col2_i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">Color2</span><span class="o">::</span><span class="n">green</span><span class="p">);</span><span class="w"> </span><span class="c1">// 2</span>
@@ -471,7 +471,7 @@ $ g++ -std=c++17 file.cpp
             <div class="pagination">
             <ul class="pagination">
             <li class="prev"><a href="http://www.lesliezhu.com/2022/10/23/cpp_2.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
-            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
             <li class="next"><a href="http://www.lesliezhu.com/2020/05/10/I_want_a_dictionary.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>

@@ -339,32 +339,32 @@ C++提供开发者自定义类型的能力，而对于自定义类型的资源�
 <p>
 比如:
 </p>
-<div class="source"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Vector</span><span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Vector</span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
 <span class="w">    </span><span class="n">Vector</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="n">elem</span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="n">elem</span><span class="p">[</span><span class="n">s</span><span class="p">]},</span><span class="w"> </span><span class="n">sz</span><span class="p">{</span><span class="n">s</span><span class="p">}</span><span class="w">  </span><span class="c1">// 分配资源</span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="p">{</span>
 <span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w">  </span><span class="c1">// 初始化</span>
-<span class="w">           </span><span class="n">elem</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">           </span><span class="n">elem</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
 <span class="w">   </span><span class="o">~</span><span class="n">Vector</span><span class="p">(){</span><span class="w"> </span><span class="k">delete</span><span class="p">[]</span><span class="w"> </span><span class="n">elem</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">   </span><span class="c1">// 析构函数释放资源</span>
 
-<span class="w">   </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="p">[](</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
-<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="nf">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">   </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">elem</span><span class="p">;</span><span class="w"></span>
-<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="n">sz</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">   </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="p">[](</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="nf">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">   </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">elem</span><span class="p">;</span>
+<span class="w">   </span><span class="kt">int</span><span class="w"> </span><span class="n">sz</span><span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>
 那么在使用的时候就可以当对象离开作用域时自动调用析构函数完成资源的释放:
 </p>
-<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">fct</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Vector</span><span class="w"> </span><span class="n">v</span><span class="p">(</span><span class="n">n</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">Vector</span><span class="w"> </span><span class="n">v2</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="p">);</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">fct</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Vector</span><span class="w"> </span><span class="n">v</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Vector</span><span class="w"> </span><span class="n">v2</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n</span><span class="p">);</span>
 <span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// v2在此销毁</span>
 <span class="p">}</span><span class="w"> </span><span class="c1">// v在此销毁</span>
 </pre></div>
@@ -392,15 +392,15 @@ new运算符是从一块名为自由存储或动态内存(dynamic memory)的区�
 <p>
 比如:
 </p>
-<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">user</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Shape</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Circle</span><span class="p">{</span><span class="n">Point</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">},</span><span class="w"> </span><span class="mi">10</span><span class="p">};</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">user</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Shape</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Circle</span><span class="p">{</span><span class="n">Point</span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">},</span><span class="w"> </span><span class="mi">10</span><span class="p">};</span>
 <span class="w">    </span><span class="c1">//...</span>
 <span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="n">Bad_x</span><span class="p">{};</span><span class="w">  </span><span class="c1">// 存在泄漏危险</span>
 <span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span><span class="w">         </span><span class="c1">// 存在泄漏危险</span>
 <span class="w">    </span><span class="c1">//...</span>
-<span class="w">    </span><span class="k">delete</span><span class="w"> </span><span class="n">p</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">delete</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
@@ -418,26 +418,26 @@ new运算符是从一块名为自由存储或动态内存(dynamic memory)的区�
 <div class="outline-3" id="outline-container-orgdb4e9ae">
 <h3 id="orgdb4e9ae"><span class="section-number-3">3.1</span> std::unique_ptr</h3>
 <div class="outline-text-3" id="text-3-1">
-<div class="source"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Smiley</span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Circle</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Smiley</span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Circle</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">//...</span>
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">eyes</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">uniq_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mouth</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">eyes</span><span class="p">;</span>
+<span class="w">    </span><span class="n">uniq_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mouth</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">read_shape</span><span class="p">(</span><span class="n">istream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">is</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">read_shape</span><span class="p">(</span><span class="n">istream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">is</span><span class="p">)</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="c1">//....</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="n">Circle</span><span class="p">{</span><span class="n">p</span><span class="p">,</span><span class="n">r</span><span class="p">}};</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="n">Circle</span><span class="p">{</span><span class="n">p</span><span class="p">,</span><span class="n">r</span><span class="p">}};</span>
+<span class="p">}</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="n">user</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">   </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w"></span>
-<span class="w">   </span><span class="k">while</span><span class="p">(</span><span class="n">cin</span><span class="p">)</span><span class="w"></span>
-<span class="w">      </span><span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">read_shape</span><span class="p">(</span><span class="n">cin</span><span class="p">));</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="n">user</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">   </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
+<span class="w">   </span><span class="k">while</span><span class="p">(</span><span class="n">cin</span><span class="p">)</span>
+<span class="w">      </span><span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">read_shape</span><span class="p">(</span><span class="n">cin</span><span class="p">));</span>
 <span class="w">   </span><span class="c1">//...</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
@@ -446,12 +446,12 @@ new运算符是从一块名为自由存储或动态内存(dynamic memory)的区�
 <p>
 std::unique_ptr只能移动(std::move)不能拷贝：
 </p>
-<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">f1</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_unique</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">f1</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_unique</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">;</span><span class="w">            </span><span class="c1">// 错误，不能拷贝</span>
 <span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">p</span><span class="p">);</span><span class="w"> </span><span class="c1">// 之后p等于nullptr,后续p不能再使用了</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 </pre></div>
 
 </div>
@@ -465,19 +465,19 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
 <p>
 比如:
 </p>
-<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">fstream</span><span class="o">&gt;</span><span class="p">);</span><span class="w"></span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">fstream</span><span class="o">&gt;</span><span class="p">);</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">fstream</span><span class="o">&gt;</span><span class="p">);</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">g</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">fstream</span><span class="o">&gt;</span><span class="p">);</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">user</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">ios_base</span><span class="o">::</span><span class="n">openmode</span><span class="w"> </span><span class="n">mode</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">fstream</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fp</span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="n">fstream</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">mode</span><span class="p">)};</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">user</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">ios_base</span><span class="o">::</span><span class="n">openmode</span><span class="w"> </span><span class="n">mode</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">fstream</span><span class="o">&gt;</span><span class="w"> </span><span class="n">fp</span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="n">fstream</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">mode</span><span class="p">)};</span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="o">!*</span><span class="n">fp</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="n">No_file</span><span class="p">{};</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="o">!*</span><span class="n">fp</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="n">No_file</span><span class="p">{};</span>
 
-<span class="w">    </span><span class="n">f</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">g</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">f</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
+<span class="w">    </span><span class="n">g</span><span class="p">(</span><span class="n">fp</span><span class="p">);</span>
 <span class="w">    </span><span class="c1">//...</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 </pre></div>
 
 <p>
@@ -488,8 +488,8 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
 <div class="outline-3" id="outline-container-org83dfe8c">
 <h3 id="org83dfe8c"><span class="section-number-3">3.3</span> make_unique, make_shared</h3>
 <div class="outline-text-3" id="text-3-3">
-<div class="source"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Oz&quot;</span><span class="p">,</span><span class="mf">7.62</span><span class="p">);</span><span class="w"></span>
-<span class="k">auto</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;Ankh Morpork&quot;</span><span class="p">,</span><span class="mf">4.65</span><span class="p">);</span><span class="w"></span>
+<div class="source"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Oz&quot;</span><span class="p">,</span><span class="mf">7.62</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;Ankh Morpork&quot;</span><span class="p">,</span><span class="mf">4.65</span><span class="p">);</span>
 </pre></div>
 
 <p>
@@ -544,7 +544,7 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
             <div class="pagination">
             <ul class="pagination">
             <li class="prev"><a href="http://www.lesliezhu.com/2022/10/26/cpp_4.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
-            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>Archive</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
             <li class="next"><a href="http://www.lesliezhu.com/2022/10/23/cpp_2.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
