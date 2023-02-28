@@ -102,12 +102,12 @@
 <h2>引言</h2>
 <p>有不少工具用于统一项目编码风格，比如Go语言自带<code>fmt</code>模块统一编码风格，又比如C++有<code>astyle</code>这样的工具，但这里要介绍的是<code>clang-format</code>工具。</p>
 <p>安装:</p>
-<div class="highlight"><pre><span></span>$ sudo yum install clang-format git-clang-format
+<div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>clang-format<span class="w"> </span>git-clang-format
 </pre></div>
 <p>如果是源码安装，在<code>llvm-project/clang/</code>目录下:</p>
-<div class="highlight"><pre><span></span>$ mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build/
-$ cmake ../
-$ make clang-format
+<div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/
+$<span class="w"> </span>cmake<span class="w"> </span>../
+$<span class="w"> </span>make<span class="w"> </span>clang-format
 </pre></div>
 <p>同时还提供了其它工具对应的版本:</p>
 <div class="highlight"><pre><span></span>llvm-project/clang/tools/clang-format/clang-format-bbedit.applescript
@@ -120,33 +120,33 @@ llvm-project/clang/tools/clang-format/git-clang-format
 </pre></div>
 <h2>生成风格配置文件</h2>
 <p>以llvm和google为例:</p>
-<div class="highlight"><pre><span></span>$ clang-format -style<span class="o">=</span>llvm   -dump-config &gt; .clang-format
-$ clang-format -style<span class="o">=</span>google -dump-config &gt; .clang-format
+<div class="highlight"><pre><span></span>$<span class="w"> </span>clang-format<span class="w"> </span>-style<span class="o">=</span>llvm<span class="w">   </span>-dump-config<span class="w"> </span>&gt;<span class="w"> </span>.clang-format
+$<span class="w"> </span>clang-format<span class="w"> </span>-style<span class="o">=</span>google<span class="w"> </span>-dump-config<span class="w"> </span>&gt;<span class="w"> </span>.clang-format
 </pre></div>
 <p>有了<code>.clang-format</code>风格配置文件，命令<code>clang-format</code>就会自动读取此配置文件，编辑器<code>vscode</code>只要安装了<code>vs-clang-format</code>插件也会自动读取此配置。</p>
 <h2>修改文件风格</h2>
-<div class="highlight"><pre><span></span>$ clang-format filename.cpp     <span class="c1"># 只对比不修改文件</span>
-$ clang-format -i filename.cpp  <span class="c1"># 直接修改文件</span>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>clang-format<span class="w"> </span>filename.cpp<span class="w">     </span><span class="c1"># 只对比不修改文件</span>
+$<span class="w"> </span>clang-format<span class="w"> </span>-i<span class="w"> </span>filename.cpp<span class="w">  </span><span class="c1"># 直接修改文件</span>
 </pre></div>
 <h2>git自动clang-format</h2>
 <p>需要依赖<code>git-clang-format</code>:</p>
-<div class="highlight"><pre><span></span>$ git clang-format
+<div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clang-format
 </pre></div>
 <p>它会自动对暂存区的文件进行风格转换，也可以配置git-hooks让执行<code>git commit</code>的时候自动进行转换。</p>
 <p>添加文件<code>.git/hooks/pre-commit</code>:</p>
 <div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
 
-git clang-format
+git<span class="w"> </span>clang-format
 </pre></div>
 <p>这样就不怕忘记执行clang-format了。</p>
 <h2>部分代码不想被格式化</h2>
-<div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">formatted_code</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">formatted_code</span><span class="p">;</span>
 
 <span class="c1">// clang-format off</span>
-<span class="w">    </span><span class="kt">void</span><span class="w">    </span><span class="n">unformatted_code</span><span class="w">  </span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w">    </span><span class="n">unformatted_code</span><span class="w">  </span><span class="p">;</span>
 <span class="c1">// clang-format on</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="n">formatted_code_again</span><span class="p">;</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="n">formatted_code_again</span><span class="p">;</span>
 </pre></div>
 <p>通过注释的方式告诉<code>clang-format</code>不要因为代码风格而改动这部分代码。</p>
 <h2>.clang-format配置项</h2>
@@ -239,21 +239,21 @@ Standard:        c++17
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

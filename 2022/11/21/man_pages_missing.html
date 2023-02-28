@@ -106,43 +106,43 @@
 <p>有时候哪怕按照一般的做法使用<code>yum</code>安装了<code>man-pages</code>软件包，发现还是没有按预期安装文档，这是怎么回事呢？</p>
 <h2>man pages文档手册</h2>
 <p>一般情况下，这样安装<code>man-pages</code>软件包以下载文档手册的:</p>
-<div class="highlight"><pre><span></span>$ yum install man man-pages man-db
+<div class="highlight"><pre><span></span>$<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>man<span class="w"> </span>man-pages<span class="w"> </span>man-db
 
-$ mandb <span class="c1"># 更新man文档手册的索引信息</span>
+$<span class="w"> </span>mandb<span class="w"> </span><span class="c1"># 更新man文档手册的索引信息</span>
 
-$ man strcpy <span class="c1"># 查看strcpy文档手册</span>
+$<span class="w"> </span>man<span class="w"> </span>strcpy<span class="w"> </span><span class="c1"># 查看strcpy文档手册</span>
 </pre></div>
 <p>假设现在要查看<code>nlopt</code>相关的文档，但不知道哪个软件包包含有这份文档手册，则可以这样查看:</p>
-<div class="highlight"><pre><span></span>$ man nlopt
-No manual entry <span class="k">for</span> nlopt
+<div class="highlight"><pre><span></span>$<span class="w"> </span>man<span class="w"> </span>nlopt
+No<span class="w"> </span>manual<span class="w"> </span>entry<span class="w"> </span><span class="k">for</span><span class="w"> </span>nlopt
 
-$ yum whatprovides */nlopt.*.gz
+$<span class="w"> </span>yum<span class="w"> </span>whatprovides<span class="w"> </span>*/nlopt.*.gz
 
-NLopt-devel-2.4.2-2.el7.x86_64 : Development files <span class="k">for</span> NLopt
-Repo        : epel
-Matched from:
-Filename    : /usr/share/man/man3/nlopt.3.gz
+NLopt-devel-2.4.2-2.el7.x86_64<span class="w"> </span>:<span class="w"> </span>Development<span class="w"> </span>files<span class="w"> </span><span class="k">for</span><span class="w"> </span>NLopt
+Repo<span class="w">        </span>:<span class="w"> </span>epel
+Matched<span class="w"> </span>from:
+Filename<span class="w">    </span>:<span class="w"> </span>/usr/share/man/man3/nlopt.3.gz
 
-$ yum install NLopt-devel
+$<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>NLopt-devel
 
 or
 
-$ yum reinstall NLopt-devel
+$<span class="w"> </span>yum<span class="w"> </span>reinstall<span class="w"> </span>NLopt-devel
 
-$ man -w nlopt <span class="c1"># 找到文档具体位置</span>
+$<span class="w"> </span>man<span class="w"> </span>-w<span class="w"> </span>nlopt<span class="w"> </span><span class="c1"># 找到文档具体位置</span>
 /usr/share/man/man3/nlopt.3.gz
 
-$ man nlopt <span class="c1"># 查看文档</span>
+$<span class="w"> </span>man<span class="w"> </span>nlopt<span class="w"> </span><span class="c1"># 查看文档</span>
 
-$ man <span class="m">3</span> nlopt
+$<span class="w"> </span>man<span class="w"> </span><span class="m">3</span><span class="w"> </span>nlopt
 </pre></div>
 <p>找到软件包名字后，安装软件就会有下载对应文档，进而可以通过<code>man</code>命令查看了。</p>
 <p>当然有的软件包提供的文档不是<code>man-page</code>格式，而是<code>info</code>格式，那就另当别论。</p>
 <h2>yum无法下载文档</h2>
 <p>前面讲到Docker镜像为了减少大小，一般是不会下载软件文档的，即使后面重新安装了软件，会发现软件虽然安装了但文档却没有下载，这是通过<code>/etc/yum.conf</code>来设置的:</p>
-<div class="highlight"><pre><span></span><span class="k">[main]</span><span class="w"></span>
-<span class="na">//...</span><span class="w"></span>
-<span class="na">tsflags</span><span class="o">=</span><span class="s">nodocs</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">[main]</span>
+<span class="na">//...</span>
+<span class="na">tsflags</span><span class="o">=</span><span class="s">nodocs</span>
 </pre></div>
 <p>将这行配置注释后，使用<code>yum</code>安装软件时就会自动下载文档了；其实这个选项是传递给了<code>rpm</code>命令，参看: <a href="https://jsmith.fedorapeople.org/drafts/SMG/html/Software_Management_Guide/ch06s22.html">yum-plugin-tsflags</a></p>
 </div>
@@ -217,21 +217,21 @@ $ man <span class="m">3</span> nlopt
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

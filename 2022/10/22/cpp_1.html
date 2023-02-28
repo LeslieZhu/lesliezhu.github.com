@@ -287,16 +287,16 @@
 <h2>目录</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org4d0aa87">1. 前言</a></li>
-<li><a href="#orga940523">2. auto与列表初始化</a></li>
-<li><a href="#org05f3a51">3. 空指针: nullptr</a></li>
-<li><a href="#orgcc6bd08">4. 尽量不直接使用union</a></li>
-<li><a href="#org4ce47b6">5. 枚举优先使用enum class</a></li>
+<li><a href="#org9b7aca5">1. 前言</a></li>
+<li><a href="#orgcc5d907">2. auto与列表初始化</a></li>
+<li><a href="#orgea99e77">3. 空指针: nullptr</a></li>
+<li><a href="#org8bf8e82">4. 尽量不直接使用union</a></li>
+<li><a href="#orgc2afa12">5. 枚举优先使用enum class</a></li>
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org4d0aa87">
-<h2 id="org4d0aa87"><span class="section-number-2">1</span> 前言</h2>
+<div class="outline-2" id="outline-container-org9b7aca5">
+<h2 id="org9b7aca5"><span class="section-number-2">1</span> 前言</h2>
 <div class="outline-text-2" id="text-1">
 <blockquote>
 <p>
@@ -311,8 +311,8 @@ $ g++ -std=c++17 file.cpp
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orga940523">
-<h2 id="orga940523"><span class="section-number-2">2</span> auto与列表初始化</h2>
+<div class="outline-2" id="outline-container-orgcc5d907">
+<h2 id="orgcc5d907"><span class="section-number-2">2</span> auto与列表初始化</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 变量优先使用通用的列表初始化形式 <code>{}</code> ，以避免在类型转换中丢失信息:
@@ -342,8 +342,8 @@ $ g++ -std=c++17 file.cpp
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org05f3a51">
-<h2 id="org05f3a51"><span class="section-number-2">3</span> 空指针: nullptr</h2>
+<div class="outline-2" id="outline-container-orgea99e77">
+<h2 id="orgea99e77"><span class="section-number-2">3</span> 空指针: nullptr</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 不再使用 <code>0</code> 或 <code>NULL</code> 表示空指针，使用 <code>nullptr</code> ，所有指针类型都共享同一个 <code>nullptr</code>.
@@ -372,8 +372,8 @@ $ g++ -std=c++17 file.cpp
 
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgcc6bd08">
-<h2 id="orgcc6bd08"><span class="section-number-2">4</span> 尽量不直接使用union</h2>
+<div class="outline-2" id="outline-container-org8bf8e82">
+<h2 id="org8bf8e82"><span class="section-number-2">4</span> 尽量不直接使用union</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 比如有这样一个联合的定义:
@@ -416,8 +416,8 @@ $ g++ -std=c++17 file.cpp
 
 </div>
 </div>
-<div class="outline-2" id="outline-container-org4ce47b6">
-<h2 id="org4ce47b6"><span class="section-number-2">5</span> 枚举优先使用enum class</h2>
+<div class="outline-2" id="outline-container-orgc2afa12">
+<h2 id="orgc2afa12"><span class="section-number-2">5</span> 枚举优先使用enum class</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 以往的enum中枚举值作用域与enum作用域一致，隐式转换为int类型值:
@@ -518,21 +518,21 @@ $ g++ -std=c++17 file.cpp
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

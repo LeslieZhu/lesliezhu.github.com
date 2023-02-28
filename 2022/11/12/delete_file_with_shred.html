@@ -1,0 +1,427 @@
+
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        
+        <script>
+        var CONFIG = {
+        root: '/',
+        localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"preload":true},
+        path: 'search.json',
+        };
+        </script>
+        
+        <title>使用shred工具彻底粉碎文件</title>
+        <meta name="author" content="吴羽舒">
+        <meta name="email" content="minyilife@use-wechat.com">
+        <meta name="description" content="Use OrgNote.">
+        <meta property="og:site_name" content="MinYiLife"/>
+        <meta name="Keywords" content="OrgNote,Emacs,org-mode,blog,python,geek,markdown,c++">
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <meta property="og:image" content="undefined"/>
+
+        <link href="/favicon.ico" rel="icon">
+        
+        <link rel="stylesheet" href="/theme/freemind/css/bootstrap.min.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/font-awesome.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/style.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/highlight.css" media="screen" type="text/css">
+        <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
+        <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
+        <style></style>
+        </head>
+        
+        <body>  
+        <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        
+        <div class="container">
+        
+        <button type="button" class="navbar-header navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        </button>
+    
+        <a class="navbar-brand" href="/index.html">MinYiLife</a>
+        
+        <div class="collapse navbar-collapse nav-menu">
+        
+        <ul class="nav navbar-nav">
+        <li><a href="http://www.lesliezhu.com/links.html" title="MinYi"><i class="fa fa-sitemap"></i>MinYi</a></li><li><a href="http://www.lesliezhu.com/archive.html" title="归档"><i class="fa fa-archive"></i>归档</a></li><li><a href="http://www.lesliezhu.com/tags.html" title="标签"><i class="fa fa-tags"></i>标签</a></li><li><a href="http://www.lesliezhu.com/about.html" title="说明"><i class="fa fa-user"></i>说明</a></li><li><a href="http://www.lesliezhu.com/rss.xml" title="订阅" target="_blank"><i class="fa fa-rss"></i>订阅</a></li><li>
+                <a role="button" class="popup-trigger">
+                <i class="fa fa-search fa-fw"></i>搜索
+                </a>
+                </li>
+                
+        <div class="site-search">
+          <div class="popup search-popup">
+            <div class="search-header">
+              <span class="search-icon">
+                <i class="fa fa-search"></i>
+              </span>
+            <div class="search-input-container">
+              <input autocomplete="off" autocorrect="off" autocapitalize="none"
+                     placeholder="Searching..." spellcheck="false"
+                     type="text" id="search-input">
+            </div>
+            <span class="popup-btn-close">
+                <i class="fa fa-times-circle"></i>
+            </span>
+          </div>
+          <div id="search-result"></div>
+        </div>
+        <div class="search-pop-overlay"></div>
+        
+        </ul>
+        
+        </div> <!-- navbar -->
+        </div> <!-- container -->
+        </nav>
+        
+        <div class="clearfix"></div>
+        <div class="container">
+        <div class="content">
+        
+        <div class="page-header">                   <!-- page-header begin -->
+        <h1>使用shred工具彻底粉碎文件</h1>
+        </div>                                      <!-- page-header end -->
+        
+        <div class="row page">                      <!-- row-page begin -->
+        <div class="col-md-9">                            <!-- col-md-9/12 begin -->
+        <div class="mypage">                        <!-- mypage begin -->
+        
+        <div class="slogan">                        <!-- slogan begin -->
+        <i class="fa fa-heart"></i>
+        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        </div>                                     <!-- slogan end -->
+        <div id='content'>
+<h2>引言</h2>
+<blockquote>
+<p>shred - overwrite a file to hide its contents, and optionally delete it</p>
+<p>Overwrite the specified FILE(s) repeatedly, in order to make it harder for 
+even very expensive hardware probing to recover the data.</p>
+</blockquote>
+<p>很多时候删除一个文件，实际上只是在文件系统里面将该文件所在存储位置标记为可用、可覆盖状态，这个时候是可以通过恢复工具来进行恢复的；但如果这块存储位置之后反复被其他内容填充、覆盖的话，恢复的难度就增加了。</p>
+<p><code>shred</code>工具在<code>coreutils</code>软件包中，一般Linux系统都自带有这个工具。它通过多次覆盖的方式来删除文件，避免文件被恢复工具重新恢复，达到彻底粉碎的效果。但实际使用中，还是有一些需要注意的地方，并不能保证任何情况下都可以覆盖、删除干净，还是可能被恢复回来。</p>
+<h2>安装coreutils</h2>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>coreutils
+$<span class="w"> </span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>coreutils
+</pre></div>
+<h2>基本使用</h2>
+<ul>
+<li>参数选项：</li>
+</ul>
+<div class="highlight"><pre><span></span>Usage: shred [OPTION]... FILE...
+
+  -f, --force               如果需要则会强制改变权限为可写，从而可以覆盖文件
+  -n, --iterations=N        默认覆盖3次，否则覆盖N次
+      --random-source=FILE  从指定文件中随机获取内容用于覆盖目标文件
+  -s, --size=N              覆盖多少字节的内容，可以使用后缀(K,M,G)
+  -u, --remove[=HOW]        覆盖文件后先截断再删除
+  -v, --verbose             显示进度详情
+  -x, --exact               不自动将随机文件大小增加到临近块大小，一般对于非普通文件都默认激活此选项
+  -z, --zero                最后用0覆盖一遍目标文件, 对文件系统隐藏覆盖行为
+</pre></div>
+<ul>
+<li>例子：粉碎一个普通文本文件:</li>
+</ul>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>cat<span class="w"> </span>test.txt
+hello
+world
+
+$<span class="w"> </span>shred<span class="w"> </span>test.txt
+
+$<span class="w"> </span>file<span class="w"> </span>test.txt
+test.txt:<span class="w"> </span>data
+</pre></div>
+<ul>
+<li>例子：粉碎后并删除</li>
+</ul>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>shred<span class="w"> </span>-u<span class="w"> </span>test1.txt<span class="w"> </span>test2.txt
+
+$<span class="w"> </span>shred<span class="w"> </span>-v<span class="w"> </span>-u<span class="w"> </span>test.txt
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">1</span>/3<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">2</span>/3<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">3</span>/3<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>removing
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>renamed<span class="w"> </span>to<span class="w"> </span><span class="m">00000000</span>
+shred:<span class="w"> </span><span class="m">00000000</span>:<span class="w"> </span>renamed<span class="w"> </span>to<span class="w"> </span><span class="m">0000000</span>
+shred:<span class="w"> </span><span class="m">0000000</span>:<span class="w"> </span>renamed<span class="w"> </span>to<span class="w"> </span><span class="m">000000</span>
+shred:<span class="w"> </span><span class="m">000000</span>:<span class="w"> </span>renamed<span class="w"> </span>to<span class="w"> </span><span class="m">00000</span>
+shred:<span class="w"> </span><span class="m">00000</span>:<span class="w"> </span>renamed<span class="w"> </span>to<span class="w"> </span><span class="m">0000</span>
+shred:<span class="w"> </span><span class="m">0000</span>:<span class="w"> </span>renamed<span class="w"> </span>to<span class="w"> </span><span class="m">000</span>
+shred:<span class="w"> </span><span class="m">000</span>:<span class="w"> </span>renamed<span class="w"> </span>to<span class="w"> </span><span class="m">00</span>
+shred:<span class="w"> </span><span class="m">00</span>:<span class="w"> </span>renamed<span class="w"> </span>to<span class="w"> </span><span class="m">0</span>
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>removed
+</pre></div>
+<ul>
+<li>例子：多次覆盖和zero覆盖</li>
+</ul>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>shred<span class="w"> </span>-v<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>test.txt
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">1</span>/10<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">2</span>/10<span class="w"> </span><span class="o">(</span><span class="m">000000</span><span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">3</span>/10<span class="w"> </span><span class="o">(</span>b6db6d<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">4</span>/10<span class="w"> </span><span class="o">(</span>ffffff<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">5</span>/10<span class="w"> </span><span class="o">(</span>aaaaaa<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">6</span>/10<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">7</span>/10<span class="w"> </span><span class="o">(</span><span class="m">555555</span><span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">8</span>/10<span class="w"> </span><span class="o">(</span><span class="m">249249</span><span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">9</span>/10<span class="w"> </span><span class="o">(</span>db6db6<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">10</span>/10<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+
+$<span class="w"> </span>shred<span class="w"> </span>-v<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>-z<span class="w"> </span>test.txt
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">1</span>/11<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">2</span>/11<span class="w"> </span><span class="o">(</span><span class="m">249249</span><span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">3</span>/11<span class="w"> </span><span class="o">(</span>aaaaaa<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">4</span>/11<span class="w"> </span><span class="o">(</span>ffffff<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">5</span>/11<span class="w"> </span><span class="o">(</span><span class="m">924924</span><span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">6</span>/11<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">7</span>/11<span class="w"> </span><span class="o">(</span><span class="m">492492</span><span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">8</span>/11<span class="w"> </span><span class="o">(</span><span class="m">555555</span><span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">9</span>/11<span class="w"> </span><span class="o">(</span><span class="m">000000</span><span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">10</span>/11<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">11</span>/11<span class="w"> </span><span class="o">(</span><span class="m">000000</span><span class="o">)</span>...
+</pre></div>
+<ul>
+<li>例子: 粉碎指定字节大小内容</li>
+</ul>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>cat<span class="w"> </span>test.txt
+hello
+world
+
+$<span class="w"> </span>shred<span class="w"> </span>-v<span class="w"> </span>-s<span class="w"> </span><span class="m">5</span><span class="w"> </span>test.txt
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">1</span>/3<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">2</span>/3<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+shred:<span class="w"> </span>test.txt:<span class="w"> </span>pass<span class="w"> </span><span class="m">3</span>/3<span class="w"> </span><span class="o">(</span>random<span class="o">)</span>...
+
+$<span class="w"> </span>cat<span class="w"> </span>test.txt
+P�Wr9
+world
+</pre></div>
+<ul>
+<li>例子：粉碎设备分区</li>
+</ul>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>shred<span class="w"> </span>/dev/hda0
+$<span class="w"> </span>shred<span class="w"> </span>-vfz<span class="w"> </span>-n<span class="w"> </span><span class="m">10</span><span class="w"> </span>/dev/md1
+</pre></div>
+<h2>注意事项</h2>
+<p><code>shred</code>的工作前提是在覆盖文件的时候，文件系统会在文件原有位置直接覆盖写入的，以下情况可能达不到粉碎效果:</p>
+<ul>
+<li>日志结构或带日志的文件系统，这种可能会根据日志可以恢复文件，比如AIX 和 Solaris（以及 JFS、ReiserFS、XFS、Ext3 等）</li>
+<li>带冗余功能的文件系统，比如基于RAID的文件系统</li>
+<li>会创建快照的文件系统，比如NFS服务器</li>
+<li>缓存在临时位置的文件系统，比如NFS版本3客户端</li>
+<li>带压缩的文件系统</li>
+</ul>
+<p>一般带备份的文件系统或者带远程镜像功能的系统，在<code>shred</code>粉碎后还是可以恢复文件。</p>
+<h2>文档手册</h2>
+<div class="highlight"><pre><span></span>$ info coreutils 'shred invocation'
+
+'shred' overwrites devices or files, to help prevent even very expensive
+hardware from recovering the data.
+
+   Ordinarily when you remove a file (*note rm invocation::), the data
+is not actually destroyed.  Only the index listing where the file is
+stored is destroyed, and the storage is made available for reuse.  There
+are undelete utilities that will attempt to reconstruct the index and
+can bring the file back if the parts were not reused.
+
+   On a busy system with a nearly-full drive, space can get reused in a
+few seconds.  But there is no way to know for sure.  If you have
+sensitive data, you may want to be sure that recovery is not possible by
+actually overwriting the file with non-sensitive data.
+
+   However, even after doing that, it is possible to take the disk back
+to a laboratory and use a lot of sensitive (and expensive) equipment to
+look for the faint "echoes" of the original data underneath the
+overwritten data.  If the data has only been overwritten once, it's not
+even that hard.
+   The best way to remove something irretrievably is to destroy the
+media it's on with acid, melt it down, or the like.  For cheap removable
+media like floppy disks, this is the preferred method.  However, hard
+drives are expensive and hard to melt, so the 'shred' utility tries to
+achieve a similar effect non-destructively.
+
+   ......
+
+   If you are not sure how your file system operates, then you should
+assume that it does not overwrite data in place, which means that shred
+cannot reliably operate on regular files in your file system.
+
+   Generally speaking, it is more reliable to shred a device than a
+file, since this bypasses the problem of file system design mentioned
+above.  However, even shredding devices is not always completely
+reliable.  For example, most disks map out bad sectors invisibly to the
+application; if the bad sectors contain sensitive data, 'shred' won't be
+able to destroy it.
+</pre></div>
+<p>如果不确定文件系统目前是否会在文件原先位置覆盖，那么粉碎整个设备分区比单独粉碎某个文件更可靠。</p>
+<ul>
+<li>参看文章(Secure Deletion of Data from Magnetic and Solid-State Memory)：<a href="https://www.cs.auckland.ac.nz/~pgut001/pubs/secure_del.html">https://www.cs.auckland.ac.nz/~pgut001/pubs/secure_del.html</a></li>
+</ul>
+<h2>coreutils源码</h2>
+<ul>
+<li><a href="https://www.gnu.org/software/coreutils/">https://www.gnu.org/software/coreutils/</a></li>
+</ul>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>git://git.sv.gnu.org/coreutils
+</pre></div>
+</div>
+        <hr>
+        <div id="post-copyright">
+        <ul class="post-copyright">
+        <li class="post-copyright-author">
+        <strong>本文作者：</strong>「
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-02-28 Tue，共633字
+        </li>
+        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
+        <li class="post-copyright-link">
+        <strong>本文链接：</strong>
+        <a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html" title="使用shred工具彻底粉碎文件">http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html</a>
+        </li>
+        <li class="post-copyright-license">
+        <strong>版权声明：</strong>
+        原创文章，如需转载请注明文章作者和出处。谢谢！
+        </li>
+        </ul>
+        </div>
+        
+            <div>
+            <center>
+            <div class="pagination">
+            <ul class="pagination">
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            </ul>
+            </div>
+            </center>
+            </div>
+            
+            <div class="post-reward">
+            <input type="checkbox" name="reward" id="reward" hidden />
+            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
+            <div class="qr-code">
+            
+                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
+                <span>微信打赏</span>
+                </label>
+                
+                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
+                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
+                <span>微信公众号</span>
+                </label>
+                
+            </div>
+            </div>
+            
+            
+            <script src="https://utteranc.es/client.js"
+            repo="LeslieZhu/lesliezhu.github.com"
+            issue-term="title"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+            </script>
+            </div> <!-- my-page --></div> <!-- col-md -->
+        <div class="col-md-3">
+        <div id="sidebar">
+        
+        <div class="widget">
+        <h4>微信公众号</h4>
+        <ul class="entry list-unstyled">
+        <li><img src='/images/weixin.jpg'></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>最新文章</h4>
+        <ul class="entry list-unstyled">
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
+        </ul>   
+        </div> 
+        
+        <div class="widget">
+        <h4>标签云</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>时间机器</h4>
+        <ul class="tag_box inline list-unstyled">
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
+        </ul>
+        </div>
+        
+        <div class="widget">
+        <h4>作品链接</h4>
+        <ul class="entry list-unstyled">
+        
+            <li><a href="https://github.com/LeslieZhu" title="GitHub主页" target="_blank"><i class="fa fa-home"></i>GitHub主页</a></li>
+            
+            <li><a href="https://pypi.org/user/LeslieZhu/" title="PyPI主页" target="_blank"><i class="fa fa-code"></i>PyPI主页</a></li>
+            
+            <li><a href="http://lesliezhu.com" title="MinYiLife博客" target="_blank"><i class="fa fa-book"></i>MinYiLife博客</a></li>
+            
+            <li><a href="https://github.com/LeslieZhu/OrgNote" title="OrgNote:为自己定制的博客工具" target="_blank"><i class="fa fa-code-fork"></i>OrgNote:为自己定制的博客工具</a></li>
+            
+            <li><a href="https://github.com/ledge-lang" title="Ledge: 正在开发的一个编程语言" target="_blank"><i class="fa fa-code-fork"></i>Ledge: 正在开发的一个编程语言</a></li>
+            
+        </ul>
+        </div>
+        
+        </div> <!-- sidebar -->
+        </div> <!-- col-md-3 -->
+        
+        </div> <!-- row-fluid -->
+        </div>
+        </div>
+        
+        <div class="container-narrow">
+        <footer>
+        <p>&copy; 2014-2023 吴羽舒
+        with help from <a href="https://github.com/LeslieZhu/OrgNote" target="_blank">OrgNote</a>. Theme by <a href="https://github.com/LeslieZhu/orgnote-theme-freemind">orgnote-theme-freemind</a>.  Published with GitHub Pages. 
+        </p> </footer>
+        </div> <!-- container-narrow -->
+        
+        <a id="gotop" href="#">   
+        <span>▲</span> 
+        </a>
+        
+        
+
+        <script type="text/javascript">
+        
+        <!-- donate script -->
+        var reward = document.getElementById('reward');
+        if(reward){
+            reward.onclick = function() {
+              $('#reward-button').addClass('hidden');
+              $('#qr-code-image-w').show();
+              $('#qr-code-image-a').show();
+              $('#qr-code-image-p').show();
+            }
+        }
+        <!-- /donate script -->
+
+        
+        function showul(name){
+            var uls = document.getElementById(name);
+            if(uls.style.display == "none"){
+               uls.style.display = "block";
+            } else {
+               uls.style.display = "none";
+            } 
+        }
+        </script>
+        
+
+        </body>
+        </html>
+        

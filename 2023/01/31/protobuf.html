@@ -118,38 +118,38 @@ libprotoc 3.6.1
 </ul>
 <h2>定义数据格式协议</h2>
 <p>addressbook.proto:</p>
-<div class="highlight"><pre><span></span><span class="n">syntax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"proto2"</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">syntax</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"proto2"</span><span class="p">;</span>
 
-<span class="n">package</span><span class="w"> </span><span class="n">tutorial</span><span class="p">;</span><span class="w"></span>
+<span class="n">package</span><span class="w"> </span><span class="n">tutorial</span><span class="p">;</span>
 
-<span class="n">message</span><span class="w"> </span><span class="n">Person</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">optional</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">optional</span><span class="w"> </span><span class="n">int32</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">optional</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"></span>
+<span class="n">message</span><span class="w"> </span><span class="n">Person</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">optional</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">  </span><span class="n">optional</span><span class="w"> </span><span class="n">int32</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">  </span><span class="n">optional</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">PhoneType</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">MOBILE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">HOME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">WORK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">PhoneType</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">MOBILE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">HOME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">WORK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="n">message</span><span class="w"> </span><span class="n">PhoneNumber</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">optional</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">optional</span><span class="w"> </span><span class="n">PhoneType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">[</span><span class="k">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HOME</span><span class="p">];</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="n">message</span><span class="w"> </span><span class="n">PhoneNumber</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">optional</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="n">number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">optional</span><span class="w"> </span><span class="n">PhoneType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">[</span><span class="k">default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HOME</span><span class="p">];</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="n">repeated</span><span class="w"> </span><span class="n">PhoneNumber</span><span class="w"> </span><span class="n">phones</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="n">repeated</span><span class="w"> </span><span class="n">PhoneNumber</span><span class="w"> </span><span class="n">phones</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="n">message</span><span class="w"> </span><span class="n">AddressBook</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">repeated</span><span class="w"> </span><span class="n">Person</span><span class="w"> </span><span class="n">people</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="n">message</span><span class="w"> </span><span class="n">AddressBook</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">repeated</span><span class="w"> </span><span class="n">Person</span><span class="w"> </span><span class="n">people</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 <h2>编译生成编码解码接口文件</h2>
-<div class="highlight"><pre><span></span>$ protoc -I<span class="o">=</span><span class="nv">$SRC_DIR</span> --cpp_out<span class="o">=</span><span class="nv">$DST_DIR</span> <span class="nv">$SRC_DIR</span>/addressbook.proto
-$ protoc -I<span class="o">=</span>. --cpp_out<span class="o">=</span>. addressbook.proto
+<div class="highlight"><pre><span></span>$<span class="w"> </span>protoc<span class="w"> </span>-I<span class="o">=</span><span class="nv">$SRC_DIR</span><span class="w"> </span>--cpp_out<span class="o">=</span><span class="nv">$DST_DIR</span><span class="w"> </span><span class="nv">$SRC_DIR</span>/addressbook.proto
+$<span class="w"> </span>protoc<span class="w"> </span>-I<span class="o">=</span>.<span class="w"> </span>--cpp_out<span class="o">=</span>.<span class="w"> </span>addressbook.proto
 
-$ ls -1
+$<span class="w"> </span>ls<span class="w"> </span>-1
 addressbook.pb.cc
 addressbook.pb.h
 addressbook.proto
@@ -157,168 +157,168 @@ addressbook.proto
 <p>不需要每次手动生成接口文件，可以在CMakeLists.txt中通过CMake提供的命令自动生成接口文件。</p>
 <h2>写入一条数据</h2>
 <p>writer.cpp:</p>
-<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">"addressbook.pb.h"</span><span class="cp"></span>
-<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fstream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"addressbook.pb.h"</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 
 <span class="c1">// This function fills in a Person message based on user input.</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">PromptForAddress</span><span class="p">(</span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">*</span><span class="w"> </span><span class="n">person</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Enter person ID number: "</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">cin</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">person</span><span class="o">-&gt;</span><span class="n">set_id</span><span class="p">(</span><span class="n">id</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">cin</span><span class="p">.</span><span class="n">ignore</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="sc">'\n'</span><span class="p">);</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">PromptForAddress</span><span class="p">(</span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">*</span><span class="w"> </span><span class="n">person</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Enter person ID number: "</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+<span class="w">  </span><span class="n">cin</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
+<span class="w">  </span><span class="n">person</span><span class="o">-&gt;</span><span class="n">set_id</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+<span class="w">  </span><span class="n">cin</span><span class="p">.</span><span class="n">ignore</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="sc">'\n'</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Enter name: "</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">getline</span><span class="p">(</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">person</span><span class="o">-&gt;</span><span class="n">mutable_name</span><span class="p">());</span><span class="w"></span>
+<span class="w">  </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Enter name: "</span><span class="p">;</span>
+<span class="w">  </span><span class="n">getline</span><span class="p">(</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">person</span><span class="o">-&gt;</span><span class="n">mutable_name</span><span class="p">());</span>
 
-<span class="w">  </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Enter email address (blank for none): "</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">string</span><span class="w"> </span><span class="n">email</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">getline</span><span class="p">(</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">email</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">person</span><span class="o">-&gt;</span><span class="n">set_email</span><span class="p">(</span><span class="n">email</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Enter email address (blank for none): "</span><span class="p">;</span>
+<span class="w">  </span><span class="n">string</span><span class="w"> </span><span class="n">email</span><span class="p">;</span>
+<span class="w">  </span><span class="n">getline</span><span class="p">(</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">email</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">person</span><span class="o">-&gt;</span><span class="n">set_email</span><span class="p">(</span><span class="n">email</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Enter a phone number (or leave blank to finish): "</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">number</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">getline</span><span class="p">(</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="n">number</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">number</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Enter a phone number (or leave blank to finish): "</span><span class="p">;</span>
+<span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">number</span><span class="p">;</span>
+<span class="w">    </span><span class="n">getline</span><span class="p">(</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="n">number</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">number</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">PhoneNumber</span><span class="o">*</span><span class="w"> </span><span class="n">phone_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">person</span><span class="o">-&gt;</span><span class="n">add_phones</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="n">phone_number</span><span class="o">-&gt;</span><span class="n">set_number</span><span class="p">(</span><span class="n">number</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">PhoneNumber</span><span class="o">*</span><span class="w"> </span><span class="n">phone_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">person</span><span class="o">-&gt;</span><span class="n">add_phones</span><span class="p">();</span>
+<span class="w">    </span><span class="n">phone_number</span><span class="o">-&gt;</span><span class="n">set_number</span><span class="p">(</span><span class="n">number</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Is this a mobile, home, or work phone? "</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">getline</span><span class="p">(</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"mobile"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">phone_number</span><span class="o">-&gt;</span><span class="n">set_type</span><span class="p">(</span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">MOBILE</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"home"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">phone_number</span><span class="o">-&gt;</span><span class="n">set_type</span><span class="p">(</span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">HOME</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"work"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">phone_number</span><span class="o">-&gt;</span><span class="n">set_type</span><span class="p">(</span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">WORK</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Unknown phone type.  Using default."</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Is this a mobile, home, or work phone? "</span><span class="p">;</span>
+<span class="w">    </span><span class="n">string</span><span class="w"> </span><span class="n">type</span><span class="p">;</span>
+<span class="w">    </span><span class="n">getline</span><span class="p">(</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"mobile"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">phone_number</span><span class="o">-&gt;</span><span class="n">set_type</span><span class="p">(</span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">MOBILE</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"home"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">phone_number</span><span class="o">-&gt;</span><span class="n">set_type</span><span class="p">(</span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">HOME</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"work"</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">phone_number</span><span class="o">-&gt;</span><span class="n">set_type</span><span class="p">(</span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">WORK</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Unknown phone type.  Using default."</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 
 <span class="c1">// Main function:  Reads the entire address book from a file,</span>
 <span class="c1">//   adds one person based on user input, then writes it back out to the same</span>
 <span class="c1">//   file.</span>
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="c1">// Verify that the version of the library that we linked against is</span>
 <span class="w">  </span><span class="c1">// compatible with the version of the headers we compiled against.</span>
-<span class="w">  </span><span class="n">GOOGLE_PROTOBUF_VERIFY_VERSION</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">GOOGLE_PROTOBUF_VERIFY_VERSION</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Usage:  "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" ADDRESS_BOOK_FILE"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Usage:  "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" ADDRESS_BOOK_FILE"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="n">tutorial</span><span class="o">::</span><span class="n">AddressBook</span><span class="w"> </span><span class="n">address_book</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">tutorial</span><span class="o">::</span><span class="n">AddressBook</span><span class="w"> </span><span class="n">address_book</span><span class="p">;</span>
 
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Read the existing address book.</span>
-<span class="w">    </span><span class="n">fstream</span><span class="w"> </span><span class="n">input</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">in</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">binary</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">": File not found.  Creating a new file."</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">address_book</span><span class="p">.</span><span class="n">ParseFromIstream</span><span class="p">(</span><span class="o">&amp;</span><span class="n">input</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Failed to parse address book."</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">fstream</span><span class="w"> </span><span class="n">input</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">in</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">binary</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">input</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">": File not found.  Creating a new file."</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">address_book</span><span class="p">.</span><span class="n">ParseFromIstream</span><span class="p">(</span><span class="o">&amp;</span><span class="n">input</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Failed to parse address book."</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 
 <span class="w">  </span><span class="c1">// Add an address.</span>
-<span class="w">  </span><span class="n">PromptForAddress</span><span class="p">(</span><span class="n">address_book</span><span class="p">.</span><span class="n">add_people</span><span class="p">());</span><span class="w"></span>
+<span class="w">  </span><span class="n">PromptForAddress</span><span class="p">(</span><span class="n">address_book</span><span class="p">.</span><span class="n">add_people</span><span class="p">());</span>
 
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Write the new address book back to disk.</span>
-<span class="w">    </span><span class="n">fstream</span><span class="w"> </span><span class="n">output</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">out</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">trunc</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">binary</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">address_book</span><span class="p">.</span><span class="n">SerializeToOstream</span><span class="p">(</span><span class="o">&amp;</span><span class="n">output</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Failed to write address book."</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">fstream</span><span class="w"> </span><span class="n">output</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">out</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">trunc</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">binary</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">address_book</span><span class="p">.</span><span class="n">SerializeToOstream</span><span class="p">(</span><span class="o">&amp;</span><span class="n">output</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Failed to write address book."</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 
 <span class="w">  </span><span class="c1">// Optional:  Delete all global objects allocated by libprotobuf.</span>
-<span class="w">  </span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">ShutdownProtobufLibrary</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">ShutdownProtobufLibrary</span><span class="p">();</span>
 
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 <h2>读取一条数据</h2>
 <p>reader.cpp:</p>
-<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">"addressbook.pb.h"</span><span class="cp"></span>
-<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fstream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"addressbook.pb.h"</span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 
 <span class="c1">// Iterates though all people in the AddressBook and prints info about them.</span>
-<span class="kt">void</span><span class="w"> </span><span class="nf">ListPeople</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">tutorial</span><span class="o">::</span><span class="n">AddressBook</span><span class="o">&amp;</span><span class="w"> </span><span class="n">address_book</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">address_book</span><span class="p">.</span><span class="n">people_size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">&amp;</span><span class="w"> </span><span class="n">person</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">address_book</span><span class="p">.</span><span class="n">people</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">ListPeople</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">tutorial</span><span class="o">::</span><span class="n">AddressBook</span><span class="o">&amp;</span><span class="w"> </span><span class="n">address_book</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">address_book</span><span class="p">.</span><span class="n">people_size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">&amp;</span><span class="w"> </span><span class="n">person</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">address_book</span><span class="p">.</span><span class="n">people</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Person ID: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">person</span><span class="p">.</span><span class="n">id</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  Name: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">person</span><span class="p">.</span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">person</span><span class="p">.</span><span class="n">has_email</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  E-mail address: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">person</span><span class="p">.</span><span class="n">email</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Person ID: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">person</span><span class="p">.</span><span class="n">id</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  Name: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">person</span><span class="p">.</span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">person</span><span class="p">.</span><span class="n">has_email</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  E-mail address: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">person</span><span class="p">.</span><span class="n">email</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">person</span><span class="p">.</span><span class="n">phones_size</span><span class="p">();</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">PhoneNumber</span><span class="o">&amp;</span><span class="w"> </span><span class="n">phone_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">person</span><span class="p">.</span><span class="n">phones</span><span class="p">(</span><span class="n">j</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">person</span><span class="p">.</span><span class="n">phones_size</span><span class="p">();</span><span class="w"> </span><span class="n">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">const</span><span class="w"> </span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">PhoneNumber</span><span class="o">&amp;</span><span class="w"> </span><span class="n">phone_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">person</span><span class="p">.</span><span class="n">phones</span><span class="p">(</span><span class="n">j</span><span class="p">);</span>
 
-<span class="w">      </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">phone_number</span><span class="p">.</span><span class="n">type</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">MOBILE</span><span class="o">:</span><span class="w"></span>
-<span class="w">          </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  Mobile phone #: "</span><span class="p">;</span><span class="w"></span>
-<span class="w">          </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">HOME</span><span class="o">:</span><span class="w"></span>
-<span class="w">          </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  Home phone #: "</span><span class="p">;</span><span class="w"></span>
-<span class="w">          </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="n">tutorial</span><span class="o">::</span><span class="n">Person</span><span class="o">::</span><span class="n">WORK</span><span class="o">:</span><span class="w"></span>
-<span class="w">          </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  Work phone #: "</span><span class="p">;</span><span class="w"></span>
-<span class="w">          </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">      </span><span class="p">}</span><span class="w"></span>
-<span class="w">      </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">phone_number</span><span class="p">.</span><span class="n">number</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">phone_number</span><span class="p">.</span><span class="n">type</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">tutorial</span><span class="o">::</span><span class="no">Person</span><span class="o">::</span><span class="no">MOBILE</span><span class="p">:</span>
+<span class="w">          </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  Mobile phone #: "</span><span class="p">;</span>
+<span class="w">          </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">tutorial</span><span class="o">::</span><span class="no">Person</span><span class="o">::</span><span class="no">HOME</span><span class="p">:</span>
+<span class="w">          </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  Home phone #: "</span><span class="p">;</span>
+<span class="w">          </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">tutorial</span><span class="o">::</span><span class="no">Person</span><span class="o">::</span><span class="no">WORK</span><span class="p">:</span>
+<span class="w">          </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  Work phone #: "</span><span class="p">;</span>
+<span class="w">          </span><span class="k">break</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">phone_number</span><span class="p">.</span><span class="n">number</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 
 <span class="c1">// Main function:  Reads the entire address book from a file and prints all</span>
 <span class="c1">//   the information inside.</span>
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="c1">// Verify that the version of the library that we linked against is</span>
 <span class="w">  </span><span class="c1">// compatible with the version of the headers we compiled against.</span>
-<span class="w">  </span><span class="n">GOOGLE_PROTOBUF_VERIFY_VERSION</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">GOOGLE_PROTOBUF_VERIFY_VERSION</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Usage:  "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" ADDRESS_BOOK_FILE"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Usage:  "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" ADDRESS_BOOK_FILE"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="n">tutorial</span><span class="o">::</span><span class="n">AddressBook</span><span class="w"> </span><span class="n">address_book</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">tutorial</span><span class="o">::</span><span class="n">AddressBook</span><span class="w"> </span><span class="n">address_book</span><span class="p">;</span>
 
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Read the existing address book.</span>
-<span class="w">    </span><span class="n">fstream</span><span class="w"> </span><span class="n">input</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">in</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">binary</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">address_book</span><span class="p">.</span><span class="n">ParseFromIstream</span><span class="p">(</span><span class="o">&amp;</span><span class="n">input</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Failed to parse address book."</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">fstream</span><span class="w"> </span><span class="n">input</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">in</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ios</span><span class="o">::</span><span class="n">binary</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">address_book</span><span class="p">.</span><span class="n">ParseFromIstream</span><span class="p">(</span><span class="o">&amp;</span><span class="n">input</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Failed to parse address book."</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="n">ListPeople</span><span class="p">(</span><span class="n">address_book</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">ListPeople</span><span class="p">(</span><span class="n">address_book</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// Optional:  Delete all global objects allocated by libprotobuf.</span>
-<span class="w">  </span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">ShutdownProtobufLibrary</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">google</span><span class="o">::</span><span class="n">protobuf</span><span class="o">::</span><span class="n">ShutdownProtobufLibrary</span><span class="p">();</span>
 
-<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 <h2>CMake编译程序</h2>
 <div class="highlight"><pre><span></span><span class="nb">CMAKE_MINIMUM_REQUIRED</span><span class="p">(</span><span class="s">VERSION</span><span class="w"> </span><span class="s">2.8.12</span><span class="p">)</span>
@@ -346,45 +346,45 @@ addressbook.proto
 <span class="nb">target_link_libraries</span><span class="p">(</span><span class="s">reader</span><span class="w"> </span><span class="o">${</span><span class="nv">PROTOBUF_LIBRARIES</span><span class="o">}</span><span class="p">)</span>
 </pre></div>
 <p>编译运行:</p>
-<div class="highlight"><pre><span></span>$ cmake ..
--- library protobuf found
+<div class="highlight"><pre><span></span>$<span class="w"> </span>cmake<span class="w"> </span>..
+--<span class="w"> </span>library<span class="w"> </span>protobuf<span class="w"> </span>found
 /root/src/person/build/addressbook.pb.cc
 /root/src/person/build/addressbook.pb.h
 /root/src/person/build
--- Configuring <span class="k">done</span>
--- Generating <span class="k">done</span>
--- Build files have been written to: /root/src/person/build
+--<span class="w"> </span>Configuring<span class="w"> </span><span class="k">done</span>
+--<span class="w"> </span>Generating<span class="w"> </span><span class="k">done</span>
+--<span class="w"> </span>Build<span class="w"> </span>files<span class="w"> </span>have<span class="w"> </span>been<span class="w"> </span>written<span class="w"> </span>to:<span class="w"> </span>/root/src/person/build
 
-$ make
-<span class="o">[</span> <span class="m">50</span>%<span class="o">]</span> Built target reader
-<span class="o">[</span><span class="m">100</span>%<span class="o">]</span> Built target writer
+$<span class="w"> </span>make
+<span class="o">[</span><span class="w"> </span><span class="m">50</span>%<span class="o">]</span><span class="w"> </span>Built<span class="w"> </span>target<span class="w"> </span>reader
+<span class="o">[</span><span class="m">100</span>%<span class="o">]</span><span class="w"> </span>Built<span class="w"> </span>target<span class="w"> </span>writer
 
-$ ./writer test.data
-test.data: File not found.  Creating a new file.
-Enter person ID number: <span class="m">101</span>
-Enter name: leslie
-Enter email address <span class="o">(</span>blank <span class="k">for</span> none<span class="o">)</span>:
-Enter a phone number <span class="o">(</span>or leave blank to finish<span class="o">)</span>:
+$<span class="w"> </span>./writer<span class="w"> </span>test.data
+test.data:<span class="w"> </span>File<span class="w"> </span>not<span class="w"> </span>found.<span class="w">  </span>Creating<span class="w"> </span>a<span class="w"> </span>new<span class="w"> </span>file.
+Enter<span class="w"> </span>person<span class="w"> </span>ID<span class="w"> </span>number:<span class="w"> </span><span class="m">101</span>
+Enter<span class="w"> </span>name:<span class="w"> </span>leslie
+Enter<span class="w"> </span>email<span class="w"> </span>address<span class="w"> </span><span class="o">(</span>blank<span class="w"> </span><span class="k">for</span><span class="w"> </span>none<span class="o">)</span>:
+Enter<span class="w"> </span>a<span class="w"> </span>phone<span class="w"> </span>number<span class="w"> </span><span class="o">(</span>or<span class="w"> </span>leave<span class="w"> </span>blank<span class="w"> </span>to<span class="w"> </span>finish<span class="o">)</span>:
 
-$ ./reader test.data
-Person ID: <span class="m">101</span>
-  Name: leslie
+$<span class="w"> </span>./reader<span class="w"> </span>test.data
+Person<span class="w"> </span>ID:<span class="w"> </span><span class="m">101</span>
+<span class="w">  </span>Name:<span class="w"> </span>leslie
 
-$ ./writer test.data
-Enter person ID number: <span class="m">102</span>
-Enter name: lesliezhu
-Enter email address <span class="o">(</span>blank <span class="k">for</span> none<span class="o">)</span>: x@y.com
-Enter a phone number <span class="o">(</span>or leave blank to finish<span class="o">)</span>: <span class="m">191</span>
-Is this a mobile, home, or work phone? home
-Enter a phone number <span class="o">(</span>or leave blank to finish<span class="o">)</span>:
+$<span class="w"> </span>./writer<span class="w"> </span>test.data
+Enter<span class="w"> </span>person<span class="w"> </span>ID<span class="w"> </span>number:<span class="w"> </span><span class="m">102</span>
+Enter<span class="w"> </span>name:<span class="w"> </span>lesliezhu
+Enter<span class="w"> </span>email<span class="w"> </span>address<span class="w"> </span><span class="o">(</span>blank<span class="w"> </span><span class="k">for</span><span class="w"> </span>none<span class="o">)</span>:<span class="w"> </span>x@y.com
+Enter<span class="w"> </span>a<span class="w"> </span>phone<span class="w"> </span>number<span class="w"> </span><span class="o">(</span>or<span class="w"> </span>leave<span class="w"> </span>blank<span class="w"> </span>to<span class="w"> </span>finish<span class="o">)</span>:<span class="w"> </span><span class="m">191</span>
+Is<span class="w"> </span>this<span class="w"> </span>a<span class="w"> </span>mobile,<span class="w"> </span>home,<span class="w"> </span>or<span class="w"> </span>work<span class="w"> </span>phone?<span class="w"> </span>home
+Enter<span class="w"> </span>a<span class="w"> </span>phone<span class="w"> </span>number<span class="w"> </span><span class="o">(</span>or<span class="w"> </span>leave<span class="w"> </span>blank<span class="w"> </span>to<span class="w"> </span>finish<span class="o">)</span>:
 
-$ ./reader test.data
-Person ID: <span class="m">101</span>
-  Name: leslie
-Person ID: <span class="m">102</span>
-  Name: lesliezhu
-  E-mail address: x@y.com
-  Home phone <span class="c1">#: 191</span>
+$<span class="w"> </span>./reader<span class="w"> </span>test.data
+Person<span class="w"> </span>ID:<span class="w"> </span><span class="m">101</span>
+<span class="w">  </span>Name:<span class="w"> </span>leslie
+Person<span class="w"> </span>ID:<span class="w"> </span><span class="m">102</span>
+<span class="w">  </span>Name:<span class="w"> </span>lesliezhu
+<span class="w">  </span>E-mail<span class="w"> </span>address:<span class="w"> </span>x@y.com
+<span class="w">  </span>Home<span class="w"> </span>phone<span class="w"> </span><span class="c1">#: 191</span>
 </pre></div>
 <h2>改变数据格式协议</h2>
 <p>在扩展数据格式协议时，如果要保持<code>向前兼容(旧程序可以处理新格式数据）</code>和<code>向后兼容（新API可以处理旧格式数据）</code>，则有以下原则：</p>
@@ -476,21 +476,21 @@ Person ID: <span class="m">102</span>
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

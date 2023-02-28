@@ -101,8 +101,8 @@
         <div id='content'>
 <h2>引言</h2>
 <p>当我们登录Linux系统后，如果长时间不操作，比如忘记关闭终端窗口了，怎么做到用户自动退出登录呢？</p>
-<div class="highlight"><pre><span></span>$ ls -l /etc/profile
--rw-r--r-- <span class="m">1</span> root root <span class="m">1819</span> Apr  <span class="m">1</span>  <span class="m">2020</span> /etc/profile
+<div class="highlight"><pre><span></span>$<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/etc/profile
+-rw-r--r--<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">1819</span><span class="w"> </span>Apr<span class="w">  </span><span class="m">1</span><span class="w">  </span><span class="m">2020</span><span class="w"> </span>/etc/profile
 </pre></div>
 <p>这个文件是系统环境变量的配置文件，并且只有root有修改权限；如果能够在这个文件里面做一些设置，那么每个用户登录后都会加载里面的配置。</p>
 <h2>/etc/profile</h2>
@@ -117,7 +117,7 @@
 <span class="c1"># will prevent the need for merging in future updates.</span>
 </pre></div>
 <p>这个文件不建议直接修改，而是创建自己的配置文件:</p>
-<div class="highlight"><pre><span></span>$ ls -1 /etc/profile.d/*
+<div class="highlight"><pre><span></span>$<span class="w"> </span>ls<span class="w"> </span>-1<span class="w"> </span>/etc/profile.d/*
 /etc/profile.d/colorgrep.csh
 /etc/profile.d/colorgrep.sh
 /etc/profile.d/colorls.csh
@@ -134,12 +134,12 @@
 <p>这些都是系统默认自带的定制环境变量，我们看下<code>vim.sh</code>里面内容:</p>
 <div class="highlight"><pre><span></span><span class="c1"># cat /etc/profile.d/vim.sh</span>
 
-<span class="k">if</span> <span class="o">[</span> -n <span class="s2">"</span><span class="nv">$BASH_VERSION</span><span class="s2">"</span> -o -n <span class="s2">"</span><span class="nv">$KSH_VERSION</span><span class="s2">"</span> -o -n <span class="s2">"</span><span class="nv">$ZSH_VERSION</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-  <span class="o">[</span> -x /usr/bin/id <span class="o">]</span> <span class="o">||</span> <span class="k">return</span>
-  <span class="nv">ID</span><span class="o">=</span><span class="sb">`</span>/usr/bin/id -u<span class="sb">`</span>
-  <span class="o">[</span> -n <span class="s2">"</span><span class="nv">$ID</span><span class="s2">"</span> -a <span class="s2">"</span><span class="nv">$ID</span><span class="s2">"</span> -le <span class="m">200</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="k">return</span>
-  <span class="c1"># for bash and zsh, only if no alias is already set</span>
-  <span class="nb">alias</span> vi &gt;/dev/null <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="o">||</span> <span class="nb">alias</span> <span class="nv">vi</span><span class="o">=</span>vim
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$BASH_VERSION</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$KSH_VERSION</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$ZSH_VERSION</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="o">[</span><span class="w"> </span>-x<span class="w"> </span>/usr/bin/id<span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="k">return</span>
+<span class="w">  </span><span class="nv">ID</span><span class="o">=</span><span class="sb">`</span>/usr/bin/id<span class="w"> </span>-u<span class="sb">`</span>
+<span class="w">  </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$ID</span><span class="s2">"</span><span class="w"> </span>-a<span class="w"> </span><span class="s2">"</span><span class="nv">$ID</span><span class="s2">"</span><span class="w"> </span>-le<span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">return</span>
+<span class="w">  </span><span class="c1"># for bash and zsh, only if no alias is already set</span>
+<span class="w">  </span><span class="nb">alias</span><span class="w"> </span>vi<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">alias</span><span class="w"> </span><span class="nv">vi</span><span class="o">=</span>vim
 <span class="k">fi</span>
 </pre></div>
 <h2>/etc/profile.d/timeout.sh</h2>
@@ -153,15 +153,15 @@
 <p>以<code>root</code>用户新建<code>/etc/profile.d/timeout.sh</code>文件，用于定义变量<code>TMOUT</code>大于0，用户超时不操作自动退出登录:</p>
 <div class="highlight"><pre><span></span><span class="c1"># cat /etc/profile.d/timeout.sh</span>
 
-<span class="nb">readonly</span> <span class="nv">TMOUT</span><span class="o">=</span><span class="m">600</span> <span class="c1"># 单位是秒(s)</span>
-<span class="nb">export</span> TMOUT
+<span class="nb">readonly</span><span class="w"> </span><span class="nv">TMOUT</span><span class="o">=</span><span class="m">600</span><span class="w"> </span><span class="c1"># 单位是秒(s)</span>
+<span class="nb">export</span><span class="w"> </span>TMOUT
 </pre></div>
 <p>变量<code>TMOUT</code>的作用是在<code>Shell</code>超过一定时间无操作后自动退出登录。</p>
-<div class="highlight"><pre><span></span>$ <span class="nb">unset</span> TMOUT
-bash: unset: TMOUT: cannot unset: <span class="nb">readonly</span> variable
+<div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">unset</span><span class="w"> </span>TMOUT
+bash:<span class="w"> </span>unset:<span class="w"> </span>TMOUT:<span class="w"> </span>cannot<span class="w"> </span>unset:<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>variable
 
-$ <span class="nv">TMOUT</span><span class="o">=</span><span class="m">1000</span>
-bash: TMOUT: <span class="nb">readonly</span> variable
+$<span class="w"> </span><span class="nv">TMOUT</span><span class="o">=</span><span class="m">1000</span>
+bash:<span class="w"> </span>TMOUT:<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>variable
 </pre></div>
 <p>而<code>readonly</code>是不允许修改这个值，除非<code>root</code>用户修改配置文件并重新登录才可以修改生效。</p>
 <h2>总结</h2>
@@ -238,21 +238,21 @@ bash: TMOUT: <span class="nb">readonly</span> variable
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

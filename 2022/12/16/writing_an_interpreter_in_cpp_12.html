@@ -118,39 +118,39 @@
 <p>虚拟机字节码操作数都是整数，这些整数作为索引，用于在符号表、常量表、作用域表中查找到正确的对象，然后进入调用栈，根据操作码的逻辑完成计算。</p>
 <p>如果要将源文件编译为字节码文件，然后虚拟机加载字节码文件执行，即编译器和虚拟机分离，则需要用一种方式将符号表、常量表、作用域表能够写入文件并正确读取，然后是字节码本身的写入文件和读取。</p>
 <h2>斐波那契数基准测试</h2>
-<div class="highlight"><pre><span></span><span class="n">let</span><span class="w"> </span><span class="n">fibonacci</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">){</span><span class="w"></span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">fibonacci</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">fibonacci</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">let</span><span class="w"> </span><span class="n">fibonacci</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">){</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">){</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">){</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">fibonacci</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">fibonacci</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
 
-<span class="n">fibonacci</span><span class="p">(</span><span class="mi">35</span><span class="p">);</span><span class="w"></span>
+<span class="n">fibonacci</span><span class="p">(</span><span class="mi">35</span><span class="p">);</span>
 </pre></div>
 <p>同时fibonacci也实现了内置函数形式，分别用解释器和编译器执行对比:</p>
-<div class="highlight"><pre><span></span>$ ./fibonacci
-usage: fibonacci -engine vm<span class="p">|</span><span class="nb">eval</span> <span class="o">[</span>-builtin<span class="o">]</span>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>./fibonacci
+usage:<span class="w"> </span>fibonacci<span class="w"> </span>-engine<span class="w"> </span>vm<span class="p">|</span><span class="nb">eval</span><span class="w"> </span><span class="o">[</span>-builtin<span class="o">]</span>
 
-$ ./fibonacci -engine <span class="nb">eval</span> -builtin
-<span class="nv">engine</span><span class="o">=</span>eval, fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>, <span class="nv">duration</span><span class="o">=</span>0s
+$<span class="w"> </span>./fibonacci<span class="w"> </span>-engine<span class="w"> </span><span class="nb">eval</span><span class="w"> </span>-builtin
+<span class="nv">engine</span><span class="o">=</span>eval,<span class="w"> </span>fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>,<span class="w"> </span><span class="nv">duration</span><span class="o">=</span>0s
 
-$ ./fibonacci -engine vm -builtin
-<span class="nv">engine</span><span class="o">=</span>vm, fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>, <span class="nv">duration</span><span class="o">=</span>0s
+$<span class="w"> </span>./fibonacci<span class="w"> </span>-engine<span class="w"> </span>vm<span class="w"> </span>-builtin
+<span class="nv">engine</span><span class="o">=</span>vm,<span class="w"> </span>fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>,<span class="w"> </span><span class="nv">duration</span><span class="o">=</span>0s
 
-$ ./fibonacci -engine <span class="nb">eval</span>
-<span class="nv">engine</span><span class="o">=</span>eval, fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>, <span class="nv">duration</span><span class="o">=</span>83s
+$<span class="w"> </span>./fibonacci<span class="w"> </span>-engine<span class="w"> </span><span class="nb">eval</span>
+<span class="nv">engine</span><span class="o">=</span>eval,<span class="w"> </span>fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>,<span class="w"> </span><span class="nv">duration</span><span class="o">=</span>83s
 
-$ ./fibonacci -engine vm
-<span class="nv">engine</span><span class="o">=</span>vm, fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>, <span class="nv">duration</span><span class="o">=</span>31s
+$<span class="w"> </span>./fibonacci<span class="w"> </span>-engine<span class="w"> </span>vm
+<span class="nv">engine</span><span class="o">=</span>vm,<span class="w"> </span>fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="m">9227465</span>,<span class="w"> </span><span class="nv">duration</span><span class="o">=</span>31s
 
-$ <span class="nb">time</span> python fibonacci.py
-fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span> <span class="m">9227465</span>
-python fibonacci.py  <span class="m">3</span>.59s user <span class="m">0</span>.04s system <span class="m">99</span>% cpu <span class="m">3</span>.639 total
+$<span class="w"> </span><span class="nb">time</span><span class="w"> </span>python<span class="w"> </span>fibonacci.py
+fibonacci<span class="o">(</span><span class="m">35</span><span class="o">)=</span><span class="w"> </span><span class="m">9227465</span>
+python<span class="w"> </span>fibonacci.py<span class="w">  </span><span class="m">3</span>.59s<span class="w"> </span>user<span class="w"> </span><span class="m">0</span>.04s<span class="w"> </span>system<span class="w"> </span><span class="m">99</span>%<span class="w"> </span>cpu<span class="w"> </span><span class="m">3</span>.639<span class="w"> </span>total
 </pre></div>
 <ul>
 <li>虚拟机执行字节码比解释器执行要快3倍左右</li>
@@ -254,21 +254,21 @@ python fibonacci.py  <span class="m">3</span>.59s user <span class="m">0</span>.
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

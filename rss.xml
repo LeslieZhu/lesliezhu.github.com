@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> 使用shred工具彻底粉碎文件 </title>
+            <link> http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html</guid>
+            <category><![CDATA[Linux操作与管理]]></category>
+            <pubDate>2023-02-28 Tue</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html</comments>
+            </item>
+            
+            <item>
             <title> 火把龙 </title>
             <link> http://www.lesliezhu.com/2022/12/29/torch_dragon.html </link>
             <author><![CDATA[吴羽舒]]></author>

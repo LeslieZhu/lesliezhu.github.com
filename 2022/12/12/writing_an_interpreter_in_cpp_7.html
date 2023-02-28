@@ -147,117 +147,117 @@
 <p>之前字节码和编译器已经支持整数加法运算，现在添加对表达式和条件语句的支持，会涉及到<code>编译顺序</code>的调整，执行条件语句的<code>跳转指令</code>等。</p>
 <h2>出栈操作码：OpPop</h2>
 <p>栈顶的值使用后不再继续留在调用栈中,添加出栈操作码:</p>
-<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Error</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Compile</span><span class="p">([[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Error</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Compile</span><span class="p">([[</span><span class="n">maybe_unused</span><span class="p">]]</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">node</span><span class="p">)</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="c1">//...</span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exprStmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exprStmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">ExpressionStatement</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
 
-<span class="w">      </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">exprStmt</span><span class="o">-&gt;</span><span class="n">pExpression</span><span class="p">);</span><span class="w"></span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
-<span class="w">      </span><span class="p">{</span><span class="w"></span>
-<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
-<span class="w">      </span><span class="p">}</span><span class="w"></span>
-<span class="w">      </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpPop</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">      </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">exprStmt</span><span class="o">-&gt;</span><span class="n">pExpression</span><span class="p">);</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span>
+<span class="w">      </span><span class="p">{</span>
+<span class="w">          </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">      </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpPop</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="w">    </span><span class="c1">//...</span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 </pre></div>
 <p>在每个表达式语句后执行自动出栈操作，防止执行结果继续停留在栈顶。</p>
 <h2>中缀表达式</h2>
 <p>8种中缀表达式中和算术运算相关的是: <code>+</code>,<code>-</code>,<code>*</code>,<code>/</code>，在加法基础上补充即可。</p>
 <p>编译器部分:</p>
-<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">InfixExpression</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">InfixExpression</span><span class="p">)</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="c1">// ...</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"+"</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpAdd</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"+"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpAdd</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
 <span class="w">    </span><span class="p">}</span><span class="w"> </span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"-"</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpSub</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"*"</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpMul</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"/"</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpDiv</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unknow operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"-"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpSub</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"*"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpMul</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"/"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpDiv</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unknow operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>虚拟机部分:</p>
-<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">executeBInaryIntegerOperaction</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                                                </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">left</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                                                </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">right</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">rightObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">right</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">leftObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">left</span><span class="p">);</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">executeBInaryIntegerOperaction</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">,</span>
+<span class="w">                                                                </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">left</span><span class="p">,</span>
+<span class="w">                                                                </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">right</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">rightObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">right</span><span class="p">);</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">leftObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">left</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">op</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpAdd</span><span class="o">:</span><span class="w"></span>
-<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">rightObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpSub</span><span class="o">:</span><span class="w"></span>
-<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">rightObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpMul</span><span class="o">:</span><span class="w"></span>
-<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rightObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpDiv</span><span class="o">:</span><span class="w"></span>
-<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">rightObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpAdd</span><span class="p">:</span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">rightObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpSub</span><span class="p">:</span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">rightObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpMul</span><span class="p">:</span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rightObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpDiv</span><span class="p">:</span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leftObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">rightObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">;</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">default</span><span class="o">:</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unknow integer operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeTypeStr</span><span class="p">(</span><span class="n">op</span><span class="p">));</span><span class="w"></span>
-<span class="w">        </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">default</span><span class="o">:</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unknow integer operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeTypeStr</span><span class="p">(</span><span class="n">op</span><span class="p">));</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">result</span><span class="p">));</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">result</span><span class="p">));</span>
+<span class="p">}</span>
 </pre></div>
 <h2>布尔类型</h2>
 <p>编译器部分:</p>
-<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Boolean</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">boolAst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">boolAst</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpTrue</span><span class="p">,{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpFalse</span><span class="p">,{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">Boolean</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">boolAst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">Boolean</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">boolAst</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpTrue</span><span class="p">,{});</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpFalse</span><span class="p">,{});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>虚拟机部分:</p>
-<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpTrue</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">TRUE_OBJ</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpFalse</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">FALSE_OBJ</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpTrue</span><span class="p">:</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">TRUE_OBJ</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpFalse</span><span class="p">:</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">FALSE_OBJ</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span>
 </pre></div>
 <h2>比较运算符</h2>
 <ul>
@@ -266,48 +266,48 @@
 <li><code>&gt;</code></li>
 <li><code>&lt;</code></li>
 </ul>
-<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">InfixExpression</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">InfixExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">infixObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">InfixExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">InfixExpression</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">InfixExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">infixObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">InfixExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"&lt;"</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">pRight</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"&lt;"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">pRight</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
 
-<span class="w">        </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">pLeft</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">pLeft</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
 
 
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGreaterThan</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGreaterThan</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
 
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="c1">// ...</span>
 
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"&gt;"</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGreaterThan</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"=="</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpEqual</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"!="</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpNotEqual</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unknow operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"&gt;"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGreaterThan</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"=="</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpEqual</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"!="</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpNotEqual</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unknow operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">infixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>4个运算符只需要定义3个操作码，通过调整编译顺序，可以将大于与小于都使用一个操作码完成。</p>
 <h2>前缀运算</h2>
@@ -316,306 +316,306 @@
 <li><code>-</code></li>
 </ul>
 <p>编译器:</p>
-<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">PrefixExpression</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">prefixObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">PrefixExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">prefixObj</span><span class="o">-&gt;</span><span class="n">pRight</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">PrefixExpression</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">prefixObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">PrefixExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">prefixObj</span><span class="o">-&gt;</span><span class="n">pRight</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">prefixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"!"</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpBang</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">prefixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"-"</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpMinus</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unknow operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">prefixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">prefixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"!"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpBang</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">prefixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">"-"</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpMinus</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unknow operator: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">prefixObj</span><span class="o">-&gt;</span><span class="n">Operator</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>虚拟机:</p>
-<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">executeBangOperator</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">operand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">executeBangOperator</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">operand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">operand</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">TRUE_OBJ</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">FALSE_OBJ</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">operand</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">FALSE_OBJ</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">TRUE_OBJ</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">FALSE_OBJ</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">operand</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">TRUE_OBJ</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">FALSE_OBJ</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">operand</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">FALSE_OBJ</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">TRUE_OBJ</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">FALSE_OBJ</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 
-<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">executeMinusOperator</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">operand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">executeMinusOperator</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">operand</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">INTEGER</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unsupported type for negation: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">integerObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">operand</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">-1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">integerObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">));</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">INTEGER</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">evaluator</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"unsupported type for negation: "</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">operand</span><span class="o">-&gt;</span><span class="n">TypeStr</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">integerObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">operand</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Integer</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">-1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">integerObj</span><span class="o">-&gt;</span><span class="n">Value</span><span class="p">));</span>
+<span class="p">}</span>
 </pre></div>
 <h2>跳转指令与偏移量</h2>
 <p>当AST已经在字节码中铺平后，字节码就是一系列的指令，它们只有先后关系，没有任何节点或递归；当需要根据条件语句来执行不同指令的时候，需要通过<code>偏移量</code>和<code>跳转指令</code>来实现；而这里的偏移量可能是绝对偏移，也可能是相对偏移，如果编译的时候单次扫描的话，可以通过<code>回填</code>的方式，在知道具体的真实偏移量后再填入预设位置。</p>
 <p>以<code>if</code>条件语句为例:</p>
-<div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="nb">true</span><span class="p">){</span><span class="w"></span>
-<span class="w">  </span><span class="mi">10</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="mi">20</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="nb">true</span><span class="p">){</span>
+<span class="w">  </span><span class="mi">10</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="mi">20</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="mi">30</span><span class="p">;</span><span class="w"></span>
+<span class="mi">30</span><span class="p">;</span>
 </pre></div>
 <p>当编译为字节码时，先编码条件语句部分，然后要有字节操作码来决定是进入哪个分支，新增两个操作码:</p>
-<div class="highlight"><pre><span></span><span class="n">OpJumpNotTruthy</span><span class="p">,</span><span class="w"></span>
-<span class="n">OpJump</span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">OpJumpNotTruthy</span><span class="p">,</span>
+<span class="n">OpJump</span><span class="p">,</span>
 </pre></div>
 <p>前一个是有条件的跳转指令，如果它已经是true了则没有必要再去判断后面的else部分字节码了，使用<code>OpJump</code>这个无条件跳转指令。</p>
 <p>每次语句执行后位于栈顶的元素会出栈，那么这里条件语句执行完后在调用栈就没有它，但它必须交给<code>OpJumpNotTruthy</code>有条件指令来作为条件进行判断，因此需要记住前一个出栈元素是什么:</p>
-<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">EmittedInstruction</span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">Opcode</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">Position</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">EmittedInstruction</span><span class="p">{</span>
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">Opcode</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">Position</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">EmittedInstruction</span><span class="p">(){}</span><span class="w"></span>
-<span class="w">    </span><span class="n">EmittedInstruction</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pos</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="n">Opcode</span><span class="p">(</span><span class="n">op</span><span class="p">),</span><span class="w"> </span><span class="n">Position</span><span class="p">(</span><span class="n">pos</span><span class="p">){}</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="n">EmittedInstruction</span><span class="p">(){}</span>
+<span class="w">    </span><span class="n">EmittedInstruction</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pos</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="n">Opcode</span><span class="p">(</span><span class="n">op</span><span class="p">),</span><span class="w"> </span><span class="n">Position</span><span class="p">(</span><span class="n">pos</span><span class="p">){}</span>
+<span class="p">};</span>
 
-<span class="k">struct</span><span class="w"> </span><span class="nc">Compiler</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">EmittedInstruction</span><span class="w"> </span><span class="n">lastInstruction</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">EmittedInstruction</span><span class="w"> </span><span class="n">prevInstruction</span><span class="p">;</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Compiler</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">EmittedInstruction</span><span class="w"> </span><span class="n">lastInstruction</span><span class="p">;</span>
+<span class="w">    </span><span class="n">EmittedInstruction</span><span class="w"> </span><span class="n">prevInstruction</span><span class="p">;</span>
 
 <span class="w">    </span><span class="c1">//...</span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 </pre></div>
 <p>添加一些辅助函数来记录这两个信息:</p>
-<div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">operands</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">ins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Make</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">operands</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addInstruction</span><span class="p">(</span><span class="n">ins</span><span class="p">);</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">operands</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">ins</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Make</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">operands</span><span class="p">);</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addInstruction</span><span class="p">(</span><span class="n">ins</span><span class="p">);</span>
 
 <span class="w">    </span><span class="n">setLastInstruction</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span><span class="w">        </span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">setLastInstruction</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pos</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">prevInstruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lastInstruction</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">lastInstruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EmittedInstruction</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">setLastInstruction</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">pos</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">prevInstruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lastInstruction</span><span class="p">;</span>
+<span class="w">    </span><span class="n">lastInstruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EmittedInstruction</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span>
+<span class="p">}</span>
 
-<span class="kt">bool</span><span class="w"> </span><span class="nf">lastInstructionIsPop</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">lastInstruction</span><span class="p">.</span><span class="n">Opcode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpPop</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">bool</span><span class="w"> </span><span class="nf">lastInstructionIsPop</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">lastInstruction</span><span class="p">.</span><span class="n">Opcode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpPop</span><span class="p">);</span>
+<span class="p">}</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">removeLastPop</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">instructions</span><span class="p">.</span><span class="n">assign</span><span class="p">(</span><span class="n">instructions</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lastInstruction</span><span class="p">.</span><span class="n">Position</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">lastInstruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prevInstruction</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">removeLastPop</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">instructions</span><span class="p">.</span><span class="n">assign</span><span class="p">(</span><span class="n">instructions</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lastInstruction</span><span class="p">.</span><span class="n">Position</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lastInstruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">prevInstruction</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 <p>每个刚出栈的元素都可以记录和判断，则可以编译期去除一些出栈操作，起到回退的效果。</p>
 <p>至于跳转指令的真实偏移量，在编译到可以确定这个值时回填过去：</p>
-<div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">replaceInstruction</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="o">&amp;</span><span class="w"> </span><span class="n">newInstruction</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newInstruction</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">instructions</span><span class="p">[</span><span class="n">pos</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newInstruction</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">replaceInstruction</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Instructions</span><span class="o">&amp;</span><span class="w"> </span><span class="n">newInstruction</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newInstruction</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">instructions</span><span class="p">[</span><span class="n">pos</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newInstruction</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="nf">changeOperand</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">opPos</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">operand</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">instructions</span><span class="p">[</span><span class="n">opPos</span><span class="p">]);</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">newInstruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Make</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">operand</span><span class="p">});</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">changeOperand</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">opPos</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">operand</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">&gt;</span><span class="p">(</span><span class="n">instructions</span><span class="p">[</span><span class="n">opPos</span><span class="p">]);</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">newInstruction</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">Make</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">operand</span><span class="p">});</span>
 
-<span class="w">    </span><span class="n">replaceInstruction</span><span class="p">(</span><span class="n">opPos</span><span class="p">,</span><span class="w"> </span><span class="n">newInstruction</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">replaceInstruction</span><span class="p">(</span><span class="n">opPos</span><span class="p">,</span><span class="w"> </span><span class="n">newInstruction</span><span class="p">);</span>
+<span class="p">}</span>
 </pre></div>
 <p>当知道具体的偏移量后，构建新的字节码，然后直接替换预设偏移量的位置，反正字节长度是一样的，等同直接覆盖也不需要担心引起乱码。</p>
 <h2>if-else表达式</h2>
-<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">IfExpression</span><span class="p">)</span><span class="w"></span>
-<span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">     </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ifObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">IfExpression</span><span class="p">)</span>
+<span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ifObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
 
-<span class="w">     </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pCondition</span><span class="p">);</span><span class="w"></span>
-<span class="w">     </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
-<span class="w">     </span><span class="p">{</span><span class="w"></span>
-<span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
-<span class="w">     </span><span class="p">}</span><span class="w"></span>
+<span class="w">     </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pCondition</span><span class="p">);</span>
+<span class="w">     </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span>
+<span class="w">     </span><span class="p">{</span>
+<span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span>
+<span class="w">     </span><span class="p">}</span>
 
 <span class="w">     </span><span class="c1">// 预设一个偏移量方便后续回填</span>
-<span class="w">     </span><span class="k">auto</span><span class="w"> </span><span class="n">jumpNotTruthyPos</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpJumpNotTruthy</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">9999</span><span class="p">});</span><span class="w"></span>
+<span class="w">     </span><span class="k">auto</span><span class="w"> </span><span class="n">jumpNotTruthyPos</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpJumpNotTruthy</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">9999</span><span class="p">});</span>
 
 <span class="w">     </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pConsequence</span><span class="p">);</span><span class="w"> </span><span class="c1">// 会引入一个OpPop</span>
-<span class="w">     </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
-<span class="w">     </span><span class="p">{</span><span class="w"></span>
-<span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
-<span class="w">     </span><span class="p">}</span><span class="w"></span>
+<span class="w">     </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span>
+<span class="w">     </span><span class="p">{</span>
+<span class="w">         </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span>
+<span class="w">     </span><span class="p">}</span>
 
 <span class="w">     </span><span class="c1">// 清除这个多余的OpPop</span>
-<span class="w">     </span><span class="k">if</span><span class="p">(</span><span class="n">lastInstructionIsPop</span><span class="p">())</span><span class="w"></span>
-<span class="w">     </span><span class="p">{</span><span class="w"></span>
-<span class="w">         </span><span class="n">removeLastPop</span><span class="p">();</span><span class="w"></span>
-<span class="w">     </span><span class="p">}</span><span class="w"></span>
+<span class="w">     </span><span class="k">if</span><span class="p">(</span><span class="n">lastInstructionIsPop</span><span class="p">())</span>
+<span class="w">     </span><span class="p">{</span>
+<span class="w">         </span><span class="n">removeLastPop</span><span class="p">();</span>
+<span class="w">     </span><span class="p">}</span>
 
 <span class="w">     </span><span class="c1">// 如果没有else部分，则可以回填真实偏移量，跳转到此次即条件语句结束</span>
-<span class="w">     </span><span class="k">if</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pAlternative</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
-<span class="w">     </span><span class="p">{</span><span class="w"></span>
-<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
-<span class="w">         </span><span class="n">changeOperand</span><span class="p">(</span><span class="n">jumpNotTruthyPos</span><span class="p">,</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="p">);</span><span class="w"></span>
-<span class="w">     </span><span class="p">}</span><span class="w"></span>
-<span class="w">     </span><span class="k">else</span><span class="w"></span>
-<span class="w">     </span><span class="p">{</span><span class="w"></span>
+<span class="w">     </span><span class="k">if</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pAlternative</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span>
+<span class="w">     </span><span class="p">{</span>
+<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="w">         </span><span class="n">changeOperand</span><span class="p">(</span><span class="n">jumpNotTruthyPos</span><span class="p">,</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="p">);</span>
+<span class="w">     </span><span class="p">}</span>
+<span class="w">     </span><span class="k">else</span>
+<span class="w">     </span><span class="p">{</span>
 <span class="w">         </span><span class="c1">// 无条件跳转指令</span>
 <span class="w">         </span><span class="c1">// 前面条件为真时需要跳过else部分所有字节码</span>
-<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">jumpPos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpJump</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">9999</span><span class="p">});</span><span class="w"></span>
+<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">jumpPos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpJump</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">9999</span><span class="p">});</span>
 
-<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
-<span class="w">         </span><span class="n">changeOperand</span><span class="p">(</span><span class="n">jumpNotTruthyPos</span><span class="p">,</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="p">);</span><span class="w"></span>
+<span class="w">         </span><span class="k">auto</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="w">         </span><span class="n">changeOperand</span><span class="p">(</span><span class="n">jumpNotTruthyPos</span><span class="p">,</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="p">);</span>
 
-<span class="w">         </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pAlternative</span><span class="p">);</span><span class="w"></span>
-<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
-<span class="w">         </span><span class="p">{</span><span class="w"></span>
-<span class="w">             </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
-<span class="w">         </span><span class="p">}</span><span class="w"></span>
+<span class="w">         </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pAlternative</span><span class="p">);</span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">             </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span>
+<span class="w">         </span><span class="p">}</span>
 
-<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lastInstructionIsPop</span><span class="p">())</span><span class="w"></span>
-<span class="w">         </span><span class="p">{</span><span class="w"></span>
-<span class="w">             </span><span class="n">removeLastPop</span><span class="p">();</span><span class="w"></span>
-<span class="w">         </span><span class="p">}</span><span class="w"></span>
+<span class="w">         </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lastInstructionIsPop</span><span class="p">())</span>
+<span class="w">         </span><span class="p">{</span>
+<span class="w">             </span><span class="n">removeLastPop</span><span class="p">();</span>
+<span class="w">         </span><span class="p">}</span>
 
-<span class="w">         </span><span class="n">afterConsequencePos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
-<span class="w">         </span><span class="n">changeOperand</span><span class="p">(</span><span class="n">jumpPos</span><span class="p">,</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="p">);</span><span class="w"></span>
-<span class="w">     </span><span class="p">}</span><span class="w"></span>
-<span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">         </span><span class="n">afterConsequencePos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="w">         </span><span class="n">changeOperand</span><span class="p">(</span><span class="n">jumpPos</span><span class="p">,</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="p">);</span>
+<span class="w">     </span><span class="p">}</span>
+<span class="w"> </span><span class="p">}</span>
 </pre></div>
 <p>这里的<code>OpJump</code>无条件跳转指令是必须的，当条件为真时执行完如果不跳转，则会继续解码else部分。</p>
 <h2>执行跳转指令</h2>
-<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpJump</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint16</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpJumpNotTruthy</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint16</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpJump</span><span class="p">:</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint16</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span>
+<span class="w">        </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span>
+<span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpJumpNotTruthy</span><span class="p">:</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">uint16_t</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint16</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span>
+<span class="w">        </span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
 
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">condition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isTruthy</span><span class="p">(</span><span class="n">condition</span><span class="p">))</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">condition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Pop</span><span class="p">();</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isTruthy</span><span class="p">(</span><span class="n">condition</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">ip</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span>
 </pre></div>
 <p>直接读取跳转指令偏移量，根据条件设置下一个读取字节码位置即可。</p>
 <h2>OpNull操作码</h2>
 <p>在if-else语句中，如果条件为false也没有else部分，则字节码如何安排呢？为了处理这个问题，总是认为存在一个else部分，如果不存在就用一个Null代替，以保证语法的完整性。</p>
-<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">IfExpression</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ifObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">GetNodeType</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ast</span><span class="o">::</span><span class="n">NodeType</span><span class="o">::</span><span class="n">IfExpression</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ifObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">::</span><span class="n">IfExpression</span><span class="o">&gt;</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pCondition</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pCondition</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="c1">// 预设一个偏移量方便后续回填</span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">jumpNotTruthyPos</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpJumpNotTruthy</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">9999</span><span class="p">});</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">jumpNotTruthyPos</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpJumpNotTruthy</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">9999</span><span class="p">});</span>
 
-<span class="w">    </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pConsequence</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pConsequence</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">lastInstructionIsPop</span><span class="p">())</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">removeLastPop</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">lastInstructionIsPop</span><span class="p">())</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">removeLastPop</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">jumpPos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpJump</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">9999</span><span class="p">});</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">jumpPos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpJump</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mi">9999</span><span class="p">});</span>
 
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="n">changeOperand</span><span class="p">(</span><span class="n">jumpNotTruthyPos</span><span class="p">,</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="w">    </span><span class="n">changeOperand</span><span class="p">(</span><span class="n">jumpNotTruthyPos</span><span class="p">,</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pAlternative</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpNull</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pAlternative</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pAlternative</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpNull</span><span class="p">,</span><span class="w"> </span><span class="p">{});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">resultObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Compile</span><span class="p">(</span><span class="n">ifObj</span><span class="o">-&gt;</span><span class="n">pAlternative</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">resultObj</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">resultObj</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
 
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lastInstructionIsPop</span><span class="p">())</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="n">removeLastPop</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lastInstructionIsPop</span><span class="p">())</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">removeLastPop</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="n">afterConsequencePos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="n">changeOperand</span><span class="p">(</span><span class="n">jumpPos</span><span class="p">,</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="p">);</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">afterConsequencePos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="w">    </span><span class="n">changeOperand</span><span class="p">(</span><span class="n">jumpPos</span><span class="p">,</span><span class="w"> </span><span class="n">afterConsequencePos</span><span class="p">);</span>
+<span class="p">}</span>
 </pre></div>
 <p>虚拟机:</p>
-<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpNull</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">NULL_OBJ</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpNull</span><span class="p">:</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">NULL_OBJ</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">evaluator</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span>
 </pre></div>
 <h2>测试用例</h2>
 <p>全部通过测试用例:</p>
-<div class="highlight"><pre><span></span>$ ./test_monkey
-<span class="o">[==========]</span> Running <span class="m">49</span> tests from <span class="m">49</span> <span class="nb">test</span> suites.
-<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment set-up.
-<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken
-<span class="o">[</span> RUN      <span class="o">]</span> TestNextToken.BasicAssertions
-<span class="o">[</span>       OK <span class="o">]</span> TestNextToken.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
-<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>./test_monkey
+<span class="o">[==========]</span><span class="w"> </span>Running<span class="w"> </span><span class="m">49</span><span class="w"> </span>tests<span class="w"> </span>from<span class="w"> </span><span class="m">49</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>suites.
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span>Global<span class="w"> </span><span class="nb">test</span><span class="w"> </span>environment<span class="w"> </span>set-up.
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span>TestNextToken
+<span class="o">[</span><span class="w"> </span>RUN<span class="w">      </span><span class="o">]</span><span class="w"> </span>TestNextToken.BasicAssertions
+<span class="o">[</span><span class="w">       </span>OK<span class="w"> </span><span class="o">]</span><span class="w"> </span>TestNextToken.BasicAssertions<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span>TestNextToken<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="w"> </span>total<span class="o">)</span>
 
 ......
 
-<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from testVMBooleanExpression
-<span class="o">[</span> RUN      <span class="o">]</span> testVMBooleanExpression.basicTest
-<span class="o">[</span>       OK <span class="o">]</span> testVMBooleanExpression.basicTest <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
-<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from testVMBooleanExpression <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span>testVMBooleanExpression
+<span class="o">[</span><span class="w"> </span>RUN<span class="w">      </span><span class="o">]</span><span class="w"> </span>testVMBooleanExpression.basicTest
+<span class="o">[</span><span class="w">       </span>OK<span class="w"> </span><span class="o">]</span><span class="w"> </span>testVMBooleanExpression.basicTest<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span>testVMBooleanExpression<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="w"> </span>total<span class="o">)</span>
 
-<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from testVMConditionals
-<span class="o">[</span> RUN      <span class="o">]</span> testVMConditionals.basicTest
-<span class="o">[</span>       OK <span class="o">]</span> testVMConditionals.basicTest <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
-<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from testVMConditionals <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span>testVMConditionals
+<span class="o">[</span><span class="w"> </span>RUN<span class="w">      </span><span class="o">]</span><span class="w"> </span>testVMConditionals.basicTest
+<span class="o">[</span><span class="w">       </span>OK<span class="w"> </span><span class="o">]</span><span class="w"> </span>testVMConditionals.basicTest<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span>testVMConditionals<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="w"> </span>total<span class="o">)</span>
 
-<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment tear-down
-<span class="o">[==========]</span> <span class="m">49</span> tests from <span class="m">49</span> <span class="nb">test</span> suites ran. <span class="o">(</span><span class="m">16</span> ms total<span class="o">)</span>
-<span class="o">[</span>  PASSED  <span class="o">]</span> <span class="m">49</span> tests.
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span>Global<span class="w"> </span><span class="nb">test</span><span class="w"> </span>environment<span class="w"> </span>tear-down
+<span class="o">[==========]</span><span class="w"> </span><span class="m">49</span><span class="w"> </span>tests<span class="w"> </span>from<span class="w"> </span><span class="m">49</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>suites<span class="w"> </span>ran.<span class="w"> </span><span class="o">(</span><span class="m">16</span><span class="w"> </span>ms<span class="w"> </span>total<span class="o">)</span>
+<span class="o">[</span><span class="w">  </span>PASSED<span class="w">  </span><span class="o">]</span><span class="w"> </span><span class="m">49</span><span class="w"> </span>tests.
 </pre></div>
 <h2>总结</h2>
 <p>通过跳转指令实现跳转，对于具体跳转的偏移量通过预设位置和回填真实值的方式进行，执行跳转指令时只是改变下一个解码位置。</p>
@@ -691,21 +691,21 @@
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

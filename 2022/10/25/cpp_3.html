@@ -287,22 +287,22 @@
 <h2>目录</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org3813414">1. 引言</a></li>
-<li><a href="#org2e0fb16">2. RAII: 资源请求即初始化</a></li>
-<li><a href="#org8235bdc">3. 智能指针</a>
+<li><a href="#org7e7ed73">1. 引言</a></li>
+<li><a href="#orgffbb042">2. RAII: 资源请求即初始化</a></li>
+<li><a href="#org0c13272">3. 智能指针</a>
 <ul>
-<li><a href="#orgdb4e9ae">3.1. std::unique_ptr</a></li>
-<li><a href="#org0f6f626">3.2. std::shared_ptr</a></li>
-<li><a href="#org83dfe8c">3.3. make_unique, make_shared</a></li>
-<li><a href="#org91cc279">3.4. 何时使用智能指针？</a></li>
+<li><a href="#org13c6588">3.1. std::unique_ptr</a></li>
+<li><a href="#orgbd33c05">3.2. std::shared_ptr</a></li>
+<li><a href="#org8aa50ad">3.3. make_unique, make_shared</a></li>
+<li><a href="#orga6edd09">3.4. 何时使用智能指针？</a></li>
 </ul>
 </li>
-<li><a href="#org24c0151">4. 总结</a></li>
+<li><a href="#org1a80555">4. 总结</a></li>
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org3813414">
-<h2 id="org3813414"><span class="section-number-2">1</span> 引言</h2>
+<div class="outline-2" id="outline-container-org7e7ed73">
+<h2 id="org7e7ed73"><span class="section-number-2">1</span> 引言</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 C++提供开发者自定义类型的能力，而对于自定义类型的资源管理是一大难题。
@@ -315,8 +315,8 @@ C++提供开发者自定义类型的能力，而对于自定义类型的资源�
 </p>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org2e0fb16">
-<h2 id="org2e0fb16"><span class="section-number-2">2</span> RAII: 资源请求即初始化</h2>
+<div class="outline-2" id="outline-container-orgffbb042">
+<h2 id="orgffbb042"><span class="section-number-2">2</span> RAII: 资源请求即初始化</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 在构造函数中请求资源，然后在析构函数中释放它们的技术被称为资源请求即初始化(RAII, Resource Acquisition Is Initialization)。
@@ -374,8 +374,8 @@ C++提供开发者自定义类型的能力，而对于自定义类型的资源�
 </p>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org8235bdc">
-<h2 id="org8235bdc"><span class="section-number-2">3</span> 智能指针</h2>
+<div class="outline-2" id="outline-container-org0c13272">
+<h2 id="org0c13272"><span class="section-number-2">3</span> 智能指针</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 new运算符是从一块名为自由存储或动态内存(dynamic memory)的区域中分配内存。
@@ -415,8 +415,8 @@ new运算符是从一块名为自由存储或动态内存(dynamic memory)的区�
 <li>std::weak_ptr: 对于类似std::shared_ptr但有可能空悬的指针</li>
 </ul>
 </div>
-<div class="outline-3" id="outline-container-orgdb4e9ae">
-<h3 id="orgdb4e9ae"><span class="section-number-3">3.1</span> std::unique_ptr</h3>
+<div class="outline-3" id="outline-container-org13c6588">
+<h3 id="org13c6588"><span class="section-number-3">3.1</span> std::unique_ptr</h3>
 <div class="outline-text-3" id="text-3-1">
 <div class="source"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Smiley</span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Circle</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">//...</span>
@@ -456,8 +456,8 @@ std::unique_ptr只能移动(std::move)不能拷贝：
 
 </div>
 </div>
-<div class="outline-3" id="outline-container-org0f6f626">
-<h3 id="org0f6f626"><span class="section-number-3">3.2</span> std::shared_ptr</h3>
+<div class="outline-3" id="outline-container-orgbd33c05">
+<h3 id="orgbd33c05"><span class="section-number-3">3.2</span> std::shared_ptr</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr的对象是使用拷贝操作，而unique_ptr使用移动语义。
@@ -485,8 +485,8 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
 </p>
 </div>
 </div>
-<div class="outline-3" id="outline-container-org83dfe8c">
-<h3 id="org83dfe8c"><span class="section-number-3">3.3</span> make_unique, make_shared</h3>
+<div class="outline-3" id="outline-container-org8aa50ad">
+<h3 id="org8aa50ad"><span class="section-number-3">3.3</span> make_unique, make_shared</h3>
 <div class="outline-text-3" id="text-3-3">
 <div class="source"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Oz&quot;</span><span class="p">,</span><span class="mf">7.62</span><span class="p">);</span>
 <span class="k">auto</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;Ankh Morpork&quot;</span><span class="p">,</span><span class="mf">4.65</span><span class="p">);</span>
@@ -497,8 +497,8 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
 </p>
 </div>
 </div>
-<div class="outline-3" id="outline-container-org91cc279">
-<h3 id="org91cc279"><span class="section-number-3">3.4</span> 何时使用智能指针？</h3>
+<div class="outline-3" id="outline-container-orga6edd09">
+<h3 id="orga6edd09"><span class="section-number-3">3.4</span> 何时使用智能指针？</h3>
 <div class="outline-text-3" id="text-3-4">
 <ul class="org-ul">
 <li>当需要智能指针时，基本上std::uniq_ptr是首选</li>
@@ -510,8 +510,8 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
 </div>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org24c0151">
-<h2 id="org24c0151"><span class="section-number-2">4</span> 总结</h2>
+<div class="outline-2" id="outline-container-org1a80555">
+<h2 id="org1a80555"><span class="section-number-2">4</span> 总结</h2>
 <div class="outline-text-2" id="text-4">
 <ul class="org-ul">
 <li>对于自定义类型，使用RAII原则管理资源的申请与释放，内部实现中构造函数和析构函数分别使用new和delete</li>
@@ -591,21 +591,21 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

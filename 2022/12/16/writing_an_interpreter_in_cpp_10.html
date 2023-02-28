@@ -120,255 +120,255 @@
 </ul>
 <h2>重构部分代码</h2>
 <p>在实现树遍历解释器的时候，已经有内置函数了，类似:</p>
-<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">builtins</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="s">"len"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_Len</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="s">"first"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_First</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="s">"last"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_Last</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="s">"rest"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_Rest</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="s">"push"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_Push</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="s">"puts"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_Puts</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">builtins</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="s">"len"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_Len</span><span class="p">)</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="s">"first"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_First</span><span class="p">)</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="s">"last"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_Last</span><span class="p">)</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="s">"rest"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_Rest</span><span class="p">)</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="s">"push"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_Push</span><span class="p">)</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="s">"puts"</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BuiltinFunc_Puts</span><span class="p">)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
 </pre></div>
 <p>在虚拟机这边字节码的操作数是一个整数作为索引来查找函数，为了保持统一，因此需要对这部分做一些调整，改成可以切片方式平稳迭代访问:</p>
-<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">objects</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">BuiltinWithName</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Name</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Builtin</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">objects</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">BuiltinWithName</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Name</span><span class="p">;</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Builtin</span><span class="p">;</span>
 
-<span class="w">        </span><span class="n">BuiltinWithName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">BuiltinFunction</span><span class="w"> </span><span class="n">fn</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="o">:</span><span class="w"> </span><span class="n">Name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="n">Builtin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">};</span><span class="w"></span>
+<span class="w">        </span><span class="n">BuiltinWithName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">BuiltinFunction</span><span class="w"> </span><span class="n">fn</span><span class="p">)</span>
+<span class="w">            </span><span class="o">:</span><span class="w"> </span><span class="n">Name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">Builtin</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">};</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">Builtins</span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"len"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_Len</span><span class="p">),</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"first"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_First</span><span class="p">),</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"last"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_Last</span><span class="p">),</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"rest"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_Rest</span><span class="p">),</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"push"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_Push</span><span class="p">),</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"puts"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_Puts</span><span class="p">),</span><span class="w"></span>
-<span class="w">    </span><span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">Builtins</span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"len"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_Len</span><span class="p">),</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"first"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_First</span><span class="p">),</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"last"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_Last</span><span class="p">),</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"rest"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_Rest</span><span class="p">),</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"push"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_Push</span><span class="p">),</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">BuiltinWithName</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"puts"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">BuiltinFunc_Puts</span><span class="p">),</span>
+<span class="w">    </span><span class="p">};</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">def</span><span class="o">:</span><span class="w"> </span><span class="n">Builtins</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">def</span><span class="o">-&gt;</span><span class="n">Name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">def</span><span class="o">-&gt;</span><span class="n">Builtin</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">def</span><span class="o">:</span><span class="w"> </span><span class="n">Builtins</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="n">def</span><span class="o">-&gt;</span><span class="n">Name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">name</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">def</span><span class="o">-&gt;</span><span class="n">Builtin</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
 
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>之前解释器那边的内置函数定义简化为:</p>
-<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">evaluator</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">builtins</span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="s">"len"</span><span class="p">,</span><span class="w">   </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"len"</span><span class="p">)},</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="s">"first"</span><span class="p">,</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"first"</span><span class="p">)},</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="s">"last"</span><span class="p">,</span><span class="w">  </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"last"</span><span class="p">)},</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="s">"rest"</span><span class="p">,</span><span class="w">  </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"rest"</span><span class="p">)},</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="s">"push"</span><span class="p">,</span><span class="w">  </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"push"</span><span class="p">)},</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="s">"puts"</span><span class="p">,</span><span class="w">  </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"puts"</span><span class="p">)}</span><span class="w"></span>
-<span class="w">    </span><span class="p">};</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">evaluator</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">builtins</span><span class="p">{</span>
+<span class="w">        </span><span class="p">{</span><span class="s">"len"</span><span class="p">,</span><span class="w">   </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"len"</span><span class="p">)},</span>
+<span class="w">        </span><span class="p">{</span><span class="s">"first"</span><span class="p">,</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"first"</span><span class="p">)},</span>
+<span class="w">        </span><span class="p">{</span><span class="s">"last"</span><span class="p">,</span><span class="w">  </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"last"</span><span class="p">)},</span>
+<span class="w">        </span><span class="p">{</span><span class="s">"rest"</span><span class="p">,</span><span class="w">  </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"rest"</span><span class="p">)},</span>
+<span class="w">        </span><span class="p">{</span><span class="s">"push"</span><span class="p">,</span><span class="w">  </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"push"</span><span class="p">)},</span>
+<span class="w">        </span><span class="p">{</span><span class="s">"puts"</span><span class="p">,</span><span class="w">  </span><span class="n">objects</span><span class="o">::</span><span class="n">GetBuiltinByName</span><span class="p">(</span><span class="s">"puts"</span><span class="p">)}</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">}</span>
 </pre></div>
 <p>这样解释器和编译器都共用同一个内置函数定义了，而且编译器可以根据整数作为切片索引来方便虚拟机调用内置函数了。唯一的改变是内置函数返回NULL_OBJ的改为返回nullptr，方便虚拟机不会多处理一个NULL对象。</p>
 <h2>编译内置函数作用域</h2>
 <p>内置函数和其它定义函数的区别，就是内置函数不需要定义已经存在了，它所在那个作用域叫<code>内置函数作用域</code>:</p>
-<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">SymbolScopeType</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">GlobalScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"GLOBAL"</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">LocalScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"LOCAL"</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">BuiltinScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"BUILTIN"</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">SymbolScopeType</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">GlobalScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"GLOBAL"</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">LocalScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"LOCAL"</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SymbolScope</span><span class="w"> </span><span class="n">BuiltinScope</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"BUILTIN"</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="k">struct</span><span class="w"> </span><span class="nc">SymbolTable</span><span class="p">{</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">SymbolTable</span><span class="p">{</span>
 
 <span class="w">    </span><span class="c1">//....</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DefineBuiltin</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">BuiltinScope</span><span class="w"> </span><span class="p">,</span><span class="n">index</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">store</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DefineBuiltin</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">symbol</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">BuiltinScope</span><span class="w"> </span><span class="p">,</span><span class="n">index</span><span class="p">);</span>
+<span class="w">        </span><span class="n">store</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">symbol</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
 </pre></div>
 <p>只需要创建编译器的时候，提前将内置函数加载到符号表并标记好作用域:</p>
-<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Compiler</span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">symbolTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewSymbolTable</span><span class="p">();</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Compiler</span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">symbolTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewSymbolTable</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">fn</span><span class="o">:</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">Builtins</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">symbolTable</span><span class="o">-&gt;</span><span class="n">DefineBuiltin</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">fn</span><span class="o">-&gt;</span><span class="n">Name</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">fn</span><span class="o">:</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">Builtins</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">symbolTable</span><span class="o">-&gt;</span><span class="n">DefineBuiltin</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">fn</span><span class="o">-&gt;</span><span class="n">Name</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">compiler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Compiler</span><span class="o">&gt;</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="n">compiler</span><span class="o">-&gt;</span><span class="n">symbolTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbolTable</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">compiler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Compiler</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">compiler</span><span class="o">-&gt;</span><span class="n">symbolTable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbolTable</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">compiler</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">compiler</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="kt">void</span><span class="w"> </span><span class="n">loadSymbol</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">compiler</span><span class="o">::</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="n">symbol</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">compiler</span><span class="o">::</span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">GlobalScope</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetGlobal</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Index</span><span class="p">});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">compiler</span><span class="o">::</span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">LocalScope</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetLocal</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Index</span><span class="p">});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">compiler</span><span class="o">::</span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">BuiltinScope</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetBuiltin</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Index</span><span class="p">});</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="kt">void</span><span class="w"> </span><span class="n">loadSymbol</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">compiler</span><span class="o">::</span><span class="n">Symbol</span><span class="o">&gt;</span><span class="w"> </span><span class="n">symbol</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">compiler</span><span class="o">::</span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">GlobalScope</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetGlobal</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Index</span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">compiler</span><span class="o">::</span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">LocalScope</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetLocal</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Index</span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Scope</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">compiler</span><span class="o">::</span><span class="n">SymbolScopeType</span><span class="o">::</span><span class="n">BuiltinScope</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">emit</span><span class="p">(</span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetBuiltin</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">symbol</span><span class="o">-&gt;</span><span class="n">Index</span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <h2>执行内置函数</h2>
 <p>遇到OpGetBuiltin指令将内置函数对象入栈:</p>
-<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpGetBuiltin</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">builtinIndex</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">builtinIndex</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpGetBuiltin</span><span class="p">:</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">builtinIndex</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">builtinIndex</span><span class="p">);</span>
+<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 
 <span class="w">        </span><span class="c1">// 将字典换成向量就是想通过索引整数获得稳定迭代</span>
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">definition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">Builtins</span><span class="p">[</span><span class="n">builtinIndex</span><span class="p">];</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">definition</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">Builtins</span><span class="p">[</span><span class="n">builtinIndex</span><span class="p">];</span>
 
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">definition</span><span class="o">-&gt;</span><span class="n">Builtin</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">           </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Push</span><span class="p">(</span><span class="n">definition</span><span class="o">-&gt;</span><span class="n">Builtin</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">           </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span>
 </pre></div>
 <p>遇到OpCall指令时判断调用函数的类型:</p>
-<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="n">bytecode</span><span class="o">::</span><span class="n">OpcodeType</span><span class="o">::</span><span class="n">OpCall</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">numArgs</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">case</span><span class="w"> </span><span class="no">bytecode</span><span class="o">::</span><span class="no">OpcodeType</span><span class="o">::</span><span class="no">OpCall</span><span class="p">:</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">uint8_t</span><span class="w"> </span><span class="n">numArgs</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bytecode</span><span class="o">::</span><span class="n">ReadUint8</span><span class="p">(</span><span class="n">instructions</span><span class="p">,</span><span class="w"> </span><span class="n">ip</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span>
+<span class="w">        </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">ip</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">executeCall</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">           </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">executeCall</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">numArgs</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">isError</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">           </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
 
-<span class="w">        </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="n">instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">Instruction</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="n">ins_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">currentFrame</span><span class="p">();</span>
+<span class="w">        </span><span class="n">instructions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">frame</span><span class="o">-&gt;</span><span class="n">Instruction</span><span class="p">();</span>
+<span class="w">        </span><span class="n">ins_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instructions</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">break</span><span class="p">;</span>
 </pre></div>
 <p>分而治之：</p>
-<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w">  </span><span class="n">executeCall</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">fnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">[</span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="p">];</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w">  </span><span class="n">executeCall</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">fnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stack</span><span class="p">[</span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="p">];</span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">fnObj</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">COMPILED_FUNCTION</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fnObj</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">callFunction</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="p">,</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">fnObj</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">BUILTIN</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">builtinFnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fnObj</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">callBuiltin</span><span class="p">(</span><span class="n">builtinFnObj</span><span class="p">,</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">else</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"calling non-function and non-built-in"</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">fnObj</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">COMPILED_FUNCTION</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">CompiledFunction</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fnObj</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">callFunction</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="p">,</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="p">(</span><span class="n">fnObj</span><span class="o">-&gt;</span><span class="n">Type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectType</span><span class="o">::</span><span class="n">BUILTIN</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">builtinFnObj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">dynamic_pointer_cast</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Builtin</span><span class="o">&gt;</span><span class="p">(</span><span class="n">fnObj</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">callBuiltin</span><span class="p">(</span><span class="n">builtinFnObj</span><span class="p">,</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"calling non-function and non-built-in"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 
-<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callFunction</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectCompiledFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="p">,</span><span class="kt">int</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="o">-&gt;</span><span class="n">NumParameters</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="o">-&gt;</span><span class="n">NumParameters</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"wrong number of arguments: want="</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">", got="</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">str2</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callFunction</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectCompiledFunction</span><span class="o">&gt;</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="p">,</span><span class="kt">int</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="o">-&gt;</span><span class="n">NumParameters</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="o">-&gt;</span><span class="n">NumParameters</span><span class="p">);</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">to_string</span><span class="p">(</span><span class="n">numArgs</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">objects</span><span class="o">::</span><span class="n">newError</span><span class="p">(</span><span class="s">"wrong number of arguments: want="</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">str1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">", got="</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">str2</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">funcFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewFrame</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="p">,</span><span class="w"> </span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">funcFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NewFrame</span><span class="p">(</span><span class="n">compiledFnObj</span><span class="p">,</span><span class="w"> </span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">pushFrame</span><span class="p">(</span><span class="n">funcFrame</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">pushFrame</span><span class="p">(</span><span class="n">funcFrame</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">funcFrame</span><span class="o">-&gt;</span><span class="n">basePointer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="o">-&gt;</span><span class="n">NumLocals</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">funcFrame</span><span class="o">-&gt;</span><span class="n">basePointer</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">compiledFnObj</span><span class="o">-&gt;</span><span class="n">NumLocals</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callBuiltin</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectBuiltin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">builtinFnObj</span><span class="p">,</span><span class="kt">int</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">args</span><span class="p">;</span><span class="w"></span>
+<span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callBuiltin</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">ObjectBuiltin</span><span class="o">&gt;</span><span class="w"> </span><span class="n">builtinFnObj</span><span class="p">,</span><span class="kt">int</span><span class="w"> </span><span class="n">numArgs</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">objects</span><span class="o">::</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">args</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">args</span><span class="p">.</span><span class="n">assign</span><span class="p">(</span><span class="n">stack</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="p">,</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">sp</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">args</span><span class="p">.</span><span class="n">assign</span><span class="p">(</span><span class="n">stack</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="p">,</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">sp</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">builtinFnObj</span><span class="o">-&gt;</span><span class="n">Fn</span><span class="p">(</span><span class="n">args</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">builtinFnObj</span><span class="o">-&gt;</span><span class="n">Fn</span><span class="p">(</span><span class="n">args</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">sp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sp</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">numArgs</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">Push</span><span class="p">(</span><span class="n">result</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">NULL_OBJ</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Push</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Push</span><span class="p">(</span><span class="n">objects</span><span class="o">::</span><span class="n">NULL_OBJ</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 <p>执行效果：</p>
-<div class="highlight"><pre><span></span>&gt;&gt; <span class="nb">let</span> <span class="nv">array</span> <span class="o">=</span> <span class="o">[</span><span class="m">1</span>, <span class="m">2</span>, <span class="m">3</span><span class="o">]</span>
-<span class="o">[</span><span class="m">1</span>, <span class="m">2</span>, <span class="m">3</span><span class="o">]</span>
+<div class="highlight"><pre><span></span>&gt;&gt;<span class="w"> </span><span class="nb">let</span><span class="w"> </span><span class="nv">array</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="m">1</span>,<span class="w"> </span><span class="m">2</span>,<span class="w"> </span><span class="m">3</span><span class="o">]</span>
+<span class="o">[</span><span class="m">1</span>,<span class="w"> </span><span class="m">2</span>,<span class="w"> </span><span class="m">3</span><span class="o">]</span>
 
-&gt;&gt; len<span class="o">(</span>array<span class="o">)</span>
+&gt;&gt;<span class="w"> </span>len<span class="o">(</span>array<span class="o">)</span>
 <span class="m">3</span>
 
-&gt;&gt; push<span class="o">(</span>array, <span class="m">4</span><span class="o">)</span>
-<span class="o">[</span><span class="m">1</span>, <span class="m">2</span>, <span class="m">3</span>, <span class="m">4</span><span class="o">]</span>
+&gt;&gt;<span class="w"> </span>push<span class="o">(</span>array,<span class="w"> </span><span class="m">4</span><span class="o">)</span>
+<span class="o">[</span><span class="m">1</span>,<span class="w"> </span><span class="m">2</span>,<span class="w"> </span><span class="m">3</span>,<span class="w"> </span><span class="m">4</span><span class="o">]</span>
 
-&gt;&gt; rest<span class="o">(</span>array<span class="o">)</span>
-<span class="o">[</span><span class="m">2</span>, <span class="m">3</span><span class="o">]</span>
+&gt;&gt;<span class="w"> </span>rest<span class="o">(</span>array<span class="o">)</span>
+<span class="o">[</span><span class="m">2</span>,<span class="w"> </span><span class="m">3</span><span class="o">]</span>
 
-&gt;&gt; first<span class="o">(</span>array<span class="o">)</span>
+&gt;&gt;<span class="w"> </span>first<span class="o">(</span>array<span class="o">)</span>
 <span class="m">1</span>
 
-&gt;&gt; last<span class="o">(</span>array<span class="o">)</span>
+&gt;&gt;<span class="w"> </span>last<span class="o">(</span>array<span class="o">)</span>
 <span class="m">3</span>
 
-&gt;&gt; first<span class="o">(</span>rest<span class="o">(</span>push<span class="o">(</span>array, <span class="m">4</span><span class="o">)))</span>
+&gt;&gt;<span class="w"> </span>first<span class="o">(</span>rest<span class="o">(</span>push<span class="o">(</span>array,<span class="w"> </span><span class="m">4</span><span class="o">)))</span>
 <span class="m">2</span>
 
-&gt;&gt; puts<span class="o">(</span>array<span class="o">)</span>
-<span class="o">[</span><span class="m">1</span>, <span class="m">2</span>, <span class="m">3</span><span class="o">]</span>
+&gt;&gt;<span class="w"> </span>puts<span class="o">(</span>array<span class="o">)</span>
+<span class="o">[</span><span class="m">1</span>,<span class="w"> </span><span class="m">2</span>,<span class="w"> </span><span class="m">3</span><span class="o">]</span>
 null
 </pre></div>
 <h2>总结</h2>
@@ -445,21 +445,21 @@ null
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

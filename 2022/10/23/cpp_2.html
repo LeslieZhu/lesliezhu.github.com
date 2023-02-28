@@ -287,17 +287,17 @@
 <h2>目录</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org993a197">1. 引言</a></li>
-<li><a href="#org46891d8">2. module例子: 头文件变成模块</a></li>
-<li><a href="#org24a84f1">3. module例子: 模块接口和实现在一起</a></li>
-<li><a href="#org64c73a4">4. module例子: 模块接口与实现分离</a></li>
-<li><a href="#orgf541b6f">5. module例子：子模块</a></li>
-<li><a href="#orga5ef235">6. 资料</a></li>
+<li><a href="#org4fecd5e">1. 引言</a></li>
+<li><a href="#org072f5ce">2. module例子: 头文件变成模块</a></li>
+<li><a href="#org28e4e67">3. module例子: 模块接口和实现在一起</a></li>
+<li><a href="#orge446160">4. module例子: 模块接口与实现分离</a></li>
+<li><a href="#org8df27a9">5. module例子：子模块</a></li>
+<li><a href="#org00b4a66">6. 资料</a></li>
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org993a197">
-<h2 id="org993a197"><span class="section-number-2">1</span> 引言</h2>
+<div class="outline-2" id="outline-container-org4fecd5e">
+<h2 id="org4fecd5e"><span class="section-number-2">1</span> 引言</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 程序组织的最佳方式是将程序看作依赖关系定义良好的一组模块，在逻辑上通过语言特性表达模块化，在物理上通过文件模块化实现高效的分别编译。
@@ -332,8 +332,8 @@ $ g++ -std=c++20 -fmodules-ts file.cpp
 </p>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org46891d8">
-<h2 id="org46891d8"><span class="section-number-2">2</span> module例子: 头文件变成模块</h2>
+<div class="outline-2" id="outline-container-org072f5ce">
+<h2 id="org072f5ce"><span class="section-number-2">2</span> module例子: 头文件变成模块</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 hello.hpp:
@@ -356,8 +356,8 @@ $ g++ -c -std=c++20 -fmodules-ts run.cpp       # 生成run.o
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org24a84f1">
-<h2 id="org24a84f1"><span class="section-number-2">3</span> module例子: 模块接口和实现在一起</h2>
+<div class="outline-2" id="outline-container-org28e4e67">
+<h2 id="org28e4e67"><span class="section-number-2">3</span> module例子: 模块接口和实现在一起</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Vector.cpp
@@ -457,8 +457,8 @@ String dump of section '.gnu.c++.README':
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org64c73a4">
-<h2 id="org64c73a4"><span class="section-number-2">4</span> module例子: 模块接口与实现分离</h2>
+<div class="outline-2" id="outline-container-orge446160">
+<h2 id="orge446160"><span class="section-number-2">4</span> module例子: 模块接口与实现分离</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 Vector.cpp:
@@ -564,8 +564,8 @@ $ g++ -std=c++20 -fmodules-ts -x c++ Vector.hpp Vector_impl.cpp main.cpp -o main
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgf541b6f">
-<h2 id="orgf541b6f"><span class="section-number-2">5</span> module例子：子模块</h2>
+<div class="outline-2" id="outline-container-org8df27a9">
+<h2 id="org8df27a9"><span class="section-number-2">5</span> module例子：子模块</h2>
 <div class="outline-text-2" id="text-5">
 <ul class="org-ul">
 <li>子模块: TestMod.Vector</li>
@@ -712,8 +712,8 @@ func2
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orga5ef235">
-<h2 id="orga5ef235"><span class="section-number-2">6</span> 资料</h2>
+<div class="outline-2" id="outline-container-org00b4a66">
+<h2 id="org00b4a66"><span class="section-number-2">6</span> 资料</h2>
 <div class="outline-text-2" id="text-6">
 <ul class="org-ul">
 <li><a href="https://gcc.gnu.org/projects/cxx-status.html">C++ Standards Support in GCC</a></li>
@@ -794,21 +794,21 @@ func2
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

@@ -108,23 +108,23 @@
 <h2>第三方模块(submodule)</h2>
 <p>既然是第三方模块，自然这个模块基本上是由别人开发完成，而自己只是作为这个模块的使用者，不会和自己的项目代码互动协作。</p>
 <p>比如为项目添加<code>gtest</code>作为第三方库:</p>
-<div class="highlight"><pre><span></span>$ git submodule add https://github.com/google/googletest.git ./third_party/googletest
+<div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>submodule<span class="w"> </span>add<span class="w"> </span>https://github.com/google/googletest.git<span class="w"> </span>./third_party/googletest
 
 or
 
-$ git submodule add https://github.com/google/googletest.git ./third_party/
+$<span class="w"> </span>git<span class="w"> </span>submodule<span class="w"> </span>add<span class="w"> </span>https://github.com/google/googletest.git<span class="w"> </span>./third_party/
 </pre></div>
 <p>它会自动把gtest代码clone下来，但对于本地项目本身来说，只是添加一个第三方模块记录文件(<code>.gitmodules</code>)而已:</p>
-<div class="highlight"><pre><span></span><span class="o">[</span>submodule <span class="s2">"third_party/googletest"</span><span class="o">]</span>
-    <span class="nv">path</span> <span class="o">=</span> third_party/googletest
-    <span class="nv">url</span> <span class="o">=</span> https://github.com/google/googletest.git
+<div class="highlight"><pre><span></span><span class="o">[</span>submodule<span class="w"> </span><span class="s2">"third_party/googletest"</span><span class="o">]</span>
+<span class="w">    </span><span class="nv">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>third_party/googletest
+<span class="w">    </span><span class="nv">url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>https://github.com/google/googletest.git
 </pre></div>
 <p>保持本地项目和第三方模块之间的彼此独立, 后续拿到这个项目的时候自动获取依赖的第三方模块代码。</p>
 <p>如果某个第三方模块不再需要了，可以清除：</p>
-<div class="highlight"><pre><span></span>$ git submodule deinit third_party/llvm
-$ git rm --cached third_party/llvm
-$ vim .gitmodule  <span class="c1"># 可能需要手动删除内容</span>
-$ rm -rf .git/modules/third_parth/llvm  <span class="c1"># 可能需要手动删除目录</span>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>submodule<span class="w"> </span>deinit<span class="w"> </span>third_party/llvm
+$<span class="w"> </span>git<span class="w"> </span>rm<span class="w"> </span>--cached<span class="w"> </span>third_party/llvm
+$<span class="w"> </span>vim<span class="w"> </span>.gitmodule<span class="w">  </span><span class="c1"># 可能需要手动删除内容</span>
+$<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>.git/modules/third_parth/llvm<span class="w">  </span><span class="c1"># 可能需要手动删除目录</span>
 </pre></div>
 <h2>子模块(subtree)</h2>
 <blockquote>
@@ -133,20 +133,20 @@ $ rm -rf .git/modules/third_parth/llvm  <span class="c1"># 可能需要手动删
 <p>如果随着项目变大，想将一些功能模块独立变成子项目或子模块。</p>
 <p>比如某个人或团队只需要维护一个功能模块，而不需要去接触庞大的整个项目，那么把这个功能模块以子模块形式分享出去是比较好的。</p>
 <p>如果只是想将一部分功能变成子模块，后续彼此隔离，不会互相更新，则可以这样:</p>
-<div class="highlight"><pre><span></span>$ <span class="nb">cd</span> project-dir/
-$ git subtree split -P Test -b v-Test <span class="c1"># 将Test目录及记录变成一个分支</span>
-$ git pull origin v-Test <span class="c1"># 另建立项目pull该分支即可</span>
+<div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>project-dir/
+$<span class="w"> </span>git<span class="w"> </span>subtree<span class="w"> </span>split<span class="w"> </span>-P<span class="w"> </span>Test<span class="w"> </span>-b<span class="w"> </span>v-Test<span class="w"> </span><span class="c1"># 将Test目录及记录变成一个分支</span>
+$<span class="w"> </span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>v-Test<span class="w"> </span><span class="c1"># 另建立项目pull该分支即可</span>
 </pre></div>
 <p>但一般情况下，这个子项目是要和庞大的整个项目保持互动的，可能会一起维护子项目后续更新，则要换一种方式。</p>
 <p>比如有目录Test，想将它独立变成一个子项目并保持原有所有相关历史记录，可以:</p>
-<div class="highlight"><pre><span></span>$ git remote add mod-Test git@github.com:LeslieZhu/mod-Test.git
-$ git subtree push --prefix<span class="o">=</span>sub/Test mod-Test master            <span class="c1"># 推送该子项目相关更新</span>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>mod-Test<span class="w"> </span>git@github.com:LeslieZhu/mod-Test.git
+$<span class="w"> </span>git<span class="w"> </span>subtree<span class="w"> </span>push<span class="w"> </span>--prefix<span class="o">=</span>sub/Test<span class="w"> </span>mod-Test<span class="w"> </span>master<span class="w">            </span><span class="c1"># 推送该子项目相关更新</span>
 </pre></div>
 <p>如果后续还会共同维护子项目，则可以:</p>
-<div class="highlight"><pre><span></span>$ git subtree pull --prefix<span class="o">=</span>sub/Test mod-Test master            <span class="c1"># 拉取子项目相关更新和详细记录</span>
-$ git subtree pull --prefix<span class="o">=</span>sub/Test mod-Test master --squash   <span class="c1"># 拉取子项目相关更新但所有记录合并为一条</span>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>subtree<span class="w"> </span>pull<span class="w"> </span>--prefix<span class="o">=</span>sub/Test<span class="w"> </span>mod-Test<span class="w"> </span>master<span class="w">            </span><span class="c1"># 拉取子项目相关更新和详细记录</span>
+$<span class="w"> </span>git<span class="w"> </span>subtree<span class="w"> </span>pull<span class="w"> </span>--prefix<span class="o">=</span>sub/Test<span class="w"> </span>mod-Test<span class="w"> </span>master<span class="w"> </span>--squash<span class="w">   </span><span class="c1"># 拉取子项目相关更新但所有记录合并为一条</span>
 
-$ git subtree push --prefix<span class="o">=</span>sub/Test mod-Test master            <span class="c1"># 推送该子项目相关更新</span>
+$<span class="w"> </span>git<span class="w"> </span>subtree<span class="w"> </span>push<span class="w"> </span>--prefix<span class="o">=</span>sub/Test<span class="w"> </span>mod-Test<span class="w"> </span>master<span class="w">            </span><span class="c1"># 推送该子项目相关更新</span>
 </pre></div>
 <p>使用subtree方式不会在git中留下特殊记录文件，对于拿到这个项目的人来说，并不会知道还有子项目或父项目的存在，看到的只是一个实实在在的目录。</p>
 <h2>总结</h2>
@@ -223,21 +223,21 @@ $ git subtree push --prefix<span class="o">=</span>sub/Test mod-Test master     
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

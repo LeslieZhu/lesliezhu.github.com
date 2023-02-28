@@ -106,357 +106,357 @@
 <h2>引言</h2>
 <p>本篇对应的源码位于目录: <code>src/01/</code></p>
 <div class="highlight"><pre><span></span>src
- <span class="p">|</span><span class="m">01</span>
- <span class="p">|</span> <span class="p">|</span>token
- <span class="p">|</span> <span class="p">|</span> <span class="p">|</span>token.hpp
- <span class="p">|</span> <span class="p">|</span>CMakeLists.txt
- <span class="p">|</span> <span class="p">|</span><span class="nb">test</span>
- <span class="p">|</span> <span class="p">|</span> <span class="p">|</span>main.cpp
- <span class="p">|</span> <span class="p">|</span> <span class="p">|</span>lexer_test.cpp
- <span class="p">|</span> <span class="p">|</span>lexer
- <span class="p">|</span> <span class="p">|</span> <span class="p">|</span>lexer.hpp
- <span class="p">|</span> <span class="p">|</span>repl
- <span class="p">|</span> <span class="p">|</span> <span class="p">|</span>repl.hpp
+<span class="w"> </span><span class="p">|</span><span class="m">01</span>
+<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span>token
+<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span>token.hpp
+<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span>CMakeLists.txt
+<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span><span class="nb">test</span>
+<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span>main.cpp
+<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span>lexer_test.cpp
+<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span>lexer
+<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span>lexer.hpp
+<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span>repl
+<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="p">|</span>repl.hpp
 </pre></div>
 <p>将源代码转换为词法单元，这个过程叫<code>词法分析</code>，完成这个过程的叫<code>词法分析器(tokenizer/scanner)</code>。</p>
 <h2>定义词法单元Token</h2>
-<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">token</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">token</span>
+<span class="p">{</span>
 
-<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Token</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">TokenType</span><span class="w"> </span><span class="n">Type</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Literal</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">};</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Token</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">TokenType</span><span class="w"> </span><span class="n">Type</span><span class="p">;</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">Literal</span><span class="p">;</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">}</span>
 </pre></div>
 <p>用一个结构体来存储Token，它包含类型和源码内容。</p>
 <p>用常量来标记所有的Token类型:</p>
-<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">token</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">namespace</span><span class="w"> </span><span class="nn">types</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">ILLEGAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"ILLEGAL"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">EndOF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"EOF"</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">token</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">namespace</span><span class="w"> </span><span class="nn">types</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">ILLEGAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"ILLEGAL"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">EndOF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"EOF"</span><span class="p">;</span>
 
 <span class="w">        </span><span class="c1">// Identifiers + literals</span>
 <span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">IDENT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"IDENT"</span><span class="p">;</span><span class="w"> </span><span class="c1">// add, foobar, x, y, ...</span>
 <span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">INT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"INT"</span><span class="p">;</span><span class="w">     </span><span class="c1">// 1343456</span>
 
 <span class="w">        </span><span class="c1">// Operators</span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">ASSIGN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"="</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">PLUS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"+"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">MINUS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"-"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">BANG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"!"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">ASTERISK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"*"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">SLASH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"/"</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">ASSIGN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"="</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">PLUS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"+"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">MINUS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"-"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">BANG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"!"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">ASTERISK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"*"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">SLASH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"/"</span><span class="p">;</span>
 
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">LT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"&lt;"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">GT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"&gt;"</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">LT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"&lt;"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">GT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"&gt;"</span><span class="p">;</span>
 
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">EQ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"=="</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">NOT_EQ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"!="</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">EQ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"=="</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">NOT_EQ</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"!="</span><span class="p">;</span>
 
 <span class="w">        </span><span class="c1">// Delimiters</span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">COMMA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">","</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">SEMICOLON</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">";"</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">COMMA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">","</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">SEMICOLON</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">";"</span><span class="p">;</span>
 
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">LPAREN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"("</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">RPAREN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">")"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">LBRACE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"{"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">RBRACE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"}"</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">LPAREN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"("</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">RPAREN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">")"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">LBRACE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"{"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">RBRACE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"}"</span><span class="p">;</span>
 
 <span class="w">        </span><span class="c1">// Keywords</span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">FUNCTION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"FUNCTION"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">LET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"LET"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">TRUE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"TRUE"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">FALSE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"FALSE"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">IF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"IF"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">ELSE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"ELSE"</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">RETURN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"RETURN"</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">FUNCTION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"FUNCTION"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">LET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"LET"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">TRUE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"TRUE"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">FALSE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"FALSE"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">IF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"IF"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">ELSE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"ELSE"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">TokenType</span><span class="w"> </span><span class="n">RETURN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"RETURN"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>对于暂不支持的词法类型统一设置为<code>ILLEGAL</code>，源码文件结束则使用<code>EndOF</code>, 而对于关键字则用一个字典来管理:</p>
-<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">TokenType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">keywords</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{{</span><span class="s">"fn"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">FUNCTION</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                             </span><span class="p">{</span><span class="s">"let"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LET</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                             </span><span class="p">{</span><span class="s">"true"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">TRUE</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                             </span><span class="p">{</span><span class="s">"false"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">FALSE</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                             </span><span class="p">{</span><span class="s">"if"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">IF</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                             </span><span class="p">{</span><span class="s">"else"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ELSE</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                             </span><span class="p">{</span><span class="s">"return"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">RETURN</span><span class="p">}};</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">TokenType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">keywords</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{{</span><span class="s">"fn"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">FUNCTION</span><span class="p">},</span>
+<span class="w">                                             </span><span class="p">{</span><span class="s">"let"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LET</span><span class="p">},</span>
+<span class="w">                                             </span><span class="p">{</span><span class="s">"true"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">TRUE</span><span class="p">},</span>
+<span class="w">                                             </span><span class="p">{</span><span class="s">"false"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">FALSE</span><span class="p">},</span>
+<span class="w">                                             </span><span class="p">{</span><span class="s">"if"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">IF</span><span class="p">},</span>
+<span class="w">                                             </span><span class="p">{</span><span class="s">"else"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ELSE</span><span class="p">},</span>
+<span class="w">                                             </span><span class="p">{</span><span class="s">"return"</span><span class="p">,</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">RETURN</span><span class="p">}};</span>
 </pre></div>
 <h2>词法分析器Lexer</h2>
-<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">lexer</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Lexer</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">input</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">lexer</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Lexer</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">input</span><span class="p">;</span>
 <span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">position</span><span class="p">;</span><span class="w">     </span><span class="c1">// current position in input (points to current char)</span>
 <span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">readPosition</span><span class="p">;</span><span class="w"> </span><span class="c1">// current reading position in input (after current char)</span>
 <span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">ch</span><span class="p">;</span><span class="w">          </span><span class="c1">// current char under examination</span>
 
-<span class="w">        </span><span class="n">Lexer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">input_</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">input</span><span class="p">(</span><span class="n">input_</span><span class="p">),</span><span class="w"></span>
-<span class="w">                                          </span><span class="n">position</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"></span>
-<span class="w">                                          </span><span class="n">readPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"></span>
-<span class="w">                                          </span><span class="n">ch</span><span class="p">(</span><span class="sc">' '</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">};</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="n">Lexer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">input_</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">input</span><span class="p">(</span><span class="n">input_</span><span class="p">),</span>
+<span class="w">                                          </span><span class="n">position</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                          </span><span class="n">readPosition</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+<span class="w">                                          </span><span class="n">ch</span><span class="p">(</span><span class="sc">' '</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="p">}</span>
 </pre></div>
 <p>用结构体Lexer来存储读取的字符、当期位置、下一个读取位置等信息。</p>
 <p>同时提供一个创建词法分析器对象的函数:</p>
-<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">lexer</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Lexer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">input</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Lexer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Lexer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">input</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">l</span><span class="o">-&gt;</span><span class="n">readChar</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">l</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">lexer</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Lexer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">New</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">input</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Lexer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Lexer</span><span class="o">&gt;</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<span class="w">        </span><span class="n">l</span><span class="o">-&gt;</span><span class="n">readChar</span><span class="p">();</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">l</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>一旦Lexer创建后，它不断读取源代码并识别成词法单元Token:</p>
-<div class="highlight"><pre><span></span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="nf">NextToken</span><span class="p">()</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">tok</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="nf">NextToken</span><span class="p">()</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">tok</span><span class="p">;</span>
 
-<span class="w">            </span><span class="n">skipWhitespace</span><span class="p">();</span><span class="w"></span>
+<span class="w">            </span><span class="n">skipWhitespace</span><span class="p">();</span>
 
-<span class="w">            </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">ch</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'='</span><span class="o">:</span><span class="w"></span>
-<span class="w">            </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">peekChar</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">'='</span><span class="p">)</span><span class="w"></span>
-<span class="w">                </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="kt">char</span><span class="w"> </span><span class="n">oldChar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ch</span><span class="p">;</span><span class="w"></span>
-<span class="w">                    </span><span class="n">readChar</span><span class="p">();</span><span class="w"></span>
-<span class="w">                    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">oldChar</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EQ</span><span class="p">;</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">literal</span><span class="p">;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">                </span><span class="k">else</span><span class="w"></span>
-<span class="w">                </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ASSIGN</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'+'</span><span class="o">:</span><span class="w"></span>
-<span class="w">            </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">PLUS</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'-'</span><span class="o">:</span><span class="w"></span>
-<span class="w">            </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">MINUS</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'!'</span><span class="o">:</span><span class="w"></span>
-<span class="w">            </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">peekChar</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">'='</span><span class="p">)</span><span class="w"></span>
-<span class="w">                </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="kt">char</span><span class="w"> </span><span class="n">oldChar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ch</span><span class="p">;</span><span class="w"></span>
-<span class="w">                    </span><span class="n">readChar</span><span class="p">();</span><span class="w"></span>
-<span class="w">                    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">oldChar</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">NOT_EQ</span><span class="p">;</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">literal</span><span class="p">;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">                </span><span class="k">else</span><span class="w"></span>
-<span class="w">                </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">BANG</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'/'</span><span class="o">:</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SLASH</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'*'</span><span class="o">:</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ASTERISK</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'&lt;'</span><span class="o">:</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LT</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'&gt;'</span><span class="o">:</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">GT</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">';'</span><span class="o">:</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SEMICOLON</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">','</span><span class="o">:</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">COMMA</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'{'</span><span class="o">:</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LBRACE</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'}'</span><span class="o">:</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">RBRACE</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'('</span><span class="o">:</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LPAREN</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">')'</span><span class="o">:</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">RPAREN</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="mi">0</span><span class="o">:</span><span class="w"></span>
-<span class="w">            </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">""</span><span class="p">;</span><span class="w"></span>
-<span class="w">                </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EndOF</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="k">default</span><span class="o">:</span><span class="w"></span>
-<span class="w">            </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isLetter</span><span class="p">(</span><span class="n">ch</span><span class="p">))</span><span class="w"></span>
-<span class="w">                </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">readIdentifier</span><span class="p">();</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">LookupIdent</span><span class="p">(</span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="p">);</span><span class="w"></span>
-<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">tok</span><span class="p">;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">                </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isDigit</span><span class="p">(</span><span class="n">ch</span><span class="p">))</span><span class="w"></span>
-<span class="w">                </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">readNumber</span><span class="p">();</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">INT</span><span class="p">;</span><span class="w"></span>
-<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">tok</span><span class="p">;</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">                </span><span class="k">else</span><span class="w"></span>
-<span class="w">                </span><span class="p">{</span><span class="w"></span>
-<span class="w">                    </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ILLEGAL</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span><span class="w"></span>
-<span class="w">                </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'='</span><span class="p">:</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">peekChar</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">'='</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="kt">char</span><span class="w"> </span><span class="n">oldChar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ch</span><span class="p">;</span>
+<span class="w">                    </span><span class="n">readChar</span><span class="p">();</span>
+<span class="w">                    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">oldChar</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EQ</span><span class="p">;</span>
+<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">literal</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ASSIGN</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'+'</span><span class="p">:</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">PLUS</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'-'</span><span class="p">:</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">MINUS</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'!'</span><span class="p">:</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">peekChar</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="sc">'='</span><span class="p">)</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="kt">char</span><span class="w"> </span><span class="n">oldChar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ch</span><span class="p">;</span>
+<span class="w">                    </span><span class="n">readChar</span><span class="p">();</span>
+<span class="w">                    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">oldChar</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">NOT_EQ</span><span class="p">;</span>
+<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">literal</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">BANG</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'/'</span><span class="p">:</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SLASH</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'*'</span><span class="p">:</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ASTERISK</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'&lt;'</span><span class="p">:</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LT</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'&gt;'</span><span class="p">:</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">GT</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">';'</span><span class="p">:</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SEMICOLON</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">','</span><span class="p">:</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">COMMA</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'{'</span><span class="p">:</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LBRACE</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'}'</span><span class="p">:</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">RBRACE</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">'('</span><span class="p">:</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LPAREN</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="sc">')'</span><span class="p">:</span>
+<span class="w">                </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">RPAREN</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="mi">0</span><span class="p">:</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+<span class="w">                </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EndOF</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="k">default</span><span class="o">:</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isLetter</span><span class="p">(</span><span class="n">ch</span><span class="p">))</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">readIdentifier</span><span class="p">();</span>
+<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">LookupIdent</span><span class="p">(</span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="p">);</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">tok</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">isDigit</span><span class="p">(</span><span class="n">ch</span><span class="p">))</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">readNumber</span><span class="p">();</span>
+<span class="w">                    </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">INT</span><span class="p">;</span>
+<span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="n">tok</span><span class="p">;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">                </span><span class="k">else</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">newToken</span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ILLEGAL</span><span class="p">,</span><span class="w"> </span><span class="n">ch</span><span class="p">);</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="p">}</span>
 
-<span class="w">            </span><span class="n">readChar</span><span class="p">();</span><span class="w"></span>
-<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">tok</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="n">readChar</span><span class="p">();</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">tok</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
 </pre></div>
 <h2>测试用例</h2>
-<div class="highlight"><pre><span></span><span class="n">TEST</span><span class="p">(</span><span class="n">TestNextToken</span><span class="p">,</span><span class="w"> </span><span class="n">BasicAssertions</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sa">R</span><span class="s">"</span><span class="dl">"(</span><span class="s"></span>
+<div class="highlight"><pre><span></span><span class="n">TEST</span><span class="p">(</span><span class="n">TestNextToken</span><span class="p">,</span><span class="w"> </span><span class="n">BasicAssertions</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sa">R</span><span class="s">"</span><span class="dl">"(</span>
 <span class="s">        leT five = 5;</span>
-<span class="s">        </span><span class="dl">)"</span><span class="s">"</span><span class="p">;</span><span class="w"></span>
+<span class="s">        </span><span class="dl">)"</span><span class="s">"</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tests</span><span class="p">{{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LET</span><span class="p">,</span><span class="w"> </span><span class="s">"let"</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                    </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">IDENT</span><span class="p">,</span><span class="w"> </span><span class="s">"five"</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                    </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ASSIGN</span><span class="p">,</span><span class="w"> </span><span class="s">"="</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                    </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">INT</span><span class="p">,</span><span class="w"> </span><span class="s">"5"</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                    </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SEMICOLON</span><span class="p">,</span><span class="w"> </span><span class="s">";"</span><span class="p">},</span><span class="w"></span>
-<span class="w">                                    </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EndOF</span><span class="p">,</span><span class="w"> </span><span class="s">""</span><span class="p">}};</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tests</span><span class="p">{{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">LET</span><span class="p">,</span><span class="w"> </span><span class="s">"let"</span><span class="p">},</span>
+<span class="w">                                    </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">IDENT</span><span class="p">,</span><span class="w"> </span><span class="s">"five"</span><span class="p">},</span>
+<span class="w">                                    </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">ASSIGN</span><span class="p">,</span><span class="w"> </span><span class="s">"="</span><span class="p">},</span>
+<span class="w">                                    </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">INT</span><span class="p">,</span><span class="w"> </span><span class="s">"5"</span><span class="p">},</span>
+<span class="w">                                    </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">SEMICOLON</span><span class="p">,</span><span class="w"> </span><span class="s">";"</span><span class="p">},</span>
+<span class="w">                                    </span><span class="p">{</span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EndOF</span><span class="p">,</span><span class="w"> </span><span class="s">""</span><span class="p">}};</span>
 
-<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">lexer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lexer</span><span class="o">::</span><span class="n">New</span><span class="p">(</span><span class="n">input</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">test</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">tests</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lexer</span><span class="o">-&gt;</span><span class="n">NextToken</span><span class="p">();</span><span class="w"></span>
-<span class="w">        </span><span class="n">EXPECT_EQ</span><span class="p">(</span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="p">,</span><span class="w"> </span><span class="n">test</span><span class="p">.</span><span class="n">Type</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">EXPECT_EQ</span><span class="p">(</span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="p">,</span><span class="w"> </span><span class="n">test</span><span class="p">.</span><span class="n">Literal</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">lexer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lexer</span><span class="o">::</span><span class="n">New</span><span class="p">(</span><span class="n">input</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="n">test</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">tests</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lexer</span><span class="o">-&gt;</span><span class="n">NextToken</span><span class="p">();</span>
+<span class="w">        </span><span class="n">EXPECT_EQ</span><span class="p">(</span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="p">,</span><span class="w"> </span><span class="n">test</span><span class="p">.</span><span class="n">Type</span><span class="p">);</span>
+<span class="w">        </span><span class="n">EXPECT_EQ</span><span class="p">(</span><span class="n">tok</span><span class="p">.</span><span class="n">Literal</span><span class="p">,</span><span class="w"> </span><span class="n">test</span><span class="p">.</span><span class="n">Literal</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <p>测试不通过:</p>
-<div class="highlight"><pre><span></span>$ ./monkey_test
-~/waiicpp/src/01/test/lexer_test.cpp:111: Failure
-Expected equality of these values:
-  tok.Type
-    Which is: <span class="s2">"IDENT"</span>
-  test.Type
-    Which is: <span class="s2">"LET"</span>
-~/waiicpp/src/01/test/lexer_test.cpp:112: Failure
-Expected equality of these values:
-  tok.Literal
-    Which is: <span class="s2">"leT"</span>
-  test.Literal
-    Which is: <span class="s2">"let"</span>
-<span class="o">[</span>  FAILED  <span class="o">]</span> TestNextToken.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
-<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>./monkey_test
+~/waiicpp/src/01/test/lexer_test.cpp:111:<span class="w"> </span>Failure
+Expected<span class="w"> </span>equality<span class="w"> </span>of<span class="w"> </span>these<span class="w"> </span>values:
+<span class="w">  </span>tok.Type
+<span class="w">    </span>Which<span class="w"> </span>is:<span class="w"> </span><span class="s2">"IDENT"</span>
+<span class="w">  </span>test.Type
+<span class="w">    </span>Which<span class="w"> </span>is:<span class="w"> </span><span class="s2">"LET"</span>
+~/waiicpp/src/01/test/lexer_test.cpp:112:<span class="w"> </span>Failure
+Expected<span class="w"> </span>equality<span class="w"> </span>of<span class="w"> </span>these<span class="w"> </span>values:
+<span class="w">  </span>tok.Literal
+<span class="w">    </span>Which<span class="w"> </span>is:<span class="w"> </span><span class="s2">"leT"</span>
+<span class="w">  </span>test.Literal
+<span class="w">    </span>Which<span class="w"> </span>is:<span class="w"> </span><span class="s2">"let"</span>
+<span class="o">[</span><span class="w">  </span>FAILED<span class="w">  </span><span class="o">]</span><span class="w"> </span>TestNextToken.BasicAssertions<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span>TestNextToken<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="w"> </span>total<span class="o">)</span>
 
-<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment tear-down
-<span class="o">[==========]</span> <span class="m">1</span> <span class="nb">test</span> from <span class="m">1</span> <span class="nb">test</span> suite ran. <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
-<span class="o">[</span>  PASSED  <span class="o">]</span> <span class="m">0</span> tests.
-<span class="o">[</span>  FAILED  <span class="o">]</span> <span class="m">1</span> test, listed below:
-<span class="o">[</span>  FAILED  <span class="o">]</span> TestNextToken.BasicAssertions
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span>Global<span class="w"> </span><span class="nb">test</span><span class="w"> </span>environment<span class="w"> </span>tear-down
+<span class="o">[==========]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>suite<span class="w"> </span>ran.<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="w"> </span>total<span class="o">)</span>
+<span class="o">[</span><span class="w">  </span>PASSED<span class="w">  </span><span class="o">]</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>tests.
+<span class="o">[</span><span class="w">  </span>FAILED<span class="w">  </span><span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>test,<span class="w"> </span>listed<span class="w"> </span>below:
+<span class="o">[</span><span class="w">  </span>FAILED<span class="w">  </span><span class="o">]</span><span class="w"> </span>TestNextToken.BasicAssertions
 
- <span class="m">1</span> FAILED TEST
+<span class="w"> </span><span class="m">1</span><span class="w"> </span>FAILED<span class="w"> </span>TEST
 </pre></div>
 <p>将<code>leT</code>改成<code>let</code>修正后，测试通过:</p>
-<div class="highlight"><pre><span></span>$ ./monkey_test
-<span class="o">[==========]</span> Running <span class="m">1</span> <span class="nb">test</span> from <span class="m">1</span> <span class="nb">test</span> suite.
-<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment set-up.
-<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken
-<span class="o">[</span> RUN      <span class="o">]</span> TestNextToken.BasicAssertions
-<span class="o">[</span>       OK <span class="o">]</span> TestNextToken.BasicAssertions <span class="o">(</span><span class="m">0</span> ms<span class="o">)</span>
-<span class="o">[</span>----------<span class="o">]</span> <span class="m">1</span> <span class="nb">test</span> from TestNextToken <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>./monkey_test
+<span class="o">[==========]</span><span class="w"> </span>Running<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>suite.
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span>Global<span class="w"> </span><span class="nb">test</span><span class="w"> </span>environment<span class="w"> </span>set-up.
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span>TestNextToken
+<span class="o">[</span><span class="w"> </span>RUN<span class="w">      </span><span class="o">]</span><span class="w"> </span>TestNextToken.BasicAssertions
+<span class="o">[</span><span class="w">       </span>OK<span class="w"> </span><span class="o">]</span><span class="w"> </span>TestNextToken.BasicAssertions<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="o">)</span>
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span>TestNextToken<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="w"> </span>total<span class="o">)</span>
 
-<span class="o">[</span>----------<span class="o">]</span> Global <span class="nb">test</span> environment tear-down
-<span class="o">[==========]</span> <span class="m">1</span> <span class="nb">test</span> from <span class="m">1</span> <span class="nb">test</span> suite ran. <span class="o">(</span><span class="m">0</span> ms total<span class="o">)</span>
-<span class="o">[</span>  PASSED  <span class="o">]</span> <span class="m">1</span> test.
+<span class="o">[</span>----------<span class="o">]</span><span class="w"> </span>Global<span class="w"> </span><span class="nb">test</span><span class="w"> </span>environment<span class="w"> </span>tear-down
+<span class="o">[==========]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>from<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>suite<span class="w"> </span>ran.<span class="w"> </span><span class="o">(</span><span class="m">0</span><span class="w"> </span>ms<span class="w"> </span>total<span class="o">)</span>
+<span class="o">[</span><span class="w">  </span>PASSED<span class="w">  </span><span class="o">]</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>test.
 </pre></div>
 <h2>REPL</h2>
 <p>这个REPL接收一个输入然后打印Token解析结果:</p>
-<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">repl</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">namespace</span><span class="w"> </span><span class="nn">repl</span>
+<span class="p">{</span>
 
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">PROMPT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"&gt;&gt; "</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">PROMPT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"&gt;&gt; "</span><span class="p">;</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Start</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">line</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PROMPT</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Start</span><span class="p">()</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">line</span><span class="p">;</span>
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PROMPT</span><span class="p">;</span>
 
-<span class="w">            </span><span class="n">getline</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="n">line</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="n">getline</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">cin</span><span class="p">,</span><span class="w"> </span><span class="n">line</span><span class="p">);</span>
 
-<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">line</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"></span>
-<span class="w">            </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="k">break</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">line</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
 
-<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">lexer</span><span class="o">::</span><span class="n">Lexer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lexer</span><span class="o">::</span><span class="n">New</span><span class="p">(</span><span class="n">line</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">lexer</span><span class="o">::</span><span class="n">Lexer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lexer</span><span class="o">::</span><span class="n">New</span><span class="p">(</span><span class="n">line</span><span class="p">);</span>
 
-<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="o">-&gt;</span><span class="n">NextToken</span><span class="p">();</span><span class="w"> </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EndOF</span><span class="p">;</span><span class="w"> </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="o">-&gt;</span><span class="n">NextToken</span><span class="p">())</span><span class="w"></span>
-<span class="w">            </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">tok</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">token</span><span class="o">::</span><span class="n">Token</span><span class="w"> </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="o">-&gt;</span><span class="n">NextToken</span><span class="p">();</span><span class="w"> </span><span class="n">tok</span><span class="p">.</span><span class="n">Type</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">token</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">EndOF</span><span class="p">;</span><span class="w"> </span><span class="n">tok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="o">-&gt;</span><span class="n">NextToken</span><span class="p">())</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">tok</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 <h2>main主程序</h2>
-<div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getlogin</span><span class="p">();</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">getlogin</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Hello "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"! This is the Monkey-CPP programming language!"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Feel free to type in commands"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Hello "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">user</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"! This is the Monkey-CPP programming language!"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Feel free to type in commands"</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">repl</span><span class="o">::</span><span class="n">Start</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">repl</span><span class="o">::</span><span class="n">Start</span><span class="p">();</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 <h2>总结</h2>
 <p>最终运行情况:</p>
-<div class="highlight"><pre><span></span>Hello lesliezhu! This is the Monkey-CPP programming language!
-Feel free to <span class="nb">type</span> <span class="k">in</span> commands
-&gt;&gt; <span class="nb">let</span> <span class="nv">add</span> <span class="o">=</span> fn<span class="o">(</span>x, y<span class="o">)</span>  <span class="o">{</span> x + y<span class="p">;</span> <span class="o">}</span><span class="p">;</span>
-<span class="o">{</span>Type:LET Literal:let<span class="o">}</span>
-<span class="o">{</span>Type:IDENT Literal:add<span class="o">}</span>
-<span class="o">{</span>Type:<span class="o">=</span> Literal:<span class="o">=}</span>
-<span class="o">{</span>Type:FUNCTION Literal:fn<span class="o">}</span>
-<span class="o">{</span>Type:<span class="o">(</span> Literal:<span class="o">(}</span>
-<span class="o">{</span>Type:IDENT Literal:x<span class="o">}</span>
-<span class="o">{</span>Type:, Literal:,<span class="o">}</span>
-<span class="o">{</span>Type:IDENT Literal:y<span class="o">}</span>
-<span class="o">{</span>Type:<span class="o">)</span> Literal:<span class="o">)}</span>
-<span class="o">{</span>Type:<span class="o">{</span> Literal:<span class="o">{}</span>
-<span class="o">{</span>Type:IDENT Literal:x<span class="o">}</span>
-<span class="o">{</span>Type:+ Literal:+<span class="o">}</span>
-<span class="o">{</span>Type:IDENT Literal:y<span class="o">}</span>
-<span class="o">{</span>Type:<span class="p">;</span> Literal:<span class="p">;</span><span class="o">}</span>
-<span class="o">{</span>Type:<span class="o">}</span> Literal:<span class="o">}}</span>
-<span class="o">{</span>Type:<span class="p">;</span> Literal:<span class="p">;</span><span class="o">}</span>
+<div class="highlight"><pre><span></span>Hello<span class="w"> </span>lesliezhu!<span class="w"> </span>This<span class="w"> </span>is<span class="w"> </span>the<span class="w"> </span>Monkey-CPP<span class="w"> </span>programming<span class="w"> </span>language!
+Feel<span class="w"> </span>free<span class="w"> </span>to<span class="w"> </span><span class="nb">type</span><span class="w"> </span><span class="k">in</span><span class="w"> </span>commands
+&gt;&gt;<span class="w"> </span><span class="nb">let</span><span class="w"> </span><span class="nv">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>fn<span class="o">(</span>x,<span class="w"> </span>y<span class="o">)</span><span class="w">  </span><span class="o">{</span><span class="w"> </span>x<span class="w"> </span>+<span class="w"> </span>y<span class="p">;</span><span class="w"> </span><span class="o">}</span><span class="p">;</span>
+<span class="o">{</span>Type:LET<span class="w"> </span>Literal:let<span class="o">}</span>
+<span class="o">{</span>Type:IDENT<span class="w"> </span>Literal:add<span class="o">}</span>
+<span class="o">{</span>Type:<span class="o">=</span><span class="w"> </span>Literal:<span class="o">=}</span>
+<span class="o">{</span>Type:FUNCTION<span class="w"> </span>Literal:fn<span class="o">}</span>
+<span class="o">{</span>Type:<span class="o">(</span><span class="w"> </span>Literal:<span class="o">(}</span>
+<span class="o">{</span>Type:IDENT<span class="w"> </span>Literal:x<span class="o">}</span>
+<span class="o">{</span>Type:,<span class="w"> </span>Literal:,<span class="o">}</span>
+<span class="o">{</span>Type:IDENT<span class="w"> </span>Literal:y<span class="o">}</span>
+<span class="o">{</span>Type:<span class="o">)</span><span class="w"> </span>Literal:<span class="o">)}</span>
+<span class="o">{</span>Type:<span class="o">{</span><span class="w"> </span>Literal:<span class="o">{}</span>
+<span class="o">{</span>Type:IDENT<span class="w"> </span>Literal:x<span class="o">}</span>
+<span class="o">{</span>Type:+<span class="w"> </span>Literal:+<span class="o">}</span>
+<span class="o">{</span>Type:IDENT<span class="w"> </span>Literal:y<span class="o">}</span>
+<span class="o">{</span>Type:<span class="p">;</span><span class="w"> </span>Literal:<span class="p">;</span><span class="o">}</span>
+<span class="o">{</span>Type:<span class="o">}</span><span class="w"> </span>Literal:<span class="o">}}</span>
+<span class="o">{</span>Type:<span class="p">;</span><span class="w"> </span>Literal:<span class="p">;</span><span class="o">}</span>
 &gt;&gt;
 </pre></div>
 </div>
@@ -531,21 +531,21 @@ Feel free to <span class="nb">type</span> <span class="k">in</span> commands
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

@@ -111,49 +111,49 @@
 <span class="k">LABEL</span><span class="w"> </span><span class="k">MAINTAINER</span><span class="w"> </span><span class="s">lesliezhu http://lesliezhu.com</span>
 
 <span class="c"># 换成阿里云软件源</span>
-<span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span> <span class="se">\</span>
-    deb http://mirrors.aliyun.com/debian/ bullseye main non-free contrib<span class="se">\</span>
-    deb-src http://mirrors.aliyun.com/debian/ bullseye main non-free contrib<span class="se">\</span>
-    deb http://mirrors.aliyun.com/debian-security bullseye/updates main<span class="se">\</span>
-    deb-src http://mirrors.aliyun.com/debian-security bullseye/updates main<span class="se">\</span>
-    deb http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib<span class="se">\</span>
-    deb-src http://mirrors.aliyun.com/debian/ bullseye-updates main non-free contrib<span class="se">\</span>
-    deb http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib<span class="se">\</span>
-    deb-src http://mirrors.aliyun.com/debian/ bullseye-backports main non-free contrib<span class="se">\</span>
-    deb http://mirrors.ustc.edu.cn/debian-security/ stable-security main non-free contrib<span class="se">\</span>
-    deb-src http://mirrors.ustc.edu.cn/debian-security/ stable-security main non-free contrib<span class="se">\</span>
-    &gt; /etc/apt/sources.list
+<span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>deb<span class="w"> </span>http://mirrors.aliyun.com/debian/<span class="w"> </span>bullseye<span class="w"> </span>main<span class="w"> </span>non-free<span class="w"> </span>contrib<span class="se">\</span>
+<span class="w">    </span>deb-src<span class="w"> </span>http://mirrors.aliyun.com/debian/<span class="w"> </span>bullseye<span class="w"> </span>main<span class="w"> </span>non-free<span class="w"> </span>contrib<span class="se">\</span>
+<span class="w">    </span>deb<span class="w"> </span>http://mirrors.aliyun.com/debian-security<span class="w"> </span>bullseye/updates<span class="w"> </span>main<span class="se">\</span>
+<span class="w">    </span>deb-src<span class="w"> </span>http://mirrors.aliyun.com/debian-security<span class="w"> </span>bullseye/updates<span class="w"> </span>main<span class="se">\</span>
+<span class="w">    </span>deb<span class="w"> </span>http://mirrors.aliyun.com/debian/<span class="w"> </span>bullseye-updates<span class="w"> </span>main<span class="w"> </span>non-free<span class="w"> </span>contrib<span class="se">\</span>
+<span class="w">    </span>deb-src<span class="w"> </span>http://mirrors.aliyun.com/debian/<span class="w"> </span>bullseye-updates<span class="w"> </span>main<span class="w"> </span>non-free<span class="w"> </span>contrib<span class="se">\</span>
+<span class="w">    </span>deb<span class="w"> </span>http://mirrors.aliyun.com/debian/<span class="w"> </span>bullseye-backports<span class="w"> </span>main<span class="w"> </span>non-free<span class="w"> </span>contrib<span class="se">\</span>
+<span class="w">    </span>deb-src<span class="w"> </span>http://mirrors.aliyun.com/debian/<span class="w"> </span>bullseye-backports<span class="w"> </span>main<span class="w"> </span>non-free<span class="w"> </span>contrib<span class="se">\</span>
+<span class="w">    </span>deb<span class="w"> </span>http://mirrors.ustc.edu.cn/debian-security/<span class="w"> </span>stable-security<span class="w"> </span>main<span class="w"> </span>non-free<span class="w"> </span>contrib<span class="se">\</span>
+<span class="w">    </span>deb-src<span class="w"> </span>http://mirrors.ustc.edu.cn/debian-security/<span class="w"> </span>stable-security<span class="w"> </span>main<span class="w"> </span>non-free<span class="w"> </span>contrib<span class="se">\</span>
+<span class="w">    </span>&gt;<span class="w"> </span>/etc/apt/sources.list
 
 <span class="c"># 安装软件包</span>
-<span class="k">RUN</span><span class="w"> </span>apt-get -y update <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    apt-get install -y cmake <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    apt-get install -y clang-13 llvm-13 llvm-13-dev  llvm-13-tools llvm-13-runtime llvm-13-linker-tools <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    apt-get install -y libgflags-dev libgtest-dev <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    apt-get install -y libboost-dev libboost-serialization-dev <span class="o">&amp;&amp;</span> <span class="se">\</span>
-    apt-get install -y libreadline-dev zlib1g zlib1g-dev
+<span class="k">RUN</span><span class="w"> </span>apt-get<span class="w"> </span>-y<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>cmake<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>clang-13<span class="w"> </span>llvm-13<span class="w"> </span>llvm-13-dev<span class="w">  </span>llvm-13-tools<span class="w"> </span>llvm-13-runtime<span class="w"> </span>llvm-13-linker-tools<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libgflags-dev<span class="w"> </span>libgtest-dev<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libboost-dev<span class="w"> </span>libboost-serialization-dev<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libreadline-dev<span class="w"> </span>zlib1g<span class="w"> </span>zlib1g-dev
 
 
 <span class="c"># 设置初始化环境变量等</span>
-<span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span> <span class="s1">'\n\n# for LLVM-13 \n\</span>
+<span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s1">'\n\n# for LLVM-13 \n\</span>
 <span class="s1">export CC=/usr/bin/clang-13 \n\</span>
 <span class="s1">export CXX=/usr/bin/clang++-13 \n\</span>
 <span class="s1">ln -sf /usr/bin/llvm-config-13 /usr/bin/llvm-config \n'</span><span class="se">\</span>
-    &gt;&gt; ~/.bashrc
+<span class="w">    </span>&gt;&gt;<span class="w"> </span>~/.bashrc
 </pre></div>
 <h2>构建Docker镜像环境</h2>
 <div class="highlight"><pre><span></span><span class="c1"># 构建镜像</span>
-$ docker build -f Dockerfile -t ledge:builder .
+$<span class="w"> </span>docker<span class="w"> </span>build<span class="w"> </span>-f<span class="w"> </span>Dockerfile<span class="w"> </span>-t<span class="w"> </span>ledge:builder<span class="w"> </span>.
 
 <span class="c1"># 进入镜像并自动映射挂载本地目录</span>
-$ docker run -v <span class="nv">$PWD</span>:<span class="nv">$PWD</span> -w <span class="nv">$PWD</span> --rm -it ledge:builder bash
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-v<span class="w"> </span><span class="nv">$PWD</span>:<span class="nv">$PWD</span><span class="w"> </span>-w<span class="w"> </span><span class="nv">$PWD</span><span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>ledge:builder<span class="w"> </span>bash
 </pre></div>
 <p>这样一键启动了开发或部署运行环境，省时省力。</p>
 <h2>CMake编译LLVM程序</h2>
 <p><code>LLVM</code>良好的模块化设计导致的一个结果，就是配置参数比较复杂，提供专门获取编译参数的工具<code>llvm-config</code>:</p>
-<div class="highlight"><pre><span></span>$ llvm-config --cxxflags --ldflags --libs --system-libs
+<div class="highlight"><pre><span></span>$<span class="w"> </span>llvm-config<span class="w"> </span>--cxxflags<span class="w"> </span>--ldflags<span class="w"> </span>--libs<span class="w"> </span>--system-libs
 </pre></div>
 <p>如果直接手写到<code>Makefile</code>， 大致会类似:</p>
-<div class="highlight"><pre><span></span>$ clang++ -g -O3 <span class="sb">`</span>llvm-config --cxxflags --ldflags --system-libs --libs core orcjit native<span class="sb">`</span> program.cpp -o program
+<div class="highlight"><pre><span></span>$<span class="w"> </span>clang++<span class="w"> </span>-g<span class="w"> </span>-O3<span class="w"> </span><span class="sb">`</span>llvm-config<span class="w"> </span>--cxxflags<span class="w"> </span>--ldflags<span class="w"> </span>--system-libs<span class="w"> </span>--libs<span class="w"> </span>core<span class="w"> </span>orcjit<span class="w"> </span>native<span class="sb">`</span><span class="w"> </span>program.cpp<span class="w"> </span>-o<span class="w"> </span>program
 </pre></div>
 <p>如果是使用<code>CMake</code>管理的项目，则可以这样:</p>
 <div class="highlight"><pre><span></span><span class="c"># 要求必须找到LLVM</span>
@@ -273,21 +273,21 @@ $ docker run -v <span class="nv">$PWD</span>:<span class="nv">$PWD</span> -w <sp
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         

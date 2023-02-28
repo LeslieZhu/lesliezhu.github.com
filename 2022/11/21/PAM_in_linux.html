@@ -108,10 +108,10 @@
 <p>对于管理员来说，正确的设置复杂授权等工作就变成了一个简单的管理配置文件的工作了。</p>
 <h2>/etc/pam.d/配置目录</h2>
 <p>常用的涉及到授权的命令都使用了<code>libpam</code>共享库，比如:</p>
-<div class="highlight"><pre><span></span>$ ldd /usr/bin/su
-    libpam.so.0 <span class="o">=</span>&gt; /lib64/libpam.so.0 <span class="o">(</span>0x00007fb74b974000<span class="o">)</span>
-    libpam_misc.so.0 <span class="o">=</span>&gt; /lib64/libpam_misc.so.0 <span class="o">(</span>0x00007fb74b770000<span class="o">)</span>
-    ......
+<div class="highlight"><pre><span></span>$<span class="w"> </span>ldd<span class="w"> </span>/usr/bin/su
+<span class="w">    </span>libpam.so.0<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span>/lib64/libpam.so.0<span class="w"> </span><span class="o">(</span>0x00007fb74b974000<span class="o">)</span>
+<span class="w">    </span>libpam_misc.so.0<span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span>/lib64/libpam_misc.so.0<span class="w"> </span><span class="o">(</span>0x00007fb74b770000<span class="o">)</span>
+<span class="w">    </span>......
 </pre></div>
 <p>系统对常见的一些需要授权操作服务场景(比如<code>su</code>)默认定义好了规则:</p>
 <div class="highlight"><pre><span></span>/etc/pam.d/chfn
@@ -134,32 +134,32 @@
 /etc/pam.d/systemd-user
 </pre></div>
 <p>比如<code>su</code>命令对应的授权规则是:</p>
-<div class="highlight"><pre><span></span>$ cat /etc/pam.d/su
+<div class="highlight"><pre><span></span>$<span class="w"> </span>cat<span class="w"> </span>/etc/pam.d/su
 
 <span class="c1">#%PAM-1.0</span>
-auth		sufficient	pam_rootok.so
+auth<span class="w">		</span>sufficient<span class="w">	</span>pam_rootok.so
 <span class="c1"># Uncomment the following line to implicitly trust users in the "wheel" group.</span>
 <span class="c1">#auth		sufficient	pam_wheel.so trust use_uid</span>
 <span class="c1"># Uncomment the following line to require a user to be in the "wheel" group.</span>
 <span class="c1">#auth		required	pam_wheel.so use_uid</span>
-auth		substack	system-auth
-auth		include		postlogin
-account		sufficient	pam_succeed_if.so <span class="nv">uid</span> <span class="o">=</span> <span class="m">0</span> use_uid quiet
-account		include		system-auth
-password	include		system-auth
-session		include		system-auth
-session		include		postlogin
-session		optional	pam_xauth.so
+auth<span class="w">		</span>substack<span class="w">	</span>system-auth
+auth<span class="w">		</span>include<span class="w">		</span>postlogin
+account<span class="w">		</span>sufficient<span class="w">	</span>pam_succeed_if.so<span class="w"> </span><span class="nv">uid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="w"> </span>use_uid<span class="w"> </span>quiet
+account<span class="w">		</span>include<span class="w">		</span>system-auth
+password<span class="w">	</span>include<span class="w">		</span>system-auth
+session<span class="w">		</span>include<span class="w">		</span>system-auth
+session<span class="w">		</span>include<span class="w">		</span>postlogin
+session<span class="w">		</span>optional<span class="w">	</span>pam_xauth.so
 </pre></div>
 <p>基本含义是根据规则，首先需要通过<code>pam_rootok.so</code>模块检验是否能够获得root身份，之后再叠加更加严格的规则。比如如果要求只有<code>wheel</code>用户组的用户可以使用<code>sudo</code>命令，则可以要求必须通过<code>pam_wheel.so</code>模块检验。</p>
 <p>如果是以上服务场景之外的, 其他程序想要获取到授权，则统统归到<code>/etc/pam.d/other</code>规则文件里面，其内容:</p>
-<div class="highlight"><pre><span></span>$ cat /etc/pam.d/other
+<div class="highlight"><pre><span></span>$<span class="w"> </span>cat<span class="w"> </span>/etc/pam.d/other
 
 <span class="c1">#%PAM-1.0</span>
-auth     required       pam_deny.so
-account  required       pam_deny.so
-password required       pam_deny.so
-session  required       pam_deny.so
+auth<span class="w">     </span>required<span class="w">       </span>pam_deny.so
+account<span class="w">  </span>required<span class="w">       </span>pam_deny.so
+password<span class="w"> </span>required<span class="w">       </span>pam_deny.so
+session<span class="w">  </span>required<span class="w">       </span>pam_deny.so
 </pre></div>
 <p>即系统默认自带的授权场景之外的其他授权行为一律拒绝。</p>
 <h2>授权规则语法</h2>
@@ -229,106 +229,106 @@ session    required     pam_limits.so    conf=/etc/security/limits.conf
 <p>现有一个程序调用这个授权服务:</p>
 <div class="highlight"><pre><span></span><span class="c1">// https://github.com/linux-pam/linux-pam/blob/master/examples/check_user.c</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;security/pam_appl.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;security/pam_misc.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;security/pam_appl.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;security/pam_misc.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
 
-<span class="k">static</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pam_conv</span><span class="w"> </span><span class="n">conv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">misc_conv</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nb">NULL</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">static</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">pam_conv</span><span class="w"> </span><span class="n">conv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">misc_conv</span><span class="p">,</span>
+<span class="w">    </span><span class="nb">NULL</span>
+<span class="p">};</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">pam_handle_t</span><span class="w"> </span><span class="o">*</span><span class="n">pamh</span><span class="o">=</span><span class="nb">NULL</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">retval</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">user</span><span class="o">=</span><span class="s">"nobody"</span><span class="p">;</span><span class="w"></span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">pam_handle_t</span><span class="w"> </span><span class="o">*</span><span class="n">pamh</span><span class="o">=</span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">retval</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">user</span><span class="o">=</span><span class="s">"nobody"</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">user</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"Usage: check_user [username]</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"Usage: check_user [username]</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="c1">// 调用check授权服务</span>
 <span class="w">    </span><span class="n">retval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pam_start</span><span class="p">(</span><span class="s">"check"</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">conv</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pamh</span><span class="p">);</span><span class="w"> </span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="n">retval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pam_authenticate</span><span class="p">(</span><span class="n">pamh</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">    </span><span class="cm">/* is user really user? */</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span>
+<span class="w">        </span><span class="n">retval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pam_authenticate</span><span class="p">(</span><span class="n">pamh</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">    </span><span class="cm">/* is user really user? */</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="n">retval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pam_acct_mgmt</span><span class="p">(</span><span class="n">pamh</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">       </span><span class="cm">/* permitted access? */</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span>
+<span class="w">        </span><span class="n">retval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pam_acct_mgmt</span><span class="p">(</span><span class="n">pamh</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">       </span><span class="cm">/* permitted access? */</span>
 
-<span class="w">    </span><span class="cm">/* This is where we have been authorized or not. */</span><span class="w"></span>
+<span class="w">    </span><span class="cm">/* This is where we have been authorized or not. */</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span><span class="w"> </span><span class="s">"Authenticated</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span><span class="w"> </span><span class="s">"Not Authenticated</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span><span class="w"> </span><span class="s">"Authenticated</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stdout</span><span class="p">,</span><span class="w"> </span><span class="s">"Not Authenticated</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pam_end</span><span class="p">(</span><span class="n">pamh</span><span class="p">,</span><span class="n">retval</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">     </span><span class="cm">/* close Linux-PAM */</span><span class="w"></span>
-<span class="w">    </span><span class="n">pamh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"check_user: failed to release authenticator</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pam_end</span><span class="p">(</span><span class="n">pamh</span><span class="p">,</span><span class="n">retval</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">     </span><span class="cm">/* close Linux-PAM */</span>
+<span class="w">    </span><span class="n">pamh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">;</span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"check_user: failed to release authenticator</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">0</span><span class="o">:</span><span class="mi">1</span><span class="w"> </span><span class="p">);</span><span class="w">       </span><span class="cm">/* indicate success */</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="n">retval</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PAM_SUCCESS</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">0</span><span class="o">:</span><span class="mi">1</span><span class="w"> </span><span class="p">);</span><span class="w">       </span><span class="cm">/* indicate success */</span>
+<span class="p">}</span>
 </pre></div>
 <p>这样新开发的程序就可以使用自定义的授权服务规则了:</p>
-<div class="highlight"><pre><span></span>$ yum install pam-devel
+<div class="highlight"><pre><span></span>$<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>pam-devel
 
-$ gcc main.cpp  -lpam -lpam_misc -o check_user
+$<span class="w"> </span>gcc<span class="w"> </span>main.cpp<span class="w">  </span>-lpam<span class="w"> </span>-lpam_misc<span class="w"> </span>-o<span class="w"> </span>check_user
 
-$ ./check_user
+$<span class="w"> </span>./check_user
 Password:
-Not Authenticated
+Not<span class="w"> </span>Authenticated
 
-$ ./check_user <span class="nb">test</span>
+$<span class="w"> </span>./check_user<span class="w"> </span><span class="nb">test</span>
 Password:
 Authenticated
 
-$ ./check_user <span class="nb">test</span>
+$<span class="w"> </span>./check_user<span class="w"> </span><span class="nb">test</span>
 Password:
-Not Authenticated
+Not<span class="w"> </span>Authenticated
 </pre></div>
 <h2>pam_limits管理会话资源分配</h2>
 <p>日常接触较多的是会话资源管理，比如:</p>
-<div class="highlight"><pre><span></span>$ <span class="nb">ulimit</span> -a
-core file size          <span class="o">(</span>blocks, -c<span class="o">)</span> <span class="m">0</span>
-data seg size           <span class="o">(</span>kbytes, -d<span class="o">)</span> unlimited
-scheduling priority             <span class="o">(</span>-e<span class="o">)</span> <span class="m">0</span>
-file size               <span class="o">(</span>blocks, -f<span class="o">)</span> unlimited
-pending signals                 <span class="o">(</span>-i<span class="o">)</span> <span class="m">7475</span>
-max locked memory       <span class="o">(</span>kbytes, -l<span class="o">)</span> <span class="m">64</span>
-max memory size         <span class="o">(</span>kbytes, -m<span class="o">)</span> unlimited
-open files                      <span class="o">(</span>-n<span class="o">)</span> <span class="m">1048576</span>
-pipe size            <span class="o">(</span><span class="m">512</span> bytes, -p<span class="o">)</span> <span class="m">8</span>
-POSIX message queues     <span class="o">(</span>bytes, -q<span class="o">)</span> <span class="m">819200</span>
-real-time priority              <span class="o">(</span>-r<span class="o">)</span> <span class="m">0</span>
-stack size              <span class="o">(</span>kbytes, -s<span class="o">)</span> <span class="m">8192</span>
-cpu <span class="nb">time</span>               <span class="o">(</span>seconds, -t<span class="o">)</span> unlimited
-max user processes              <span class="o">(</span>-u<span class="o">)</span> unlimited
-virtual memory          <span class="o">(</span>kbytes, -v<span class="o">)</span> unlimited
-file locks                      <span class="o">(</span>-x<span class="o">)</span> unlimited
+<div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">ulimit</span><span class="w"> </span>-a
+core<span class="w"> </span>file<span class="w"> </span>size<span class="w">          </span><span class="o">(</span>blocks,<span class="w"> </span>-c<span class="o">)</span><span class="w"> </span><span class="m">0</span>
+data<span class="w"> </span>seg<span class="w"> </span>size<span class="w">           </span><span class="o">(</span>kbytes,<span class="w"> </span>-d<span class="o">)</span><span class="w"> </span>unlimited
+scheduling<span class="w"> </span>priority<span class="w">             </span><span class="o">(</span>-e<span class="o">)</span><span class="w"> </span><span class="m">0</span>
+file<span class="w"> </span>size<span class="w">               </span><span class="o">(</span>blocks,<span class="w"> </span>-f<span class="o">)</span><span class="w"> </span>unlimited
+pending<span class="w"> </span>signals<span class="w">                 </span><span class="o">(</span>-i<span class="o">)</span><span class="w"> </span><span class="m">7475</span>
+max<span class="w"> </span>locked<span class="w"> </span>memory<span class="w">       </span><span class="o">(</span>kbytes,<span class="w"> </span>-l<span class="o">)</span><span class="w"> </span><span class="m">64</span>
+max<span class="w"> </span>memory<span class="w"> </span>size<span class="w">         </span><span class="o">(</span>kbytes,<span class="w"> </span>-m<span class="o">)</span><span class="w"> </span>unlimited
+open<span class="w"> </span>files<span class="w">                      </span><span class="o">(</span>-n<span class="o">)</span><span class="w"> </span><span class="m">1048576</span>
+pipe<span class="w"> </span>size<span class="w">            </span><span class="o">(</span><span class="m">512</span><span class="w"> </span>bytes,<span class="w"> </span>-p<span class="o">)</span><span class="w"> </span><span class="m">8</span>
+POSIX<span class="w"> </span>message<span class="w"> </span>queues<span class="w">     </span><span class="o">(</span>bytes,<span class="w"> </span>-q<span class="o">)</span><span class="w"> </span><span class="m">819200</span>
+real-time<span class="w"> </span>priority<span class="w">              </span><span class="o">(</span>-r<span class="o">)</span><span class="w"> </span><span class="m">0</span>
+stack<span class="w"> </span>size<span class="w">              </span><span class="o">(</span>kbytes,<span class="w"> </span>-s<span class="o">)</span><span class="w"> </span><span class="m">8192</span>
+cpu<span class="w"> </span><span class="nb">time</span><span class="w">               </span><span class="o">(</span>seconds,<span class="w"> </span>-t<span class="o">)</span><span class="w"> </span>unlimited
+max<span class="w"> </span>user<span class="w"> </span>processes<span class="w">              </span><span class="o">(</span>-u<span class="o">)</span><span class="w"> </span>unlimited
+virtual<span class="w"> </span>memory<span class="w">          </span><span class="o">(</span>kbytes,<span class="w"> </span>-v<span class="o">)</span><span class="w"> </span>unlimited
+file<span class="w"> </span>locks<span class="w">                      </span><span class="o">(</span>-x<span class="o">)</span><span class="w"> </span>unlimited
 </pre></div>
 <p>这是系统当前会话的资源限制情况，它其实检查这些资源限制是通过<code>pam_limits</code>模块进行的，这个模块默认是读取配置文件<code>/etc/security/limits.conf</code>,还会读取<code>/etc/security/limits.d/</code>目录下的配置文件。</p>
 <p>如果是临时修改会话资源限制，则使用<code>ulimit</code>命令:</p>
-<div class="highlight"><pre><span></span>$ <span class="nb">ulimit</span> -s
+<div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">ulimit</span><span class="w"> </span>-s
 <span class="m">10240</span>
 
-$ <span class="nb">ulimit</span> -s <span class="m">8192</span>
+$<span class="w"> </span><span class="nb">ulimit</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8192</span>
 
-$ <span class="nb">ulimit</span> -s
+$<span class="w"> </span><span class="nb">ulimit</span><span class="w"> </span>-s
 <span class="m">8192</span>
 
-$ <span class="nb">ulimit</span> -s unlimited
+$<span class="w"> </span><span class="nb">ulimit</span><span class="w"> </span>-s<span class="w"> </span>unlimited
 
-$ <span class="nb">ulimit</span> -s
+$<span class="w"> </span><span class="nb">ulimit</span><span class="w"> </span>-s
 unlimited
 </pre></div>
 <p>如果是长期生效则修改配置文件<code>/etc/security/limits.conf</code>:</p>
@@ -414,21 +414,21 @@ testUser         hard    nofile        1024   # 最多打开1024个文件
         <div class="widget">
         <h4>最新文章</h4>
         <ul class="entry list-unstyled">
-        <li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li><li><a href="http://www.lesliezhu.com/2023/01/29/learn_japanese_3.html"><i class="fa fa-file-o"></i>标准日本语初级(第2课):これは本です</a></li>
+        <li><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html"><i class="fa fa-file-o"></i>使用shred工具彻底粉碎文件</a></li><li><a href="http://www.lesliezhu.com/2022/12/29/torch_dragon.html"><i class="fa fa-file-o"></i>火把龙</a></li><li><a href="http://www.lesliezhu.com/2023/02/03/tensorflow_2.html"><i class="fa fa-file-o"></i>TensorFlow读取.pb模型文件并预测图片</a></li><li><a href="http://www.lesliezhu.com/2019/08/29/tensorflow_1.html"><i class="fa fa-file-o"></i>源码编译TensorFlow为C++ API动态库</a></li><li><a href="http://www.lesliezhu.com/2023/01/31/protobuf.html"><i class="fa fa-file-o"></i>Protocol Buffers:谷歌开源的数据交换格式协议</a></li><li><a href="http://www.lesliezhu.com/2022/10/24/yum_rpm.html"><i class="fa fa-file-o"></i>制作rpm安装包文件</a></li>
         </ul>   
         </div> 
         
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>30</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>7</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>2</span></a></li>
         </ul>
         </div>
         
         <div class="widget">
         <h4>时间机器</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>52</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/202302.html">202302<span>4</span></a></li><li><a href="http://www.lesliezhu.com/tags/202301.html">202301<span>11</span></a></li><li><a href="http://www.lesliezhu.com/tags/202212.html">202212<span>10</span></a></li><li><a href="http://www.lesliezhu.com/tags/202211.html">202211<span>13</span></a></li><li><a href="http://www.lesliezhu.com/tags/202210.html">202210<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/202206.html">202206<span>3</span></a></li><li><a href="http://www.lesliezhu.com/tags/202205.html">202205<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/202005.html">202005<span>1</span></a></li><li><a href="http://www.lesliezhu.com/tags/201910.html">201910<span>1</span></a></li><li><a href="http://www.lesliezhu.com/archive.html">All<span>53</span></a></li>
         </ul>
         </div>
         
