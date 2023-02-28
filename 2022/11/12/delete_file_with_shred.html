@@ -102,8 +102,7 @@
 <h2>引言</h2>
 <blockquote>
 <p>shred - overwrite a file to hide its contents, and optionally delete it</p>
-<p>Overwrite the specified FILE(s) repeatedly, in order to make it harder for 
-even very expensive hardware probing to recover the data.</p>
+<p>Overwrite the specified FILE(s) repeatedly, in order to make it harder for even very expensive hardware probing to recover the data.</p>
 </blockquote>
 <p>很多时候删除一个文件，实际上只是在文件系统里面将该文件所在存储位置标记为可用、可覆盖状态，这个时候是可以通过恢复工具来进行恢复的；但如果这块存储位置之后反复被其他内容填充、覆盖的话，恢复的难度就增加了。</p>
 <p><code>shred</code>工具在<code>coreutils</code>软件包中，一般Linux系统都自带有这个工具。它通过多次覆盖的方式来删除文件，避免文件被恢复工具重新恢复，达到彻底粉碎的效果。但实际使用中，还是有一些需要注意的地方，并不能保证任何情况下都可以覆盖、删除干净，还是可能被恢复回来。</p>
@@ -268,6 +267,8 @@ able to destroy it.
 <li><a href="https://www.gnu.org/software/coreutils/">https://www.gnu.org/software/coreutils/</a></li>
 </ul>
 <div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>git://git.sv.gnu.org/coreutils
+
+$<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>coreutils/src/shred.c
 </pre></div>
 </div>
         <hr>
