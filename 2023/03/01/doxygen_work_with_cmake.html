@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>客家人的一种少见“伯-叔”类关系称呼</title>
+        <title>CMake使用Doxygen自动生成文档</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>客家人的一种少见“伯-叔”类关系称呼</h1>
+        <h1>CMake使用Doxygen自动生成文档</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,47 +96,124 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/读书札记.html"><i class="读书札记"></i>读书札记</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id='content-reading'>
-<p><img alt="" src="/images/bashu.jpg"/></p>
-<p>为什么父亲会管我爷爷叫“叔”，而母亲会管我外婆叫“耶”？</p>
-<p>对此，我从小就感到疑惑，但没有得到过满意的解释，大人们都说老一辈就是习惯这样叫的。</p>
-<p>最近看南北朝时期的史书，想到南陈后主陈叔宝，还有唐初名将秦叔宝，这里面的“叔宝”的意思就是“爸爸的宝贝”吗？</p>
-<p>带着这个关于父母称呼的问题，找到中央民族大学2013年李瑶的一篇硕士论文《汉语“阿”类父母称谓词研究》，算是解惑了。</p>
-<p>在这篇论文中专门提到客家人尤其是赣南客家人存在一种比较少见的“伯-叔”类称呼，我结合自己的生活实践总结归纳为：</p>
+        <div id='content'>
+<h2>引言</h2>
+<blockquote>
+<p>官网: <a href="https://www.doxygen.nl/">https://www.doxygen.nl/</a></p>
+<p>Doxygen is the de facto standard tool for generating documentation from annotated C++ sources.</p>
+</blockquote>
+<p><code>Doxygen</code>是一个应用广泛支持多种编程语言和多种输出格式的源码文档生成工具，从1.8.0版本开始支持<code>Markdown</code>语法标记文档。</p>
+<h2>安装</h2>
 <ul>
-<li><p>“伯”称呼，发音是“ba”，同爸发音一样，指父亲</p>
+<li>软件包安装:</li>
+</ul>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>doxygen<span class="w"> </span>graphviz
+
+$<span class="w"> </span>doxygen<span class="w"> </span>--version
+<span class="m">1</span>.8.5
+</pre></div>
+<ul>
+<li>源码编译安装：</li>
+</ul>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/doxygen/doxygen.git
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>doxygen
+$<span class="w"> </span>mkdir<span class="w"> </span>build
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
+$<span class="w"> </span>cmake<span class="w"> </span>-G<span class="w"> </span><span class="s2">"Unix Makefiles"</span><span class="w"> </span>..
+$<span class="w"> </span>make
+$<span class="w"> </span>make<span class="w"> </span>install
+</pre></div>
+<h2>基本使用</h2>
+<ul>
+<li>产生配置文件:</li>
+</ul>
+<div class="highlight"><pre><span></span>$ doxygen -g
+
+
+Configuration file `Doxyfile' created.
+
+Now edit the configuration file and enter
+
+  doxygen Doxyfile
+
+to generate the documentation for your project
+</pre></div>
+<ul>
+<li>修改配置文件:</li>
+</ul>
+<div class="highlight"><pre><span></span>$ vim Doxyfile
+
+PROJECT_NAME           = "Test Doxygen"
+PROJECT_NUMBER         = 1.3.2
+PROJECT_BRIEF          = Test Doxygen Tool
+OUTPUT_DIRECTORY       = docs
+RECURSIVE              = YES
+INPUT                  = src
+FILE_PATTERNS          = *.h *.c *.hpp *.cpp
+</pre></div>
+<ul>
+<li>生成文档:</li>
+</ul>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>doxygen
+
+$<span class="w"> </span>open<span class="w"> </span>docs/html/index.html
+</pre></div>
+<h2>CMake集成Doxygen工具</h2>
+<ul>
+<li><p>参考: <a href="https://majewsky.wordpress.com/2010/08/14/tip-of-the-day-cmake-and-doxygen/">https://majewsky.wordpress.com/2010/08/14/tip-of-the-day-cmake-and-doxygen/</a></p>
 </li>
-<li><p>“叔”称呼，发音是“shu”，指父亲</p>
-</li>
-<li><p>“耶”称呼，发音是“ye”，指母亲</p>
-</li>
-<li><p>“嬷、母、姥”称呼，发音是“mo”或“mu”，指母亲</p>
-</li>
-<li><p>“伯伯”称呼，发音是“baba”，指伯父</p>
-</li>
-<li><p>“叔叔”称呼，发音是“shushu”，指叔叔</p>
-</li>
-<li><p>“毑毑”称呼，发音是“jiajia”或“jiejie”，指伯母</p>
-</li>
-<li><p>“嬷嬷、姥姥”称呼，发音是“momo”或“mumu”，指婶婶</p>
+<li><p>创建基础配置文件(Doxygen.in):</p>
 </li>
 </ul>
-<p>单字和叠词会有不同的含义，往往还是十里不同音，情况比较复杂，但也蛮有趣。</p>
-<p>如果对该论文感兴趣的话，关注公众号后发送消息“称谓研究”就可收到该论文的PDF格式文件。</p>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>cat<span class="w"> </span>Doxyfile.in
+
+<span class="nv">PROJECT_NAME</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="s2">"Test Doxygen"</span>
+<span class="nv">PROJECT_NUMBER</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="m">1</span>.3.2
+<span class="nv">PROJECT_BRIEF</span><span class="w">          </span><span class="o">=</span><span class="w"> </span>Test<span class="w"> </span>Doxygen<span class="w"> </span>Tool
+<span class="nv">OUTPUT_DIRECTORY</span><span class="w">       </span><span class="o">=</span><span class="w"> </span>docs
+
+<span class="nv">INPUT</span><span class="w">                  </span><span class="o">=</span><span class="w"> </span>@CMAKE_CURRENT_SOURCE_DIR@/src/
+<span class="nv">FILE_PATTERNS</span><span class="w">          </span><span class="o">=</span><span class="w"> </span>*.h<span class="w"> </span>*.c<span class="w"> </span>*.hpp<span class="w"> </span>*.cpp
+
+<span class="nv">RECURSIVE</span><span class="w">              </span><span class="o">=</span><span class="w"> </span>YES
+
+<span class="nv">EXTRACT_ALL</span><span class="w">            </span><span class="o">=</span><span class="w"> </span>YES
+<span class="nv">EXTRACT_PRIVATE</span><span class="w">        </span><span class="o">=</span><span class="w"> </span>YES
+</pre></div>
+<ul>
+<li>修改CMakeLists.txt调用Doxygen生成文档:</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="nb">find_package</span><span class="p">(</span><span class="s">Doxygen</span><span class="p">)</span>
+<span class="nb">if</span><span class="p">(</span><span class="s">DOXYGEN_FOUND</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">configure_file</span><span class="p">(</span><span class="o">${</span><span class="nv">CMAKE_CURRENT_SOURCE_DIR</span><span class="o">}</span><span class="s">/Doxyfile.in</span><span class="w"> </span><span class="o">${</span><span class="nv">CMAKE_CURRENT_BINARY_DIR</span><span class="o">}</span><span class="s">/Doxyfile</span><span class="w"> </span><span class="s">@ONLY</span><span class="p">)</span>
+<span class="w">   </span><span class="nb">add_custom_target</span><span class="p">(</span><span class="s">doc</span><span class="w"> </span><span class="s">ALL</span>
+<span class="w">       </span><span class="o">${</span><span class="nv">DOXYGEN_EXECUTABLE</span><span class="o">}</span><span class="w"> </span><span class="o">${</span><span class="nv">CMAKE_CURRENT_BINARY_DIR</span><span class="o">}</span><span class="s">/Doxyfile</span>
+<span class="w">       </span><span class="s">WORKING_DIRECTORY</span><span class="w"> </span><span class="o">${</span><span class="nv">CMAKE_CURRENT_BINARY_DIR</span><span class="o">}</span>
+<span class="w">       </span><span class="s">COMMENT</span><span class="w"> </span><span class="s2">"Generating API documentation with Doxygen"</span><span class="w"> </span><span class="s">VERBATIM</span>
+<span class="w">   </span><span class="p">)</span>
+<span class="nb">endif</span><span class="p">(</span><span class="s">DOXYGEN_FOUND</span><span class="p">)</span>
+</pre></div>
+<p>这样执行<code>make all</code>时自动就执行了<code>make doc</code>，将会自动生成文档。</p>
+<h2>后记</h2>
+<ul>
+<li>文档手册：<a href="https://www.doxygen.nl/manual/index.html">https://www.doxygen.nl/manual/index.html</a></li>
+<li>配置文档：<a href="https://www.doxygen.nl/manual/config.html">https://www.doxygen.nl/manual/config.html</a></li>
+</ul>
+<p>如果有一个大型项目，Doxygen可以帮助快速建立文档，然后逐步完善文档。</p>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-01-07 Sat，共360字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-03-01 Wed，共159字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2023/01/07/a_special_call_name_of_hakka.html" title="客家人的一种少见“伯-叔”类关系称呼">http://www.lesliezhu.com/2023/01/07/a_special_call_name_of_hakka.html</a>
+        <a href="http://www.lesliezhu.com/2023/03/01/doxygen_work_with_cmake.html" title="CMake使用Doxygen自动生成文档">http://www.lesliezhu.com/2023/03/01/doxygen_work_with_cmake.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -149,9 +226,9 @@
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/12/17/llvm_1.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2023/01/06/learn_japanese_1.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2022/11/12/delete_file_with_shred.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>
