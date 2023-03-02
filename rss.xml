@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> CStdString:一个跨平台的字符串类实现 </title>
+            <link> http://www.lesliezhu.com/2019/12/29/about_CStdString.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2019/12/29/about_CStdString.html</guid>
+            <category><![CDATA[C++学习与实践]]></category>
+            <pubDate>2023-03-02 Thu</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2019/12/29/about_CStdString.html</comments>
+            </item>
+            
+            <item>
             <title> CMake使用Doxygen自动生成文档 </title>
             <link> http://www.lesliezhu.com/2023/03/01/doxygen_work_with_cmake.html </link>
             <author><![CDATA[吴羽舒]]></author>
