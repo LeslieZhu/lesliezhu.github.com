@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> Mac使用Stable Diffusion进行AI画图(CPU) </title>
+            <link> http://www.lesliezhu.com/2023/03/03/use_StableDiffusion_gen_photo.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2023/03/03/use_StableDiffusion_gen_photo.html</guid>
+            <category><![CDATA[大数据与人工智能]]></category>
+            <pubDate>2023-03-13 Mon</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2023/03/03/use_StableDiffusion_gen_photo.html</comments>
+            </item>
+            
+            <item>
             <title> CStdString:一个跨平台的字符串类实现 </title>
             <link> http://www.lesliezhu.com/2019/12/29/about_CStdString.html </link>
             <author><![CDATA[吴羽舒]]></author>
