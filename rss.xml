@@ -22,6 +22,17 @@
         </image>        
         
             <item>
+            <title> Windows使用Stable Diffusion进行AI画图(GPU) </title>
+            <link> http://www.lesliezhu.com/2023/03/14/use_StableDiffusion_gen_photo_with_gpu_on_windows.html </link>
+            <author><![CDATA[吴羽舒]]></author>
+            <guid isPermaLink="true">http://www.lesliezhu.com/2023/03/14/use_StableDiffusion_gen_photo_with_gpu_on_windows.html</guid>
+            <category><![CDATA[大数据与人工智能]]></category>
+            <pubDate>2023-03-14 Tue</pubDate>
+            <description><![CDATA[]]></description>
+            <comments>http://www.lesliezhu.com/2023/03/14/use_StableDiffusion_gen_photo_with_gpu_on_windows.html</comments>
+            </item>
+            
+            <item>
             <title> Mac使用Stable Diffusion进行AI画图(CPU) </title>
             <link> http://www.lesliezhu.com/2023/03/03/use_StableDiffusion_gen_photo.html </link>
             <author><![CDATA[吴羽舒]]></author>

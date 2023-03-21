@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>CStdString:一个跨平台的字符串类实现</title>
+        <title>Windows使用Stable Diffusion进行AI画图(GPU)</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>CStdString:一个跨平台的字符串类实现</h1>
+        <h1>Windows使用Stable Diffusion进行AI画图(GPU)</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,148 +96,214 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/大数据与人工智能.html"><i class="大数据与人工智能"></i>大数据与人工智能</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
         <div id='content'>
 <h2>引言</h2>
 <blockquote>
-<p>A Drop-In replacement for CString that builds on the Standard C++ Library's basic_string template</p>
+<p><a href="https://github.com/CompVis/stable-diffusion">https://github.com/CompVis/stable-diffusion</a></p>
+<p>Stable Diffusion is a latent text-to-image diffusion model.</p>
 </blockquote>
-<p>在C++标准库中有一个<code>std::string</code>字符串类实现，但它的功能简陋一些；而在VC++ MFC中有一个<code>CString</code>类，提供了丰富的字符串操作接口。</p>
-<p><code>CStdString</code>是一个类似<code>CString</code>操作接口的、跨平台的字符串类实现，作者是<code>Joe O'Leary</code>，使用它只需要包含整个头文件<code>StdString.h</code>。</p>
-<p>相关信息很少，找到下列链接:</p>
+<p>Stable Diffusion是近年来流行的AI生成图片工具，这里尝试在Windows系统电脑上使用GPU进行图片生成。</p>
+<h2>准备工作</h2>
 <ul>
-<li>作者 <code>Joe O'Leary</code> 主页（已经无法打开）:<a href="http://www.joeo.net/">http://www.joeo.net/</a></li>
-<li><code>StdString.h</code> 说明页面（已经无法打开）:<a href="http://home.earthlink.net/~jmoleary/stdstring.htm">http://home.earthlink.net/~jmoleary/stdstring.htm</a></li>
-<li>别人整理的相关repo:<ul>
-<li><a href="https://github.com/lunakid/CStdString">https://github.com/lunakid/CStdString</a></li>
-<li><a href="https://github.com/xparq/CStdString">https://github.com/xparq/CStdString</a></li>
+<li>1)、Windows11系统，提前安装好Git工具(<a href="https://git-scm.com/download/win">https://git-scm.com/download/win</a>)</li>
+<li>2)、电脑内存16GB以上，否则电脑会很卡，即使有显卡也发挥不了作用</li>
+<li>3)、相对顺畅的网络，需要频繁访问github下载大量文件，这部分文件可以预下载放到对应位置</li>
+<li>4)、NVIDIA显卡，这里使用的是RTX3080</li>
+</ul>
+<h2>Windows开启SSH服务</h2>
+<p>因为日常使用一台Mac，然后另有一台Windows台式机带GPU用于生成图片，采用SSH登录Windows方式进行操作:</p>
+<ul>
+<li>进入【设置】-【应用】-【可选功能】-【OpenSSH服务器】-【安装】, 也可以使用PowerShell方式进行安装:</li>
+</ul>
+<div class="highlight"><pre><span></span>$ Get-WindowsCapability -Online | ? Name -like 'OpenSSH*'
+
+Name  : OpenSSH.Client~~~~0.0.1.0
+State : NotPresent
+
+Name  : OpenSSH.Server~~~~0.0.1.0
+State : NotPresent
+
+$ Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+
+
+Path          :
+Online        : True
+RestartNeeded : False
+</pre></div>
+<ul>
+<li>管理员身份启动Powershell来开启SSH服务:</li>
+</ul>
+<div class="highlight"><pre><span></span>$ Start-Service sshd  # 启动服务
+
+$ Set-Service -Name sshd -StartupType 'Automatic'  # 设置开启自动启动服务
+
+$ Get-NetFirewallRule -Name *ssh*   # 查看防火墙是否放行
+
+Name                          : OpenSSH-Server-In-TCP
+DisplayName                   : OpenSSH SSH Server (sshd)
+Description                   : Inbound rule for OpenSSH SSH Server (sshd)
+DisplayGroup                  : OpenSSH Server
+Group                         : OpenSSH Server
+Enabled                       : True
+......
+</pre></div>
+<h2>Miniconda工具与Python 3.10.6虚拟环境</h2>
+<ul>
+<li>下载对应版本的Miniconda安装好(<a href="https://docs.conda.io/en/latest/miniconda.html">https://docs.conda.io/en/latest/miniconda.html</a>):</li>
+</ul>
+<div class="highlight"><pre><span></span>$ conda -V
+conda 23.1.0
+</pre></div>
+<ul>
+<li>修改配置:</li>
+</ul>
+<div class="highlight"><pre><span></span>$ conda config --set show_channel_urls yes
+
+$ conda config --show-sources
+
+==&gt; C:\Users\lesliezhu\.condarc &lt;==  # 手动修改这个文件
+
+channels:
+  - defaults
+custom_channels:
+  conda-forge: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  msys2: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  bioconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  menpo: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  pytorch: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  pytorch-lts: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+  simpleitk: https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud
+default_channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/r
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/msys2
+show_channel_urls: True
+
+$ conda clean -i   # 清理缓存索引
+</pre></div>
+<ul>
+<li>创建Python 3.10.6虚拟环境:</li>
+</ul>
+<div class="highlight"><pre><span></span>$ conda create -n sd python=3.10.6
+
+$ conda info --envs
+
+# conda environments:
+#
+                         C:\Users\lesliezhu\miniconda3\envs\sd
+base                     D:\Anaconda3
+
+$ conda activate C:\Users\lesliezhu\miniconda3\envs\sd
+
+$ pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+Writing to C:\Users\lesliezhu\AppData\Roaming\pip\pip.ini
+
+$ python -m pip install --upgrade pip
+Looking in indexes: https://pypi.tuna.tsinghua.edu.cn/simple
+Requirement already satisfied: pip in c:\users\lesliezhu\miniconda3\envs\sd\lib\site-packages (23.0.1)
+</pre></div>
+<h2>CUDA 11.7工具</h2>
+<p>通过命令<code>nvidia-smi</code>查看对应的CUDA版本，然后下载对应工具包(<a href="https://developer.nvidia.com/cuda-toolkit-archive">https://developer.nvidia.com/cuda-toolkit-archive</a>):</p>
+<div class="highlight"><pre><span></span>$ nvidia-smi
+
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 517.02       Driver Version: 517.02       CUDA Version: 11.7     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name            TCC/WDDM | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA GeForce ... WDDM  | 00000000:01:00.0  On |                  N/A |
+| 30%   32C    P8    20W / 320W |    436MiB / 10240MiB |      3%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|    0   N/A  N/A      2000    C+G   C:\Windows\System32\dwm.exe     N/A      |
+|    ......                                                                   |
++-----------------------------------------------------------------------------+
+</pre></div>
+<h2>stable-diffusion-webui项目源码</h2>
+<ul>
+<li>下载stable-diffusion-webui:</li>
+</ul>
+<div class="highlight"><pre><span></span>$ git --version
+git version 2.36.1.windows.1
+
+$ git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
+
+$ cd stable-diffusion-webui/
+</pre></div>
+<h2>下载模型</h2>
+<ul>
+<li>官方模型(checkpoint模型)：<ul>
+<li><a href="https://huggingface.co/CompVis/stable-diffusion-v-1-4-original">https://huggingface.co/CompVis/stable-diffusion-v-1-4-original</a></li>
+<li><a href="https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/resolve/main/sd-v1-4.ckpt">https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/resolve/main/sd-v1-4.ckpt</a></li>
+<li><a href="https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/resolve/main/sd-v1-4-full-ema.ckpt">https://huggingface.co/CompVis/stable-diffusion-v-1-4-original/resolve/main/sd-v1-4-full-ema.ckpt</a></li>
+<li><a href="https://civitai.com/models/6424/chilloutmix">https://civitai.com/models/6424/chilloutmix</a></li>
+<li>该类模型存放目录：stable-diffusion-webui/models/Stable-diffusion/</li>
 </ul>
 </li>
-<li>作者2011年写的文章 <a href="https://www.codeproject.com/Articles/1146/CString-clone-Using-Standard-C">CString-clone Using Standard C++</a></li>
+<li>LoRA模型:<ul>
+<li><a href="https://civitai.com/models/11619/korean-doll-likenesss">https://civitai.com/models/11619/korean-doll-likenesss</a></li>
+<li>该类模型存放目录：stable-diffusion-webui/models/Lora/</li>
 </ul>
-<h2>早期版本: StdString.h</h2>
-<p><code>2011-12-05</code> 的版本（没找到更新版本）:</p>
-<div class="highlight"><pre><span></span>//  FILE:  StdString.h
-//  AUTHOR:	Joe O'Leary (with outside help noted in comments)
-//
-//		If you find any bugs in this code, please let me know:
-//
-//				jmoleary@earthlink.net
-//				http://www.joeo.net/stdstring.htm (a bit outdated)
-//
-//      The latest version of this code should always be available at the
-//      following link:
-//
-//              http://www.joeo.net/code/StdString.zip (Dec 6, 2003)
-//
-//
-//  REMARKS:
-//		This header file declares the CStdStr template.  This template derives
-//		the Standard C++ Library basic_string&lt;&gt; template and add to it the
-//		the following conveniences:
-//			- The full MFC CString set of functions (including implicit cast)
-//			- writing to/reading from COM IStream interfaces
-//			- Functional objects for use in STL algorithms
-//
-//		From this template, we intstantiate two classes:  CStdStringA and
-//		CStdStringW.  The name "CStdString" is just a #define of one of these,
-//		based upone the UNICODE macro setting
-//
-//		This header also declares our own version of the MFC/ATL UNICODE-MBCS
-//		conversion macros.  Our version looks exactly like the Microsoft's to
-//		facilitate portability.
+</li>
+</ul>
+<p>网站( <a href="https://civitai.com/models">https://civitai.com/models</a> )上各种模型都有，文件比较大，下载好放到对应目录即可。</p>
+<h2>启动</h2>
+<div class="highlight"><pre><span></span>$ cd stable-diffusion-webui/
+
+$ conda activate C:\Users\lesliezhu\miniconda3\envs\sd
+
+$ webui-user.bat
 </pre></div>
-<h2>作者文章(翻译)：CString-clone Using Standard C++</h2>
-<h3>介绍</h3>
-<p>从第一天使用C++标准库起，我就不喜欢它那个基于<code>basic_string&lt;&gt;</code>模板实现的字符串类，总觉得用起来不爽；相反，我却对MFC中的CString类情有独钟，它会检查NULL指针，可以隐式转换为<code>const TCHAR*</code>，以及丰富的操作函数等。但我没法再继续使用MFC，因为我需要移植性。</p>
-<p>因此我决定创造一个两全其美的字符串实现，即CStdString。它是一个基于<code>basic_string&lt;TCHAR&gt;</code>模板实现的字符串类，然后在<code>basic_string</code>基础上添加了CString API接口；从而可以获得CString的易用性，又可以获得basic_string的兼容性。</p>
-<p>一句话，CStdString可以直接替换掉CString。</p>
-<h3>特性</h3>
+<p>如果顺利，执行完打开: <a href="http://127.0.0.1:7860">http://127.0.0.1:7860</a> 即可使用了。</p>
+<h2>WebUI使用</h2>
+<p>目前使用的不太熟练，记录这么几点:</p>
 <ul>
-<li>可以直接替换CString</li>
-<li>同时提供两个实例，基于<code>wchar_t</code>的CStdStringW和基于<code>char</code>的CStdStringA，而CStdString只是其中一个的别名</li>
-<li>在所有函数中都可以安全的检查输入的NULL字符串指针</li>
-<li>额外的构造函数和赋值操作函数使得可以自动在wchar_t和char字符串之间转换</li>
-<li>隐式转换为<code>c_str()</code></li>
-<li>支持多个平台，包括Windows、Unix和Linux；支持多个C++标准库实现，包括Dinkumware、GNU、CodeWarrior和STLPort</li>
-<li>不依赖于任何basic_string模板类的实现细节</li>
-<li>派生模板类没有在basic_string上添加任何元素和虚函数</li>
+<li>从模型网站上很多图片生成例子，复制其参数后，点击【箭头】可以自动读取参数内容</li>
+<li>右侧【Save Style】可以将现有参数命名保存起来</li>
+<li>右侧【Show Extrac Networks】可以显示其他Lora模型等</li>
+<li>下方【Batch count】是一次生成多少张图片，默认是1张，建议4张</li>
+<li>下载的Lora模型注意文件名和复制过来参数是否一致</li>
+<li>根据自己SD版本下载支持的模型文件，否则会出现兼容问题，这里是SD-1.4</li>
 </ul>
-<h3>CString兼容性</h3>
-<p>我没有办法完全实现CString的所有API；如果一个函数既有CString版本，又有basic_string版本，但具体实现又不同，这个时候倾向于和basic_string保持一致。</p>
+<h2>其它</h2>
 <ul>
-<li>CStdString::operator[]返回的字符串是值传递，而CString是以引用传递形式</li>
-<li>接收单个字符和字符数量的构造函数，它的顺序是<code>(cout,value)</code>，这和CString正好相反</li>
-<li>还有两个CString的函数没有实现：LockBuffer和UnlockBuffer</li>
+<li>可以修改文件<code>launch.py</code>里面的github网站链接，加上代理前缀<code>https://ghproxy.com/</code>以加速下载,也可能导致更慢</li>
+<li>可以在<code>webui-user.bat</code>里面设置额外参数，比如:</li>
 </ul>
-<h2>关于性能的说明</h2>
-<div class="highlight"><pre><span></span>"Performance" is a fairly encompassing term. Most of the performance differences will 
-come down to the performance of std::string vs CString. That depends upon your 
-particular implementation of basic_string, over which I have no control
+<div class="highlight"><pre><span></span>$ type webui-user.bat
 
-For the performance of various CString-facade functions (e.g. format), well at this point 
-I am long past comparing those or worrying about it. It is not going to make a difference 
-in 99% of the cases. You would have to be doing some monster-level of string processing 
-for it to matter.
+@echo off
 
-If that sounds like a bit of a dismissal, I suppose it is. This class is mostly meant to 
-help people transition over from CString to std::string with a minimum of code-rewrite. 
-To help you get off of MFC&gt; The idea is that you can get your code running right away and 
-then start refactoring any important string processing code to use basic_string properly, 
-in the most efficient way you see fit. This class is not meant to be used alongside CString. 
-But if it must, well you can then always use CString instead. This class coexist well with it.
+set PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:32  # GPU内存可能出现不足错误
+set PYTHON=
+set GIT=
+set VENV_DIR=
+set COMMANDLINE_ARGS=
 
--Joe
+call webui.bat
 </pre></div>
-<h2>别人的言论与评价</h2>
-<p>在 <a href="https://stackoverflow.com/questions/5437675/mixing-objc-and-c-with-c-template-classes-in-more-than-one-source?r=SearchResults">mixing-objc-and-c-with-c-template-classes-in-more-than-one-source</a> 上获取到这些信息:</p>
-<div class="highlight"><pre><span></span>Joe's CStdString is in fact a derived class from std::string.
-
-Anyway, bad thing - good thing: CStdString has no own members. It's a straightforward 
-wrapper for one/two byte instantiations of std::basic_string with the convenience of 
-most features that MFC CString offers and a wide usability. I used it on Linux more 
-than 10 years ago and on Win32 where I couldn't use MFC. Joe's work on it started 1998 
-with help of ~50 people within 7 years of development. I think they've managed the 
-poorly side effects being in the template.
-</pre></div>
-<h2>CStdString如何转换为char*</h2>
-<p>C++中类型转换例子:</p>
-<div class="highlight"><pre><span></span>CStdString key = "hello";
-char * cKey = const_cast&lt;char *&gt;(key.c_str());
-</pre></div>
-<h2>CStdString常用操作接口</h2>
-<ul>
-<li>AppendFormat</li>
-<li>CompareNoCase</li>
-<li>Empty</li>
-<li>Equals</li>
-<li>Find</li>
-<li>FindNoCase</li>
-<li>FindNotInPair</li>
-<li>Format</li>
-<li>GetLength</li>
-<li>MakeLower</li>
-<li>MakeUpper</li>
-<li>MakeReverse</li>
-<li>Match</li>
-<li>MatchNoCase</li>
-<li>Replace</li>
-<li>Trim</li>
-<li>......</li>
-</ul>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-03-02 Thu，共605字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-03-14 Tue，共551字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2019/12/29/about_CStdString.html" title="CStdString:一个跨平台的字符串类实现">http://www.lesliezhu.com/2019/12/29/about_CStdString.html</a>
+        <a href="http://www.lesliezhu.com/2023/03/14/use_StableDiffusion_gen_photo_with_gpu_on_windows.html" title="Windows使用Stable Diffusion进行AI画图(GPU)">http://www.lesliezhu.com/2023/03/14/use_StableDiffusion_gen_photo_with_gpu_on_windows.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -250,9 +316,9 @@ char * cKey = const_cast&lt;char *&gt;(key.c_str());
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2023/03/03/use_StableDiffusion_gen_photo.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2023/03/01/doxygen_work_with_cmake.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2023/03/03/use_StableDiffusion_gen_photo.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>
