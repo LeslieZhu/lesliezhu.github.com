@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>诗人崔颢的有文无行</title>
+        <title>FaceSwap进行视频AI换脸</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>诗人崔颢的有文无行</h1>
+        <h1>FaceSwap进行视频AI换脸</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,43 +96,113 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/读书札记.html"><i class="读书札记"></i>读书札记</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/大数据与人工智能.html"><i class="大数据与人工智能"></i>大数据与人工智能</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id='content-reading'>
-<p>唐代诗人崔颢有一首著名的《黄鹤楼》，据传这首诗曾经让李白感叹“眼前有景道不得，崔颢题诗在上头”。</p>
-<p>《黄鹤楼》诗曰：</p>
+        <div id='content'>
+<h2>引言</h2>
 <blockquote>
-<p>昔人已乘黄鹤去，此地空余黄鹤楼。</p>
-<p>黄鹤一去不复返，白云千载空悠悠。</p>
-<p>晴川历历汉阳树，芳草萋萋鹦鹉洲。</p>
-<p>日暮乡关何处是，烟波江上使人愁。</p>
+<p>官网: <a href="https://faceswap.dev/">https://faceswap.dev/</a></p>
+<p>Faceswap is the leading free and Open Source multi-platform Deepfakes software.</p>
+<p>源码: <a href="https://github.com/deepfakes/faceswap">https://github.com/deepfakes/faceswap</a></p>
+<p>FaceSwap is a tool that utilizes deep learning to recognize and swap faces in pictures and videos.</p>
 </blockquote>
-<p>对于崔颢生平，在《旧唐书·列传第一百四十下》这样记载：</p>
-<blockquote>
-<p>崔颢者，登进士第，有俊才，无士行，好蒱博饮酒。及游京师，娶妻择有貌者，稍不惬意，即去之，前后数四。累官司勋员外郎。天宝十三年卒。</p>
-</blockquote>
-<p>短短不过五十多个字，用近乎白描手法，将崔颢的一生概况为“有俊才，无士行”。</p>
-<p>崔颢的“有俊才”表现在他中过进士，还有大量的诗歌流传下来可以作证，而对于“无士行”，则主要是前后四次娶妻，每一次都是只看外貌，一时兴起就娶了，稍不如意就抛弃。用今天的话来说，典型的渣男行径。</p>
-<p>但唐代的风气还是比较开放的，如果只是这样的话，那也只是崔颢个人的私生活。虽然不是人人都是外貌协会，但娶妻希望长得漂亮好看也无可厚非。因为这些就认为崔颢“无士行”，作为唐代顶级门阀“博陵崔氏”家族出身，登进士第却最后功名不显，似乎显得有点冤枉。</p>
-<p>据《新唐书·列传第一百二十八》记载：</p>
-<blockquote>
-<p>崔颢者，亦擢进士第，有文无行。好蒱博，嗜酒。取妻惟择美者，俄又弃之，凡四五娶。终司勋员外郎。</p>
-<p>初，李邕闻其名，虚舍邀之，颢至献诗，首章曰：“十五嫁王昌。”邕叱曰：“小儿无礼！”不与接而去。</p>
-</blockquote>
-<p>到了宋代欧阳修重修《新唐书》时大量采用春秋笔法，很明显的表现出“忠奸善恶”的价值观倾向，比如这里的“亦擢进士第”中“亦”，充满了一股子鄙夷味道，而“娶妻惟择美者”中的“惟”，也表明宋代对道德的要求变的更严格了。</p>
-<p>崔颢被认为“无士行”，不仅仅是因为他好赌嗜酒，也不仅仅因为他前后四次停妻再娶，而在于他早期与士人阶层交往过程中，表现的轻浮浪荡，总是写一些艳俗的闺情诗歌，导致当时的士人阶层鄙夷他的行径。</p>
+<p>FaceSwap是目前GitHub上开源的使用比较多的AI换脸工具，要求NVIDIA显卡CUDA计算能力在3.5以上；目前手里的RTX3080计算能力是8.6。</p>
+<h2>下载安装包</h2>
+<ul>
+<li><a href="https://github.com/deepfakes/faceswap/releases">https://github.com/deepfakes/faceswap/releases</a></li>
+</ul>
+<div class="highlight"><pre><span></span>$ wget https://github.com/deepfakes/faceswap/releases/download/v2.0.0/faceswap_setup_x64.exe
+</pre></div>
+<p>这个安装程序可以包办一切，如果安装失败则多尝试几次，可能是网络不顺畅导致的。</p>
+<p>但也可以手动分步骤安装：</p>
+<ul>
+<li>安装Git</li>
+<li>安装Miniconda3</li>
+<li>创建Python3.10.6虚拟环境</li>
+<li>安装faceswap源码并安装</li>
+</ul>
+<div class="highlight"><pre><span></span>$ git clone https://github.com/deepfakes/faceswap.git
+$ cd faceswap/
+
+$ conda activate faceswap
+
+$ pip3 install -r requirements/requirements_cpu.txt 
+$ pip3 install -r requirements/requirements_amd.txt 
+$ pip3 install -r requirements/requirements_nvidia.txt 
+
+$ python faceswap.py -h
+$ python faceswap.py gui # GUI方式
+</pre></div>
+<h2>使用方法</h2>
+<p>它工作大致分为四个步骤：</p>
+<ul>
+<li>收集素材：包括图片和视频</li>
+<li>提取(Extraction)：对素材进行人脸提取作为训练集</li>
+<li>训练(Training)：根据提取的人脸进行训练</li>
+<li>转换(Convert)：根据训练模型结果完成替换</li>
+</ul>
+<p>可以通过命令行操作，也可以通过GUI操作，建议使用GUI。</p>
+<h2>提取(Extract)</h2>
+<p>准备几个目录:</p>
+<ul>
+<li>src/video1.mp4: 用于被换脸的原始视频</li>
+<li>src-extract/: 提取的原始人脸图片文件</li>
+<li>dst/video2.mp4：用于换脸的替换视频</li>
+<li>dst-extract/： 用于替换人脸的替换图片文件</li>
+<li>model/: 训练模型保存目录</li>
+<li>result/: 转换结果保存目录</li>
+</ul>
+<div class="highlight"><pre><span></span>$ python faceswap.py extract -i ./src/video1.mp4 -o ./src-extract
+$ python faceswap.py extract -i ./dst/video1.mp4 -o ./dst-extract
+</pre></div>
+<p>提取后的结果，不但会有大量根据每帧导出的人脸图片文件，还会有一个<code>.fsa</code>对齐文件，这个对齐文件记录了每个人脸信息在原始视频中的帧对应位置信息。</p>
+<p>但刚才只是初步提取人脸，还需要人工参与进来进行微调，比如原始视频里面出现多个人脸，但我们只想替换某个人，那么：</p>
+<ul>
+<li>在GUI中的【Tools】选择【Sort】对人脸进行排序，因为图片文件可能很多，排序后删除不需要的人脸图片文件，保留在1000~10000个图片文件比较好</li>
+<li>在GUI中的【Tool】选择【Alignment】根据清理后的人脸图片文件来自动清理对齐文件，因为我们最终转换的时候是通过对齐文件对原始视频转换的</li>
+</ul>
+<p>这样处理后，我们的人脸图片文件目录和对齐文件里面都应该是我们确实准备用来训练进行替换的信息了，但如果想要更好的替换效果，还需要人工介入：</p>
+<ul>
+<li>在GUI中【Tools】选择【Manual】根据原始视频和对齐文件，挨帧进行脸部信息微调，对某些自动人脸识别不到位的地方调整，保存对齐文件</li>
+<li>在删除之前生成的提取人脸图片文件，重新根据对齐文件再次提取出人脸图片文件，这就是最终的训练集图片文件了</li>
+</ul>
+<p>对原始视频、目标替换视频两个都做同样的操作，目的是拿到我们满意的人脸图片文件，用于训练。</p>
+<h2>训练(Train)</h2>
+<div class="highlight"><pre><span></span>$ python faceswap.py train -A ./src-extract -B ./dst-extract -m ./model/
+</pre></div>
+<p>这个过程可能会很久，在GUI中可以通过预览图片看到替换后的效果进行评估，当训练到缺失值(Loss)小于0.02时，效果已经比较好了，可以随时停止和再次启动训练，这个过程是可以反复进行的。</p>
+<h2>转换(Convert)</h2>
+<div class="highlight"><pre><span></span>$ python faceswap.py convert -i ./src/video1.mp4 -m ./model/ -o ./converted/
+</pre></div>
+<p>因为默认原始视频的对齐文件和它在同一个目录下，它会自动寻找这个对齐文件，然后根据训练的模型结果对原始视频进行替换，得到转换后的视频。</p>
+<ul>
+<li>视频转为图片与合成(<code>ffmpeg</code>):</li>
+</ul>
+<div class="highlight"><pre><span></span>$ python tools.py effmpeg -h
+$ ffmpeg -i src/video.mp4 src-extract/video-frame-%d.png 
+$ ffmpeg -i video-frame-%0d.png -c:v libx264 -vf "fps=25,format=yuv420p" src.mp4
+</pre></div>
+<p>在GUI中进行转换的时候选择<code>effmpeg</code>就自动完成视频的合成。</p>
+<h2>总结</h2>
+<ul>
+<li>原始视频和替换视频的选择很重要，要有不同角度、光线下的人脸信息，建议1000~10000张图片</li>
+<li>提取人脸图片文件后，多花时间在对齐文件的调整上，因为后期一旦改变就导致重新训练，很费时间</li>
+<li>人脸图片训练集确定后，开始训练，训练到缺失值0.02以下就可以转换视频了</li>
+<li>如果视频不满意，则继续启动训练和转换，直到满意为止</li>
+<li>如果训练集素材找的不好，即使一直训练到100万次迭代，结果也一样不会很理想</li>
+</ul>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-05-19 Thu，共653字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-03-16 Thu，共1016字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2022/05/19/CuiHao.html" title="诗人崔颢的有文无行">http://www.lesliezhu.com/2022/05/19/CuiHao.html</a>
+        <a href="http://www.lesliezhu.com/2023/03/15/faceswap_1.html" title="FaceSwap进行视频AI换脸">http://www.lesliezhu.com/2023/03/15/faceswap_1.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -145,9 +215,9 @@
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/06/19/TangChaoHuangDiJieShao.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
-            <li class="next disabled"><a><i class="fa fa-arrow-circle-o-right"></i>下一页</a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2023/03/14/use_StableDiffusion_gen_photo_with_gpu_on_windows.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>
