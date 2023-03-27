@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>CStdString:一个跨平台的字符串类实现</title>
+        <title>日语入门阶段例句整理</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>CStdString:一个跨平台的字符串类实现</h1>
+        <h1>日语入门阶段例句整理</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,148 +96,294 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/日语学习.html"><i class="日语学习"></i>日语学习</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
         <div id='content'>
 <h2>引言</h2>
+<p>这里整理的是在<code>多邻国app</code>上入门章节例句，主要分为8个章节，会按照对应章节摘录。</p>
 <blockquote>
-<p>A Drop-In replacement for CString that builds on the Standard C++ Library's basic_string template</p>
+<p>日语里的小"つ”在电脑上的打法：日文输入法（JP），あ模式下，键入LTU即可打出っ。L是小写的意思；TU就是つ。</p>
 </blockquote>
-<p>在C++标准库中有一个<code>std::string</code>字符串类实现，但它的功能简陋一些；而在VC++ MFC中有一个<code>CString</code>类，提供了丰富的字符串操作接口。</p>
-<p><code>CStdString</code>是一个类似<code>CString</code>操作接口的、跨平台的字符串类实现，作者是<code>Joe O'Leary</code>，使用它只需要包含整个头文件<code>StdString.h</code>。</p>
-<p>相关信息很少，找到下列链接:</p>
-<ul>
-<li>作者 <code>Joe O'Leary</code> 主页（已经无法打开）:<a href="http://www.joeo.net/">http://www.joeo.net/</a></li>
-<li><code>StdString.h</code> 说明页面（已经无法打开）:<a href="http://home.earthlink.net/~jmoleary/stdstring.htm">http://home.earthlink.net/~jmoleary/stdstring.htm</a></li>
-<li>别人整理的相关repo:<ul>
-<li><a href="https://github.com/lunakid/CStdString">https://github.com/lunakid/CStdString</a></li>
-<li><a href="https://github.com/xparq/CStdString">https://github.com/xparq/CStdString</a></li>
-</ul>
-</li>
-<li>作者2011年写的文章 <a href="https://www.codeproject.com/Articles/1146/CString-clone-Using-Standard-C">CString-clone Using Standard C++</a></li>
-</ul>
-<h2>早期版本: StdString.h</h2>
-<p><code>2011-12-05</code> 的版本（没找到更新版本）:</p>
-<div class="highlight"><pre><span></span>//  FILE:  StdString.h
-//  AUTHOR:	Joe O'Leary (with outside help noted in comments)
-//
-//		If you find any bugs in this code, please let me know:
-//
-//				jmoleary@earthlink.net
-//				http://www.joeo.net/stdstring.htm (a bit outdated)
-//
-//      The latest version of this code should always be available at the
-//      following link:
-//
-//              http://www.joeo.net/code/StdString.zip (Dec 6, 2003)
-//
-//
-//  REMARKS:
-//		This header file declares the CStdStr template.  This template derives
-//		the Standard C++ Library basic_string&lt;&gt; template and add to it the
-//		the following conveniences:
-//			- The full MFC CString set of functions (including implicit cast)
-//			- writing to/reading from COM IStream interfaces
-//			- Functional objects for use in STL algorithms
-//
-//		From this template, we intstantiate two classes:  CStdStringA and
-//		CStdStringW.  The name "CStdString" is just a #define of one of these,
-//		based upone the UNICODE macro setting
-//
-//		This header also declares our own version of the MFC/ATL UNICODE-MBCS
-//		conversion macros.  Our version looks exactly like the Microsoft's to
-//		facilitate portability.
+<h2>1. 数字与颜色</h2>
+<div class="highlight"><pre><span></span>あか、あお、しろ。　　　　红、蓝、白。
+すき、きたない。　　　　　喜欢、脏的。
+やさい、すし、てりやき。　蔬菜、寿司、照烧。
+よむ、きる、のむ。　　　　读、穿、喝。
+ほしい、あまい、おさけ。　想要、甜的、酒。
+ひる、よる。　　　　　　　白天、晚上。　
+いち、に、さん、よん。　　一、二、三、四。
+ご、ろく、なな。　　　　　五、六、七。
+はち、きゆう、じゆう。　　八、九、十。
 </pre></div>
-<h2>作者文章(翻译)：CString-clone Using Standard C++</h2>
-<h3>介绍</h3>
-<p>从第一天使用C++标准库起，我就不喜欢它那个基于<code>basic_string&lt;&gt;</code>模板实现的字符串类，总觉得用起来不爽；相反，我却对MFC中的CString类情有独钟，它会检查NULL指针，可以隐式转换为<code>const TCHAR*</code>，以及丰富的操作函数等。但我没法再继续使用MFC，因为我需要移植性。</p>
-<p>因此我决定创造一个两全其美的字符串实现，即CStdString。它是一个基于<code>basic_string&lt;TCHAR&gt;</code>模板实现的字符串类，然后在<code>basic_string</code>基础上添加了CString API接口；从而可以获得CString的易用性，又可以获得basic_string的兼容性。</p>
-<p>一句话，CStdString可以直接替换掉CString。</p>
-<h3>特性</h3>
-<ul>
-<li>可以直接替换CString</li>
-<li>同时提供两个实例，基于<code>wchar_t</code>的CStdStringW和基于<code>char</code>的CStdStringA，而CStdString只是其中一个的别名</li>
-<li>在所有函数中都可以安全的检查输入的NULL字符串指针</li>
-<li>额外的构造函数和赋值操作函数使得可以自动在wchar_t和char字符串之间转换</li>
-<li>隐式转换为<code>c_str()</code></li>
-<li>支持多个平台，包括Windows、Unix和Linux；支持多个C++标准库实现，包括Dinkumware、GNU、CodeWarrior和STLPort</li>
-<li>不依赖于任何basic_string模板类的实现细节</li>
-<li>派生模板类没有在basic_string上添加任何元素和虚函数</li>
-</ul>
-<h3>CString兼容性</h3>
-<p>我没有办法完全实现CString的所有API；如果一个函数既有CString版本，又有basic_string版本，但具体实现又不同，这个时候倾向于和basic_string保持一致。</p>
-<ul>
-<li>CStdString::operator[]返回的字符串是值传递，而CString是以引用传递形式</li>
-<li>接收单个字符和字符数量的构造函数，它的顺序是<code>(cout,value)</code>，这和CString正好相反</li>
-<li>还有两个CString的函数没有实现：LockBuffer和UnlockBuffer</li>
-</ul>
-<h2>关于性能的说明</h2>
-<div class="highlight"><pre><span></span>"Performance" is a fairly encompassing term. Most of the performance differences will 
-come down to the performance of std::string vs CString. That depends upon your 
-particular implementation of basic_string, over which I have no control
-
-For the performance of various CString-facade functions (e.g. format), well at this point 
-I am long past comparing those or worrying about it. It is not going to make a difference 
-in 99% of the cases. You would have to be doing some monster-level of string processing 
-for it to matter.
-
-If that sounds like a bit of a dismissal, I suppose it is. This class is mostly meant to 
-help people transition over from CString to std::string with a minimum of code-rewrite. 
-To help you get off of MFC&gt; The idea is that you can get your code running right away and 
-then start refactoring any important string processing code to use basic_string properly, 
-in the most efficient way you see fit. This class is not meant to be used alongside CString. 
-But if it must, well you can then always use CString instead. This class coexist well with it.
-
--Joe
+<h2>2. 简单名词</h2>
+<div class="highlight"><pre><span></span>とり、ねこ、いぬ。　　　　鸟、猫、狗。
+め、みみ、せなか。　　　　眼睛、耳朵、背部。
+くもり、はれ、ふゆ、なつ。阴天、晴天、冬天、夏天。
+いえ、そと、へや。　　　　家、外面、房间。
+まんが、くだもの。　     漫画、水果。
+ちず、かぜ、えもじ。     地图、风、表情符号。
+きつぷ、きょう、がつこう。票、今天、学校。
+えんぴつ、かばん、。　　　铅笔、包。
+べんとう、てんぷら。     便当、天妇罗。
+でんわ、おちゃ、なつとう。电话、茶、纳豆
 </pre></div>
-<h2>别人的言论与评价</h2>
-<p>在 <a href="https://stackoverflow.com/questions/5437675/mixing-objc-and-c-with-c-template-classes-in-more-than-one-source?r=SearchResults">mixing-objc-and-c-with-c-template-classes-in-more-than-one-source</a> 上获取到这些信息:</p>
-<div class="highlight"><pre><span></span>Joe's CStdString is in fact a derived class from std::string.
+<h2>3. 打招呼、介绍自己</h2>
+<div class="highlight"><pre><span></span>早。              おはよう。
+早上好。          おはようございます。
 
-Anyway, bad thing - good thing: CStdString has no own members. It's a straightforward 
-wrapper for one/two byte instantiations of std::basic_string with the convenience of 
-most features that MFC CString offers and a wide usability. I used it on Linux more 
-than 10 years ago and on Win32 where I couldn't use MFC. Joe's work on it started 1998 
-with help of ~50 people within 7 years of development. I think they've managed the 
-poorly side effects being in the template.
+请。             どうぞ。
+请问。           すみません。
+
+对不起，谢谢！     すみません、ありがとう。
+
+我回来了。        ただいま。
+你回来啦。        おかえり。
+
+我开动了。        いただきます。
+我吃饱了。        ごちそうさまでした。
+
+人。             じん。
+银行。           ぎんこう。
+
+
+欢迎光临。           いらっしやいませ。
+初次见面，我叫田中。  はじめまして、わたしは田中といいます。
 </pre></div>
-<h2>CStdString如何转换为char*</h2>
-<p>C++中类型转换例子:</p>
-<div class="highlight"><pre><span></span>CStdString key = "hello";
-char * cKey = const_cast&lt;char *&gt;(key.c_str());
+<h2>4. 国际身份、兴趣爱好</h2>
+<div class="highlight"><pre><span></span>学生。           がくせい。
+先生。           せんせい。
+
+当然。           もちろん。
+晚上好。         こんばんは。
+
+你好吗？         おげんきですか。
+你叫什么名字？    お名前は何ですか。
+
+
+小王也是学生。    ワンさんも学生です。
+老李不是日本人。  李さんは日本人ではありません。
+
+一点儿。         ちょっと。
+有时。           ときどき。
+经常。           よく。
+
+散步。           さんぽ。
+步行。           歩き（あるき）。
+
+学习。           勉強(べんきょう）。
+有时学习。        ときどき勉強します。
+
+英语。            えいご。
+
+小王和老李会说日语。ワンさんとりさんは日本語が話せます。
+小王不会说英语。    ワンさんはえいごが話せません。
+
+田中先生经常玩耍。   たなかさんはよく遊び(あそび)ます。
 </pre></div>
-<h2>CStdString常用操作接口</h2>
-<ul>
-<li>AppendFormat</li>
-<li>CompareNoCase</li>
-<li>Empty</li>
-<li>Equals</li>
-<li>Find</li>
-<li>FindNoCase</li>
-<li>FindNotInPair</li>
-<li>Format</li>
-<li>GetLength</li>
-<li>MakeLower</li>
-<li>MakeUpper</li>
-<li>MakeReverse</li>
-<li>Match</li>
-<li>MatchNoCase</li>
-<li>Replace</li>
-<li>Trim</li>
-<li>......</li>
-</ul>
+<h2>5. 饮食、数字、时间</h2>
+<div class="highlight"><pre><span></span>鱼。　　　　　　　　　さかな。
+面包。　　　　　　　　パン。
+肉。　　　　　　　　　にく。
+
+那个。　　　　　　　　それ。
+哪个。              どれ。
+
+那么，我开动了。　　　じやあ、いただきます。
+请给我那个和这个。　　あれとこれをください。
+
+吃蔬菜。　　　　　　　やさいを食べます。
+不吃蔬菜。　　　　　　野菜は食べません。
+
+吃饭吗？　　　　　　　ごはんを食べますか。
+不吃饭。　　　　　　　ごはんは食べません。
+
+喝哪个？　　　　　　　どれを飲みますか。
+喝水吗？　　　　　　　水を飲みますか。
+
+会说日语。　　　　　　日本語が話せます。
+是，当然。　　　　　　はい、もちろんです。
+会说一点儿英语。　　　えいごがちょっと話せます。
+铃木先生完全不学习。　すずきさんはぜんぜん勉強しません。
+
+现在是几点？　　　　　今は何時ですか。
+现在是四点零五分。　　今（いま）は四時五分です。
+是三点零二分。　　　　三時（じ）二分（ぶん）です。
+正好三点。　　　　　　ちょうど三時です。
+
+经常散步。　　　　　　よくさんぽします。
+</pre></div>
+<h2>6. 居住环境</h2>
+<div class="highlight"><pre><span></span>辛苦了。             おつかれさまです。
+谢谢款待。           ごちそうさまでした。
+
+零。                れい。
+早上。              あさ（朝）。
+上午。              午前（ごぜん）。
+下午。              午後（ごご）。
+白天。              昼(ひる)
+晚上。              夜(よる)
+
+
+现在。              今（いま）。
+前天。              おととい。（一昨日）
+昨天。              きのう。（昨日）
+今天。              きょう。
+明天。              あした。
+后天。              あさって（明後日）
+
+今天很好。          きょうはげんきです。
+几点起床？          何時におきますか。
+早上几点起床。      あさは何時におきますか。
+
+明天去公司。        あしたは会社へ行きます。
+十二点左右去学校。   十二時(じゆうにじ)ごろにがっこぅへ行きます。
+十点左右睡觉。       十時ごろにねます。
+
+
+
+十点半喝茶。        十時半におちゃを飲みます。
+明天晚上十点睡觉。   あした夜十時にねます。
+
+不吃火腿和蔬菜。     ハムと野菜は食べません。
+
+宠物。              ペット。
+有猫吗？            ねこはいますか。
+没有狗。            いぬはいません。
+有只猫。            ねこはいます。
+
+这个。              これ。
+哪里?              どこ。
+
+厨房。              だいどころ。
+有房间吗？           へやはありますか。
+窗户。              まど。
+浴室。              おふろ。
+院子。              にわ。
+
+家里有院子。         いえににわがあります。
+</pre></div>
+<h2>7. 描述别人和家人</h2>
+<div class="highlight"><pre><span></span>我。　　　　　　　　　私（わたし）。
+我的。　　　　　　　　私の。
+
+他。　　　　　　　　　かれ（彼）。
+她。　　　　　　　　　かのじょ（彼女）。
+
+他们。　　　　　　　　かれら。
+兄弟。　　　　　　　　きょうだい。
+姐妹。　　　　　　　　しまい（姉妹）。
+家人。　　　　　　　　いえぞく（家族）。
+
+父。　　　　　　　　　とうさん。
+母。　　　　　　　　　かあさん。
+姐。　　　　　　　　　ねえさん。
+弟。　　　　　　　　　おとうと。
+妹。　　　　　　　　　いもうと。
+兄。　　　　　　　　　にいさん。
+
+大阪。　　　　　　　　おおさか。
+京都。　　　　　　　　きょうと。
+东京。　　　　　　　　とうきょう。
+
+高。　　　　　　　　　こう。
+高校。　　　　　　　　こうこう。
+
+前。　　　　　　　　　まえ。
+後。　　　　　　　　　ご。
+
+年。　　　　　　　　　ねん。
+住。　　　　　　　　　住んで（すんで）。
+很好。　　　　　　　　げんき（元気）。
+
+小学生。　　　　　　　しょうがくせい。
+初中生。　　　　　　　ちゅうがくせい（中学生）。
+高中生。　　　　　　　こうこうせい（高校生）。
+大学生。　　　　　　　だいがくせい。
+留学生。　　　　　　　りゅうがくせい。
+外国人。　　　　　　　がいこくじん。
+
+不住在大阪。　　　　　大阪に住んでいません。
+小王住在东京啊。　　　ワンさんは東京に住んでいますね。
+
+去美国。　　　　　　　アメリカへ行きます。
+去京都。　　　　　　　きょうとに行きます。
+家在哪里？　　　　　　いえはどこですか。
+
+房间有几个人？　　　　へやに何人いますか。
+有几个弟弟？　　　　　おとうとは何人ですか。
+我有三个兄弟。　　　　私にはきょうだいが三人います。
+
+田中同学是小学二年级学生。　　田中さんは小学にねんせいです。
+
+出去一下。                 いってきます。
+不，不是这样。　　　　       いいえ、そうではありません。
+</pre></div>
+<h2>8. 菜品与价格</h2>
+<div class="highlight"><pre><span></span>一个。                 一つ（ひとつ）。
+二个。                 二つ（ふたつ）。
+三个。                 三つ（みっつ）。
+四个。                 四つ（よっつ）（yottu）。
+五个。                 五つ（いつつ）。
+六个。　　　　　　　　　　六つ（むっつ）。
+七个。　　　　　　　　　　七つ（ななつ）。
+八个。                 八つ（やっつ）。
+九个。                 九つ（ここのつ）。
+
+
+几个？                 いくつ。
+有一个。               一つ(ひとつ)あります。
+
+椅子。                 いす。
+哪个书桌。             どのつくえですか
+那个书桌。             あの机（つくえ）。
+那个桌子。             あのつくえ。
+学校里有几个桌子？      学校にテーブルはいくつありますか。
+
+
+有家人吗？             家族はいますか。
+他是谁？               かれはだれですか。
+有姐妹吗？             しまいはいますか。
+
+凉。                   つめたい。
+水很凉。               水（みず）がつめたいます。
+热。                   暑い（あつい）。
+
+好吃。                 美味しい（おいしい）。
+难吃。                 まずい。
+
+辣。                   辛い（からい）。
+甜。　　　　　　　　　　　甘い（あまい）。
+
+贵。                   高い(たかい）。
+便宜。                 やすい。
+
+休息。　　　　　　　　　　休み。
+今天不休息。            今日は休み(やすみ)ません。
+
+不喜欢。　　　　　　　　　好きじゃないです。
+不喜欢公司。            会社は好きじゃないです。
+
+路上小心。             いってらっしゃい。
+不，不对。             いいえ、ちがいます。
+
+万。                  万（まん）。
+千。                  千（せん）。
+百。                  百（ひゃく）。
+日元。                円（えん）。
+这是四万日语。         これは四万円です。
+</pre></div>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-03-02 Thu，共605字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-03-27 Mon，共904字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2019/12/29/about_CStdString.html" title="CStdString:一个跨平台的字符串类实现">http://www.lesliezhu.com/2019/12/29/about_CStdString.html</a>
+        <a href="http://www.lesliezhu.com/2023/03/23/learn_japanese_4.html" title="日语入门阶段例句整理">http://www.lesliezhu.com/2023/03/23/learn_japanese_4.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -250,9 +396,9 @@ char * cKey = const_cast&lt;char *&gt;(key.c_str());
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2023/03/03/use_StableDiffusion_gen_photo.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2023/03/01/doxygen_work_with_cmake.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2023/03/15/faceswap_1.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>
