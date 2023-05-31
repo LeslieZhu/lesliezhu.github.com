@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>用clang-format统一代码风格</title>
+        <title>湖边的莫愁女</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -87,7 +87,7 @@
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>用clang-format统一代码风格</h1>
+        <h1>湖边的莫愁女</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,89 +96,39 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        标签: <a href="http://www.lesliezhu.com/tags/南野集.html"><i class="南野集"></i>南野集</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id='content'>
-<h2>引言</h2>
-<p>有不少工具用于统一项目编码风格，比如Go语言自带<code>fmt</code>模块统一编码风格，又比如C++有<code>astyle</code>这样的工具，但这里要介绍的是<code>clang-format</code>工具。</p>
-<p>安装:</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>clang-format<span class="w"> </span>git-clang-format
-</pre></div>
-<p>如果是源码安装，在<code>llvm-project/clang/</code>目录下:</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/
-$<span class="w"> </span>cmake<span class="w"> </span>../
-$<span class="w"> </span>make<span class="w"> </span>clang-format
-</pre></div>
-<p>同时还提供了其它工具对应的版本:</p>
-<div class="highlight"><pre><span></span>llvm-project/clang/tools/clang-format/clang-format-bbedit.applescript
-llvm-project/clang/tools/clang-format/clang-format-diff.py
-llvm-project/clang/tools/clang-format/clang-format-sublime.py
-llvm-project/clang/tools/clang-format/clang-format-test.el
-llvm-project/clang/tools/clang-format/clang-format.el
-llvm-project/clang/tools/clang-format/clang-format.py
-llvm-project/clang/tools/clang-format/git-clang-format
-</pre></div>
-<h2>生成风格配置文件</h2>
-<p>以llvm和google为例:</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>clang-format<span class="w"> </span>-style<span class="o">=</span>llvm<span class="w">   </span>-dump-config<span class="w"> </span>&gt;<span class="w"> </span>.clang-format
-$<span class="w"> </span>clang-format<span class="w"> </span>-style<span class="o">=</span>google<span class="w"> </span>-dump-config<span class="w"> </span>&gt;<span class="w"> </span>.clang-format
-</pre></div>
-<p>有了<code>.clang-format</code>风格配置文件，命令<code>clang-format</code>就会自动读取此配置文件，编辑器<code>vscode</code>只要安装了<code>vs-clang-format</code>插件也会自动读取此配置。</p>
-<h2>修改文件风格</h2>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>clang-format<span class="w"> </span>filename.cpp<span class="w">     </span><span class="c1"># 只对比不修改文件</span>
-$<span class="w"> </span>clang-format<span class="w"> </span>-i<span class="w"> </span>filename.cpp<span class="w">  </span><span class="c1"># 直接修改文件</span>
-</pre></div>
-<h2>git自动clang-format</h2>
-<p>需要依赖<code>git-clang-format</code>:</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clang-format
-</pre></div>
-<p>它会自动对暂存区的文件进行风格转换，也可以配置git-hooks让执行<code>git commit</code>的时候自动进行转换。</p>
-<p>添加文件<code>.git/hooks/pre-commit</code>:</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
-
-git<span class="w"> </span>clang-format
-</pre></div>
-<p>这样就不怕忘记执行clang-format了。</p>
-<h2>部分代码不想被格式化</h2>
-<div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">formatted_code</span><span class="p">;</span>
-
-<span class="c1">// clang-format off</span>
-<span class="w">    </span><span class="kt">void</span><span class="w">    </span><span class="n">unformatted_code</span><span class="w">  </span><span class="p">;</span>
-<span class="c1">// clang-format on</span>
-
-<span class="kt">void</span><span class="w"> </span><span class="n">formatted_code_again</span><span class="p">;</span>
-</pre></div>
-<p>通过注释的方式告诉<code>clang-format</code>不要因为代码风格而改动这部分代码。</p>
-<h2>.clang-format配置项</h2>
-<ul>
-<li>文档: <a href="https://clang.llvm.org/docs/ClangFormatStyleOptions.html">https://clang.llvm.org/docs/ClangFormatStyleOptions.html</a></li>
-<li>例子: <a href="https://github.com/godotengine/godot/blob/master/.clang-format">https://github.com/godotengine/godot/blob/master/.clang-format</a></li>
-</ul>
-<p>几个配置:</p>
-<div class="highlight"><pre><span></span>BasedOnStyle:  LLVM           # 基于LLVM风格
-AlignAfterOpenBracket: Align  # 括号后跨行对齐
-ColumnLimit:     0            # 行字符数量无限制
-IndentCaseLabels: true        # case缩进
-IndentWidth:     4            # 4格缩进
-NamespaceIndentation: All     # 名字空间缩进
-TabWidth:        4            # TAB长度
-UseTab:          Never        # 不使用TAB
-Language:        Cpp
-Standard:        c++17
-</pre></div>
-<p>不管使用什么风格，只要保持一致即可。</p>
+        <div id='content-reading'>
+<p>李莫愁执意要下山找陆展元，和师父吵了一架后，她被逐出了古墓派。</p>
+<p>下山后，循着当初陆展元告知的信息，李莫愁一路找到了太湖边，却只见到处张灯结彩，跟过年似的热闹。仔细一打听，竟然是她朝思暮想的陆郎大婚之日。</p>
+<p>想起当初两人在一起时的山盟海誓，李莫愁不敢相信这一切，抱着最后一丝侥幸闯到了婚礼现场，那确确实实就是陆展元，那个她担惊受怕、心心念念的陆郎。她想阻止这场婚礼，带着陆展元远走高飞，她相信陆展元对她是真心，这一切都是受到那个叫何沅君的女人的蒙骗。</p>
+<p>可惜，陆展元说过去的事情就让它过去吧，即使心里知道是他自己有所亏欠，也不再可能回到李莫愁身边。还没来得及多说几句，陆家庄的江湖朋友就已经出来指责李莫愁了，他们像看一个乡下野丫头一样看待李莫愁，觉得李莫愁不过是陆家少爷曾经的一段露水情缘。这么多江湖人士，谁没有点江湖恩怨情仇呢？最后是老江湖枯木和尚用一阳指把李莫愁打伤，还放出话十五年内胆敢再来陆家庄，就要了李莫愁小命。</p>
+<p>李莫愁拖着伤残之躯走在太湖之畔，她的梦破碎了，所有的一切都如师父所说：“天下男子皆薄幸！”</p>
+<p>自己已经被逐出师门，而苦苦找寻的陆展元也让自己成了一个笑话，在那一刻，她心中只有恨，恨那个姓何的女人，是她抢走了自己的陆郎。</p>
+<p>躲在山洞里养伤，她决心要夺回属于自己的一切；后来，她被西毒欧阳锋掳走，几经周折，习得了一身毒辣功夫，也慢慢闯出了赤练仙子的名号。李莫愁始终忘不了陆展元带给自己的羞辱，她把所有的遭遇都记账在何沅君身上。</p>
+<p>十五年弹指一挥间，对于李莫愁却是无尽的折磨，为了让自己不那么痛苦，她拼命练习歹毒功夫，以杀戮为快感，用冷酷无情来掩饰内心深处的寂寥。有时候她想立刻就去找陆展元问个明白，但又怕得到的只是更无法接受的结局；就这样既希望这一天早一点到来，又害怕这一天到来。好在这一天终于要来了，是该做一个了断了。</p>
+<p>当十五年后再次来到太湖边上，陆展元一家已经是远近闻名的模范夫妻了。他们相夫教子、举案齐眉，他们其乐融融尽享人间美好。想到这里，李莫愁不由得冷笑，笑自己痴心难忘，到这一刻，竟还想着和陆展元一起回到终南山，在师父面前请罪，然后在活死人墓相伴终生。可几年前回去的时候，才知道师父已经离世，衣钵也传给了师妹，自己彻底变成了一个漂泊江湖的可怜人。</p>
+<p>和陆展元约好了见一面，想想十五年来有很多话要和他说，但真见到对方那一刻时，李莫愁却发现自己怎么也恨不起来，有太多的话要说，到了嘴边却说不出口。李莫愁喋喋不休的说着曾经的回忆，可陆展元却是一脸的茫然，似乎在听别人的故事，和自己完全无关。不管她深情也罢，幽怨也罢，陆展元口中只道“这些我都不记得了，过去的事情就让它过去吧！”，李莫愁不由得心在滴血，他连口头上的温情都不愿再给自己，难道这一切的一切都只是自己一厢情愿，她不由得怀疑自己。</p>
+<p>太湖边的酒家，酒温的滚烫，鱼烤的飘香，李莫愁和陆展元对视而坐。伙计以为他们是热恋的情侣，贴心的送上花束，说中秋节快到了。是啊，微风吹在脸上，月亮倒映在湖面，两人依偎在一起，这不正是梦中想了千百回的情景吗？但这一刻李莫愁只能苦笑，用一杯接一杯的酒来掩饰内心的慌张，整个世界仿佛变成了一张虚幻的网，而她在里面苦苦挣扎。</p>
+<p>虽然梦中千百回，但真细算起来，李莫愁和陆展元在一起的日子屈指可数，很多事情都只是她自己的想象，想的多了就自己也分不清哪个是真哪个是假。</p>
+<p>陆展元走了，李莫愁一个人在湖边游荡，风带走相思，她也清醒了许多。一直以来，她喜欢的那个人，她念念不忘的那段情，这一切的一切都已经过去了。如今的她，拖着走火入魔的病痛之躯，还有多少日子可以继续游荡？对于她来说，陆郎是唯一的寄托，但这一切似乎也和他无关了。</p>
+<p>之后，她行事会更加狠辣，她出手会招招致命，她会是真正心如蛇蝎的赤练仙子。</p>
+<p>不久，当陆展元在李莫愁眼前殉情自杀后，李莫愁的内心彻底空荡荡了，她唯一的寄托都被摔得粉碎，只好拼命抓住和陆展元有关的东西，不然她真的要疯掉。她抓走了陆展元的女儿，把她假装成自己和陆展元的女儿一般，教她武功。可当这个孩子偷走秘籍要杀自己的时候，李莫愁才醒悟，这一切都是徒劳。</p>
+<p>那段时间，李莫愁的心彻底乱了，她拼命否认和陆展元的一切，把他说成十恶不赦的负心汉，以为这样就可以让自己变得开心，但事与愿违；直到把所有的精力都放到师门争夺上，她才短暂忘记了这一切。</p>
+<p>可是，当在绝情谷种了情花毒之后，才知道自己对陆展元寄托了太多的感情，所有有意的忘记都像风浪一样扑过来，她已经无处可逃了。在那一刻，她想起了和陆展元在太湖边酒家对视而坐，虽然他没说什么话，但感觉那晚的风真让人沉醉；就这样吧，来生和自己的陆郎相会，他可能已经等自己很久了，不由得苦笑道：“问世间情是何物，直教人生死相许！”</p>
+<p>让人闻风丧胆的赤练仙子就这样葬身火海……</p>
 </div>
         <hr>
         <div id="post-copyright">
         <ul class="post-copyright">
         <li class="post-copyright-author">
         <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-20 Tue，共301字
+        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2023-05-31 Wed，共1750字
         </li>
         <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
         <li class="post-copyright-link">
         <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2022/12/19/git_clang_format.html" title="用clang-format统一代码风格">http://www.lesliezhu.com/2022/12/19/git_clang_format.html</a>
+        <a href="http://www.lesliezhu.com/2023/05/31/hu_bian_de_mo_chou_nv.html" title="湖边的莫愁女">http://www.lesliezhu.com/2023/05/31/hu_bian_de_mo_chou_nv.html</a>
         </li>
         <li class="post-copyright-license">
         <strong>版权声明：</strong>
@@ -191,9 +141,9 @@ Standard:        c++17
             <center>
             <div class="pagination">
             <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
+            <li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
             <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
+            <li class="next"><a href="http://www.lesliezhu.com/2023/04/13/yin_keng.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
             </ul>
             </div>
             </center>

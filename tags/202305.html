@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>用clang-format统一代码风格</title>
+        <title>202305</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -31,9 +31,10 @@
         <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
-        <style></style>
+        <ORGNOTESTYLE>
         </head>
         
+
         <body>  
         <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         
@@ -48,6 +49,7 @@
     
         <a class="navbar-brand" href="/index.html">MinYiLife</a>
         
+
         <div class="collapse navbar-collapse nav-menu">
         
         <ul class="nav navbar-nav">
@@ -82,12 +84,13 @@
         </div> <!-- container -->
         </nav>
         
+
         <div class="clearfix"></div>
         <div class="container">
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>用clang-format统一代码风格</h1>
+        <h1>202305</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,136 +99,24 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        月份: <a href="http://www.lesliezhu.com/tags/202305.html"><i class="202305"></i>202305</a>
+
         </div>                                     <!-- slogan end -->
-        <div id='content'>
-<h2>引言</h2>
-<p>有不少工具用于统一项目编码风格，比如Go语言自带<code>fmt</code>模块统一编码风格，又比如C++有<code>astyle</code>这样的工具，但这里要介绍的是<code>clang-format</code>工具。</p>
-<p>安装:</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>sudo<span class="w"> </span>yum<span class="w"> </span>install<span class="w"> </span>clang-format<span class="w"> </span>git-clang-format
-</pre></div>
-<p>如果是源码安装，在<code>llvm-project/clang/</code>目录下:</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build/
-$<span class="w"> </span>cmake<span class="w"> </span>../
-$<span class="w"> </span>make<span class="w"> </span>clang-format
-</pre></div>
-<p>同时还提供了其它工具对应的版本:</p>
-<div class="highlight"><pre><span></span>llvm-project/clang/tools/clang-format/clang-format-bbedit.applescript
-llvm-project/clang/tools/clang-format/clang-format-diff.py
-llvm-project/clang/tools/clang-format/clang-format-sublime.py
-llvm-project/clang/tools/clang-format/clang-format-test.el
-llvm-project/clang/tools/clang-format/clang-format.el
-llvm-project/clang/tools/clang-format/clang-format.py
-llvm-project/clang/tools/clang-format/git-clang-format
-</pre></div>
-<h2>生成风格配置文件</h2>
-<p>以llvm和google为例:</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>clang-format<span class="w"> </span>-style<span class="o">=</span>llvm<span class="w">   </span>-dump-config<span class="w"> </span>&gt;<span class="w"> </span>.clang-format
-$<span class="w"> </span>clang-format<span class="w"> </span>-style<span class="o">=</span>google<span class="w"> </span>-dump-config<span class="w"> </span>&gt;<span class="w"> </span>.clang-format
-</pre></div>
-<p>有了<code>.clang-format</code>风格配置文件，命令<code>clang-format</code>就会自动读取此配置文件，编辑器<code>vscode</code>只要安装了<code>vs-clang-format</code>插件也会自动读取此配置。</p>
-<h2>修改文件风格</h2>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>clang-format<span class="w"> </span>filename.cpp<span class="w">     </span><span class="c1"># 只对比不修改文件</span>
-$<span class="w"> </span>clang-format<span class="w"> </span>-i<span class="w"> </span>filename.cpp<span class="w">  </span><span class="c1"># 直接修改文件</span>
-</pre></div>
-<h2>git自动clang-format</h2>
-<p>需要依赖<code>git-clang-format</code>:</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clang-format
-</pre></div>
-<p>它会自动对暂存区的文件进行风格转换，也可以配置git-hooks让执行<code>git commit</code>的时候自动进行转换。</p>
-<p>添加文件<code>.git/hooks/pre-commit</code>:</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+        
 
-git<span class="w"> </span>clang-format
-</pre></div>
-<p>这样就不怕忘记执行clang-format了。</p>
-<h2>部分代码不想被格式化</h2>
-<div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">formatted_code</span><span class="p">;</span>
-
-<span class="c1">// clang-format off</span>
-<span class="w">    </span><span class="kt">void</span><span class="w">    </span><span class="n">unformatted_code</span><span class="w">  </span><span class="p">;</span>
-<span class="c1">// clang-format on</span>
-
-<span class="kt">void</span><span class="w"> </span><span class="n">formatted_code_again</span><span class="p">;</span>
-</pre></div>
-<p>通过注释的方式告诉<code>clang-format</code>不要因为代码风格而改动这部分代码。</p>
-<h2>.clang-format配置项</h2>
-<ul>
-<li>文档: <a href="https://clang.llvm.org/docs/ClangFormatStyleOptions.html">https://clang.llvm.org/docs/ClangFormatStyleOptions.html</a></li>
-<li>例子: <a href="https://github.com/godotengine/godot/blob/master/.clang-format">https://github.com/godotengine/godot/blob/master/.clang-format</a></li>
-</ul>
-<p>几个配置:</p>
-<div class="highlight"><pre><span></span>BasedOnStyle:  LLVM           # 基于LLVM风格
-AlignAfterOpenBracket: Align  # 括号后跨行对齐
-ColumnLimit:     0            # 行字符数量无限制
-IndentCaseLabels: true        # case缩进
-IndentWidth:     4            # 4格缩进
-NamespaceIndentation: All     # 名字空间缩进
-TabWidth:        4            # TAB长度
-UseTab:          Never        # 不使用TAB
-Language:        Cpp
-Standard:        c++17
-</pre></div>
-<p>不管使用什么风格，只要保持一致即可。</p>
-</div>
-        <hr>
-        <div id="post-copyright">
-        <ul class="post-copyright">
-        <li class="post-copyright-author">
-        <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-12-20 Tue，共301字
-        </li>
-        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
-        <li class="post-copyright-link">
-        <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2022/12/19/git_clang_format.html" title="用clang-format统一代码风格">http://www.lesliezhu.com/2022/12/19/git_clang_format.html</a>
-        </li>
-        <li class="post-copyright-license">
-        <strong>版权声明：</strong>
-        原创文章，如需转载请注明文章作者和出处。谢谢！
-        </li>
-        </ul>
+        <!-- display as entry -->
+        <div class="entry">
+        <div class="row">
+        <div class="col-md-9">
+        <li><a href="http://www.lesliezhu.com/2023/05/31/hu_bian_de_mo_chou_nv.html" target="_blank"><i class="fa fa-file-o"></i>湖边的莫愁女</a></li>
+        </div>
+        </div>
         </div>
         
-            <div>
-            <center>
-            <div class="pagination">
-            <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/12/27/bytecode_serializer_deserializer.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
-            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2022/12/16/writing_an_interpreter_in_cpp_12.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
-            </ul>
-            </div>
-            </center>
-            </div>
-            
-            <div class="post-reward">
-            <input type="checkbox" name="reward" id="reward" hidden />
-            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
-            <div class="qr-code">
-            
-                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
-                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
-                <span>微信打赏</span>
-                </label>
-                
-                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
-                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
-                <span>微信公众号</span>
-                </label>
-                
-            </div>
-            </div>
-            
-            
-            <script src="https://utteranc.es/client.js"
-            repo="LeslieZhu/lesliezhu.github.com"
-            issue-term="title"
-            theme="github-light"
-            crossorigin="anonymous"
-            async>
-            </script>
-            </div> <!-- my-page --></div> <!-- col-md -->
+        </div> <!-- mypage -->
+        </div> <!-- col-md-9 -->
+        
+
         <div class="col-md-3">
         <div id="sidebar">
         
@@ -277,10 +168,12 @@ Standard:        c++17
         </div> <!-- sidebar -->
         </div> <!-- col-md-3 -->
         
+
         </div> <!-- row-fluid -->
         </div>
         </div>
         
+
         <div class="container-narrow">
         <footer>
         <p>&copy; 2014-2023 吴羽舒
