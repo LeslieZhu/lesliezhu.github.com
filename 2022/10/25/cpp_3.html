@@ -32,7 +32,7 @@
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
         <style>
- <!--/*--><![CDATA[/*><!--*/
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -53,8 +53,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -62,22 +63,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -212,8 +213,7 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
         </head>
         
@@ -281,28 +281,28 @@
         <i class="fa fa-heart"></i>
         标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id="content">
+        <div class="content" id="content">
 
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>目录</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org7e7ed73">1. 引言</a></li>
-<li><a href="#orgffbb042">2. RAII: 资源请求即初始化</a></li>
-<li><a href="#org0c13272">3. 智能指针</a>
+<li><a href="#org01b95ea">1. 引言</a></li>
+<li><a href="#orgf7c4268">2. RAII: 资源请求即初始化</a></li>
+<li><a href="#org9391118">3. 智能指针</a>
 <ul>
-<li><a href="#org13c6588">3.1. std::unique_ptr</a></li>
-<li><a href="#orgbd33c05">3.2. std::shared_ptr</a></li>
-<li><a href="#org8aa50ad">3.3. make_unique, make_shared</a></li>
-<li><a href="#orga6edd09">3.4. 何时使用智能指针？</a></li>
+<li><a href="#org4b4f0db">3.1. std::unique_ptr</a></li>
+<li><a href="#org8bf2e7a">3.2. std::shared_ptr</a></li>
+<li><a href="#org1af9569">3.3. make_unique, make_shared</a></li>
+<li><a href="#org3bb2736">3.4. 何时使用智能指针？</a></li>
 </ul>
 </li>
-<li><a href="#org1a80555">4. 总结</a></li>
+<li><a href="#org8fe6290">4. 总结</a></li>
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org7e7ed73">
-<h2 id="org7e7ed73"><span class="section-number-2">1</span> 引言</h2>
+<div class="outline-2" id="outline-container-org01b95ea">
+<h2 id="org01b95ea"><span class="section-number-2">1.</span> 引言</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 C++提供开发者自定义类型的能力，而对于自定义类型的资源管理是一大难题。
@@ -315,8 +315,8 @@ C++提供开发者自定义类型的能力，而对于自定义类型的资源�
 </p>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgffbb042">
-<h2 id="orgffbb042"><span class="section-number-2">2</span> RAII: 资源请求即初始化</h2>
+<div class="outline-2" id="outline-container-orgf7c4268">
+<h2 id="orgf7c4268"><span class="section-number-2">2.</span> RAII: 资源请求即初始化</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 在构造函数中请求资源，然后在析构函数中释放它们的技术被称为资源请求即初始化(RAII, Resource Acquisition Is Initialization)。
@@ -374,8 +374,8 @@ C++提供开发者自定义类型的能力，而对于自定义类型的资源�
 </p>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org0c13272">
-<h2 id="org0c13272"><span class="section-number-2">3</span> 智能指针</h2>
+<div class="outline-2" id="outline-container-org9391118">
+<h2 id="org9391118"><span class="section-number-2">3.</span> 智能指针</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 new运算符是从一块名为自由存储或动态内存(dynamic memory)的区域中分配内存。
@@ -415,8 +415,8 @@ new运算符是从一块名为自由存储或动态内存(dynamic memory)的区�
 <li>std::weak_ptr: 对于类似std::shared_ptr但有可能空悬的指针</li>
 </ul>
 </div>
-<div class="outline-3" id="outline-container-org13c6588">
-<h3 id="org13c6588"><span class="section-number-3">3.1</span> std::unique_ptr</h3>
+<div class="outline-3" id="outline-container-org4b4f0db">
+<h3 id="org4b4f0db"><span class="section-number-3">3.1.</span> std::unique_ptr</h3>
 <div class="outline-text-3" id="text-3-1">
 <div class="source"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Smiley</span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Circle</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">//...</span>
@@ -456,8 +456,8 @@ std::unique_ptr只能移动(std::move)不能拷贝：
 
 </div>
 </div>
-<div class="outline-3" id="outline-container-orgbd33c05">
-<h3 id="orgbd33c05"><span class="section-number-3">3.2</span> std::shared_ptr</h3>
+<div class="outline-3" id="outline-container-org8bf2e7a">
+<h3 id="org8bf2e7a"><span class="section-number-3">3.2.</span> std::shared_ptr</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr的对象是使用拷贝操作，而unique_ptr使用移动语义。
@@ -485,8 +485,8 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
 </p>
 </div>
 </div>
-<div class="outline-3" id="outline-container-org8aa50ad">
-<h3 id="org8aa50ad"><span class="section-number-3">3.3</span> make_unique, make_shared</h3>
+<div class="outline-3" id="outline-container-org1af9569">
+<h3 id="org1af9569"><span class="section-number-3">3.3.</span> make_unique, make_shared</h3>
 <div class="outline-text-3" id="text-3-3">
 <div class="source"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Oz&quot;</span><span class="p">,</span><span class="mf">7.62</span><span class="p">);</span>
 <span class="k">auto</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&quot;Ankh Morpork&quot;</span><span class="p">,</span><span class="mf">4.65</span><span class="p">);</span>
@@ -497,8 +497,8 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
 </p>
 </div>
 </div>
-<div class="outline-3" id="outline-container-orga6edd09">
-<h3 id="orga6edd09"><span class="section-number-3">3.4</span> 何时使用智能指针？</h3>
+<div class="outline-3" id="outline-container-org3bb2736">
+<h3 id="org3bb2736"><span class="section-number-3">3.4.</span> 何时使用智能指针？</h3>
 <div class="outline-text-3" id="text-3-4">
 <ul class="org-ul">
 <li>当需要智能指针时，基本上std::uniq_ptr是首选</li>
@@ -510,8 +510,8 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
 </div>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org1a80555">
-<h2 id="org1a80555"><span class="section-number-2">4</span> 总结</h2>
+<div class="outline-2" id="outline-container-org8fe6290">
+<h2 id="org8fe6290"><span class="section-number-2">4.</span> 总结</h2>
 <div class="outline-text-2" id="text-4">
 <ul class="org-ul">
 <li>对于自定义类型，使用RAII原则管理资源的申请与释放，内部实现中构造函数和析构函数分别使用new和delete</li>
@@ -598,7 +598,7 @@ shared_ptr很多方面和unique_ptr非常相似，唯一的区别是shared_ptr�
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>32</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>4</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>32</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/随笔札记.html">随笔札记<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>4</span></a></li>
         </ul>
         </div>
         

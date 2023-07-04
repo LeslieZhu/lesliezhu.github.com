@@ -32,7 +32,7 @@
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
         <style>
- <!--/*--><![CDATA[/*><!--*/
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -53,8 +53,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -62,22 +63,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -212,8 +213,7 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
         </head>
         
@@ -281,27 +281,27 @@
         <i class="fa fa-heart"></i>
         标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id="content">
+        <div class="content" id="content">
 
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>目录</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org93638ba">1. 制作rpm文件</a>
+<li><a href="#orgff52cb7">1. 制作rpm文件</a>
 <ul>
-<li><a href="#org66533ac">1.1. 准备软件源文件</a></li>
-<li><a href="#org77ae4b2">1.2. 创建SPEC文件</a></li>
-<li><a href="#orgd8b33ea">1.3. 构建RPM文件</a></li>
-<li><a href="#orge0fc64b">1.4. 安装软件包</a></li>
-<li><a href="#orgc05c17b">1.5. 卸载软件包</a></li>
+<li><a href="#orga422598">1.1. 准备软件源文件</a></li>
+<li><a href="#orgb0df5ce">1.2. 创建SPEC文件</a></li>
+<li><a href="#org290d040">1.3. 构建RPM文件</a></li>
+<li><a href="#org18ec262">1.4. 安装软件包</a></li>
+<li><a href="#org79a6be0">1.5. 卸载软件包</a></li>
 </ul>
 </li>
-<li><a href="#org78e25be">2. 资源</a></li>
+<li><a href="#orge5776d0">2. 资源</a></li>
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org93638ba">
-<h2 id="org93638ba"><span class="section-number-2">1</span> 制作rpm文件</h2>
+<div class="outline-2" id="outline-container-orgff52cb7">
+<h2 id="orgff52cb7"><span class="section-number-2">1.</span> 制作rpm文件</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 这里假设有一些二进制文件和相关Shell脚本，想打包为rpm格式实现一键自动安装。
@@ -309,13 +309,13 @@
 <ul class="org-ul">
 <li>安装工具包</li>
 </ul>
-<pre class="example">
+<pre class="example" id="org8076d99">
 $ sudo yum install rpm-build rpmdevtools
 </pre>
 <ul class="org-ul">
 <li>创建工作目录</li>
 </ul>
-<pre class="example">
+<pre class="example" id="org4ed15da">
 $ rpmdev-setuptree  # 默认创建~/rpmbuild/
 
 $ tree ~/rpmbuild/
@@ -331,7 +331,7 @@ $ tree ~/rpmbuild/
 <p>
 如果更改一些默认设置，直接修改文件 <code>~/.rpmmacros</code>:
 </p>
-<pre class="example">
+<pre class="example" id="orgb5614a0">
 %_topdir %(echo $HOME)/rpmbuild
 
 %_smp_mflags %( \
@@ -352,10 +352,10 @@ $ tree ~/rpmbuild/
     /usr/lib/rpm/check-buildroot
 </pre>
 </div>
-<div class="outline-3" id="outline-container-org66533ac">
-<h3 id="org66533ac"><span class="section-number-3">1.1</span> 准备软件源文件</h3>
+<div class="outline-3" id="outline-container-orga422598">
+<h3 id="orga422598"><span class="section-number-3">1.1.</span> 准备软件源文件</h3>
 <div class="outline-text-3" id="text-1-1">
-<pre class="example">
+<pre class="example" id="org33fb2c3">
 $ tree ~/rpmbuild/SOURCES/
 
 ~/rpmbuild/SOURCES/
@@ -388,8 +388,8 @@ $ tree ~/rpmbuild/SOURCES/
 </p>
 </div>
 </div>
-<div class="outline-3" id="outline-container-org77ae4b2">
-<h3 id="org77ae4b2"><span class="section-number-3">1.2</span> 创建SPEC文件</h3>
+<div class="outline-3" id="outline-container-orgb0df5ce">
+<h3 id="orgb0df5ce"><span class="section-number-3">1.2.</span> 创建SPEC文件</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 使用 <code>vim</code> 打开 <code>*.spec</code> 后缀文件时会自动加载模板，源自于读取了模板文件 <code>/usr/share/vim/vimfiles/template.spec</code>.
@@ -397,7 +397,7 @@ $ tree ~/rpmbuild/SOURCES/
 <p>
 如果自己要添加新模板则:
 </p>
-<pre class="example">
+<pre class="example" id="org9b3417e">
 $ vim /etc/vimrc
 
 autocmd BufNewFile *.spec 0r /usr/share/vim/vimfiles/template.spec  # 自带的模板规则
@@ -406,7 +406,7 @@ autocmd BufNewFile *.test 0r /usr/share/vim/vimfiles/template.test  # 自定义�
 <p>
 <code>~/rpmbuild/SPECS/test.spec</code> 内容:
 </p>
-<pre class="example">
+<pre class="example" id="orgfe188e8">
 #
 # 以#符号开头的行是注释行
 # 2022-10-21
@@ -500,7 +500,7 @@ echo clean done...
 <p>
 此时目录结构:
 </p>
-<pre class="example">
+<pre class="example" id="org344bcbb">
 ├── BUILD
 ├── BUILDROOT
 ├── RPMS
@@ -515,10 +515,10 @@ echo clean done...
 </pre>
 </div>
 </div>
-<div class="outline-3" id="outline-container-orgd8b33ea">
-<h3 id="orgd8b33ea"><span class="section-number-3">1.3</span> 构建RPM文件</h3>
+<div class="outline-3" id="outline-container-org290d040">
+<h3 id="org290d040"><span class="section-number-3">1.3.</span> 构建RPM文件</h3>
 <div class="outline-text-3" id="text-1-3">
-<pre class="example">
+<pre class="example" id="org4303f97">
 $ rpmbuild -ba SPECS/test.spec  # 二进制和src rpm文件
 $ rpmbuild -bb SPECS/test.spec  # 只生成二进制rpm文件
 $ rpmbuild -bs SPECS/test.spec  # 只生成src rpm文件
@@ -526,7 +526,7 @@ $ rpmbuild -bs SPECS/test.spec  # 只生成src rpm文件
 <p>
 目录文件:
 </p>
-<pre class="example">
+<pre class="example" id="org919bf2f">
 ├── BUILD
 │   └── test-1.0.0
 │       ├── debugfiles.list
@@ -556,10 +556,10 @@ $ rpmbuild -bs SPECS/test.spec  # 只生成src rpm文件
 </pre>
 </div>
 </div>
-<div class="outline-3" id="outline-container-orge0fc64b">
-<h3 id="orge0fc64b"><span class="section-number-3">1.4</span> 安装软件包</h3>
+<div class="outline-3" id="outline-container-org18ec262">
+<h3 id="org18ec262"><span class="section-number-3">1.4.</span> 安装软件包</h3>
 <div class="outline-text-3" id="text-1-4">
-<pre class="example">
+<pre class="example" id="org927ee67">
 $ sudo rpm -ivh RPMS/x86_64/test-1.0.0-2.x86_64.rpm
 
 Preparing...                          ################################# [100%]
@@ -574,10 +574,10 @@ $ ls /usr/local/Test/bin/test.exe
 </pre>
 </div>
 </div>
-<div class="outline-3" id="outline-container-orgc05c17b">
-<h3 id="orgc05c17b"><span class="section-number-3">1.5</span> 卸载软件包</h3>
+<div class="outline-3" id="outline-container-org79a6be0">
+<h3 id="org79a6be0"><span class="section-number-3">1.5.</span> 卸载软件包</h3>
 <div class="outline-text-3" id="text-1-5">
-<pre class="example">
+<pre class="example" id="org0f0f076">
 $ sudo rpm -e test-1.0.0-2
 uninstall start...
 uninstall done
@@ -588,8 +588,8 @@ total 0
 </div>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org78e25be">
-<h2 id="org78e25be"><span class="section-number-2">2</span> 资源</h2>
+<div class="outline-2" id="outline-container-orge5776d0">
+<h2 id="orge5776d0"><span class="section-number-2">2.</span> 资源</h2>
 <div class="outline-text-2" id="text-2">
 <ul class="org-ul">
 <li><a href="https://rpm.org/index.html">rpm.org</a></li>
@@ -678,7 +678,7 @@ total 0
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>32</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>4</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>32</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/随笔札记.html">随笔札记<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>4</span></a></li>
         </ul>
         </div>
         

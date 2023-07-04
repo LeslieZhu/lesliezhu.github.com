@@ -12,7 +12,7 @@
         };
         </script>
         
-        <title>Linux如何设置用户长时间不操作就自动登出?</title>
+        <title>随笔札记</title>
         <meta name="author" content="吴羽舒">
         <meta name="email" content="minyilife@use-wechat.com">
         <meta name="description" content="Use OrgNote.">
@@ -31,9 +31,10 @@
         <link rel="stylesheet" href="/theme/freemind/css/default-highlight.css" media="screen" type="text/css">
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
-        <style></style>
+        <ORGNOTESTYLE>
         </head>
         
+
         <body>  
         <nav id="main-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         
@@ -48,6 +49,7 @@
     
         <a class="navbar-brand" href="/index.html">MinYiLife</a>
         
+
         <div class="collapse navbar-collapse nav-menu">
         
         <ul class="nav navbar-nav">
@@ -82,12 +84,13 @@
         </div> <!-- container -->
         </nav>
         
+
         <div class="clearfix"></div>
         <div class="container">
         <div class="content">
         
         <div class="page-header">                   <!-- page-header begin -->
-        <h1>Linux如何设置用户长时间不操作就自动登出?</h1>
+        <h1>随笔札记</h1>
         </div>                                      <!-- page-header end -->
         
         <div class="row page">                      <!-- row-page begin -->
@@ -96,135 +99,24 @@
         
         <div class="slogan">                        <!-- slogan begin -->
         <i class="fa fa-heart"></i>
-        标签: <a href="http://www.lesliezhu.com/tags/Linux操作与管理.html"><i class="Linux操作与管理"></i>Linux操作与管理</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
+        分类: <a href="http://www.lesliezhu.com/tags/随笔札记.html"><i class="随笔札记"></i>随笔札记</a>
+
         </div>                                     <!-- slogan end -->
-        <div id='content'>
-<h2>引言</h2>
-<p>当我们登录Linux系统后，如果长时间不操作，比如忘记关闭终端窗口了，怎么做到用户自动退出登录呢？</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/etc/profile
--rw-r--r--<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">1819</span><span class="w"> </span>Apr<span class="w">  </span><span class="m">1</span><span class="w">  </span><span class="m">2020</span><span class="w"> </span>/etc/profile
-</pre></div>
-<p>这个文件是系统环境变量的配置文件，并且只有root有修改权限；如果能够在这个文件里面做一些设置，那么每个用户登录后都会加载里面的配置。</p>
-<h2>/etc/profile</h2>
-<div class="highlight"><pre><span></span><span class="c1"># /etc/profile</span>
+        
 
-<span class="c1"># System wide environment and startup programs, for login setup</span>
-<span class="c1"># Functions and aliases go in /etc/bashrc</span>
-
-<span class="c1"># It's NOT a good idea to change this file unless you know what you</span>
-<span class="c1"># are doing. It's much better to create a custom.sh shell script in</span>
-<span class="c1"># /etc/profile.d/ to make custom changes to your environment, as this</span>
-<span class="c1"># will prevent the need for merging in future updates.</span>
-</pre></div>
-<p>这个文件不建议直接修改，而是创建自己的配置文件:</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>ls<span class="w"> </span>-1<span class="w"> </span>/etc/profile.d/*
-/etc/profile.d/colorgrep.csh
-/etc/profile.d/colorgrep.sh
-/etc/profile.d/colorls.csh
-/etc/profile.d/colorls.sh
-/etc/profile.d/csh.local
-/etc/profile.d/less.csh
-/etc/profile.d/less.sh
-/etc/profile.d/sh.local
-/etc/profile.d/vim.csh
-/etc/profile.d/vim.sh
-/etc/profile.d/which2.csh
-/etc/profile.d/which2.sh
-</pre></div>
-<p>这些都是系统默认自带的定制环境变量，我们看下<code>vim.sh</code>里面内容:</p>
-<div class="highlight"><pre><span></span><span class="c1"># cat /etc/profile.d/vim.sh</span>
-
-<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$BASH_VERSION</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$KSH_VERSION</span><span class="s2">"</span><span class="w"> </span>-o<span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$ZSH_VERSION</span><span class="s2">"</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
-<span class="w">  </span><span class="o">[</span><span class="w"> </span>-x<span class="w"> </span>/usr/bin/id<span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="k">return</span>
-<span class="w">  </span><span class="nv">ID</span><span class="o">=</span><span class="sb">`</span>/usr/bin/id<span class="w"> </span>-u<span class="sb">`</span>
-<span class="w">  </span><span class="o">[</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">"</span><span class="nv">$ID</span><span class="s2">"</span><span class="w"> </span>-a<span class="w"> </span><span class="s2">"</span><span class="nv">$ID</span><span class="s2">"</span><span class="w"> </span>-le<span class="w"> </span><span class="m">200</span><span class="w"> </span><span class="o">]</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="k">return</span>
-<span class="w">  </span><span class="c1"># for bash and zsh, only if no alias is already set</span>
-<span class="w">  </span><span class="nb">alias</span><span class="w"> </span>vi<span class="w"> </span>&gt;/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">alias</span><span class="w"> </span><span class="nv">vi</span><span class="o">=</span>vim
-<span class="k">fi</span>
-</pre></div>
-<h2>/etc/profile.d/timeout.sh</h2>
-<blockquote>
-<p>TMOUT</p>
-<p>If set to a value greater than zero, TMOUT is treated as the default  timeout  for  the  read  builtin.   The
- select  command terminates if input does not arrive after TMOUT seconds when input is coming from a terminal.
- In an interactive shell, the value is interpreted as the number of seconds to wait for  input  after  issuing
- the primary prompt.  Bash terminates after waiting for that number of seconds if input does not arrive.</p>
-</blockquote>
-<p>以<code>root</code>用户新建<code>/etc/profile.d/timeout.sh</code>文件，用于定义变量<code>TMOUT</code>大于0，用户超时不操作自动退出登录:</p>
-<div class="highlight"><pre><span></span><span class="c1"># cat /etc/profile.d/timeout.sh</span>
-
-<span class="nb">readonly</span><span class="w"> </span><span class="nv">TMOUT</span><span class="o">=</span><span class="m">600</span><span class="w"> </span><span class="c1"># 单位是秒(s)</span>
-<span class="nb">export</span><span class="w"> </span>TMOUT
-</pre></div>
-<p>变量<code>TMOUT</code>的作用是在<code>Shell</code>超过一定时间无操作后自动退出登录。</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">unset</span><span class="w"> </span>TMOUT
-bash:<span class="w"> </span>unset:<span class="w"> </span>TMOUT:<span class="w"> </span>cannot<span class="w"> </span>unset:<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>variable
-
-$<span class="w"> </span><span class="nv">TMOUT</span><span class="o">=</span><span class="m">1000</span>
-bash:<span class="w"> </span>TMOUT:<span class="w"> </span><span class="nb">readonly</span><span class="w"> </span>variable
-</pre></div>
-<p>而<code>readonly</code>是不允许修改这个值，除非<code>root</code>用户修改配置文件并重新登录才可以修改生效。</p>
-<h2>总结</h2>
-<p>这样设置后，所有用户超过600秒不操作，登录的终端就自动退出登录了，在一定程度上增加了Linux系统的安全性。</p>
-</div>
-        <hr>
-        <div id="post-copyright">
-        <ul class="post-copyright">
-        <li class="post-copyright-author">
-        <strong>本文作者：</strong>「
-        <a href="http://www.lesliezhu.com/about.html" title="吴羽舒">吴羽舒</a> 」创作于2022-11-20 Sun，共280字
-        </li>
-        <li><strong>微信搜索：</strong> <span>「 <a href='http://www.lesliezhu.com/images/weixin.jpg'>MinYiLife</a> 」</span>, 关注公众号!<li>
-        <li class="post-copyright-link">
-        <strong>本文链接：</strong>
-        <a href="http://www.lesliezhu.com/2022/11/20/TMOUT_env_variable_in_liunux.html" title="Linux如何设置用户长时间不操作就自动登出?">http://www.lesliezhu.com/2022/11/20/TMOUT_env_variable_in_liunux.html</a>
-        </li>
-        <li class="post-copyright-license">
-        <strong>版权声明：</strong>
-        原创文章，如需转载请注明文章作者和出处。谢谢！
-        </li>
-        </ul>
+        <!-- display as entry -->
+        <div class="entry">
+        <div class="row">
+        <div class="col-md-9">
+        <li><a href="http://www.lesliezhu.com/2023/04/13/yin_keng.html" target="_blank"><i class="fa fa-file-o"></i>南北朝人物之阴铿</a></li><li><a href="http://www.lesliezhu.com/2023/01/15/Freud_Three_Essays_On_The_Theory_Of_Sexuality.html" target="_blank"><i class="fa fa-file-o"></i>弗洛伊德与《性学三论》</a></li><li><a href="http://www.lesliezhu.com/2023/01/07/a_special_call_name_of_hakka.html" target="_blank"><i class="fa fa-file-o"></i>客家人的一种少见“伯-叔”类关系称呼</a></li><li><a href="http://www.lesliezhu.com/2022/10/18/NanChaoGuShiRenWu_01.html" target="_blank"><i class="fa fa-file-o"></i>第一位田园诗人陶渊明</a></li><li><a href="http://www.lesliezhu.com/2022/06/22/TangXuanZong.html" target="_blank"><i class="fa fa-file-o"></i>唐玄宗在位45年大事记</a></li><li><a href="http://www.lesliezhu.com/2022/06/20/LiZhong.html" target="_blank"><i class="fa fa-file-o"></i>唐高宗庶长子李忠的坎坷人生</a></li><li><a href="http://www.lesliezhu.com/2022/06/19/TangChaoHuangDiJieShao.html" target="_blank"><i class="fa fa-file-o"></i>唐朝的20位皇帝</a></li><li><a href="http://www.lesliezhu.com/2022/05/19/CuiHao.html" target="_blank"><i class="fa fa-file-o"></i>诗人崔颢的有文无行</a></li>
+        </div>
+        </div>
         </div>
         
-            <div>
-            <center>
-            <div class="pagination">
-            <ul class="pagination">
-            <li class="prev"><a href="http://www.lesliezhu.com/2022/11/21/PAM_in_linux.html" class=alignright prev"><i class="fa fa-arrow-circle-o-left"></i>上一页</a></li>
-            <li><a href="http://www.lesliezhu.com/archive.html" target="_blank"><i class="fa fa-archive"></i>归档</a></li>
-            <li class="next"><a href="http://www.lesliezhu.com/2022/11/17/git_subtree_and_submodule.html" class="alignright next">下一页<i class="fa fa-arrow-circle-o-right"></i></a></li>
-            </ul>
-            </div>
-            </center>
-            </div>
-            
-            <div class="post-reward">
-            <input type="checkbox" name="reward" id="reward" hidden />
-            <label id="reward-button" class="reward-button" for="reward">赞赏支持</label>
-            <div class="qr-code">
-            
-                <label id="qr-code-image-w" class="qr-code-image" for="reward" hidden>
-                <img class="image" src="http://www.lesliezhu.com//images/wechatpay.jpg">
-                <span>微信打赏</span>
-                </label>
-                
-                <label id="qr-code-image-p" class="qr-code-image" for="reward" hidden>
-                <img class="image" src="http://www.lesliezhu.com//images/weixin.jpg">
-                <span>微信公众号</span>
-                </label>
-                
-            </div>
-            </div>
-            
-            
-            <script src="https://utteranc.es/client.js"
-            repo="LeslieZhu/lesliezhu.github.com"
-            issue-term="title"
-            theme="github-light"
-            crossorigin="anonymous"
-            async>
-            </script>
-            </div> <!-- my-page --></div> <!-- col-md -->
+        </div> <!-- mypage -->
+        </div> <!-- col-md-9 -->
+        
+
         <div class="col-md-3">
         <div id="sidebar">
         
@@ -276,10 +168,12 @@ bash:<span class="w"> </span>TMOUT:<span class="w"> </span><span class="nb">read
         </div> <!-- sidebar -->
         </div> <!-- col-md-3 -->
         
+
         </div> <!-- row-fluid -->
         </div>
         </div>
         
+
         <div class="container-narrow">
         <footer>
         <p>&copy; 2014-2023 吴羽舒

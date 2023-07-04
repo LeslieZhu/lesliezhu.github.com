@@ -32,7 +32,7 @@
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
         <style>
- <!--/*--><![CDATA[/*><!--*/
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -53,8 +53,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -62,22 +63,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -212,8 +213,7 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
         </head>
         
@@ -281,22 +281,22 @@
         <i class="fa fa-heart"></i>
         标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id="content">
+        <div class="content" id="content">
 
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>目录</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgd9e3164">1. 引言</a></li>
-<li><a href="#orgc8296b3">2. vector</a></li>
-<li><a href="#org08776d2">3. list</a></li>
-<li><a href="#org3058299">4. map</a></li>
-<li><a href="#org10b62d4">5. unordered_map</a></li>
+<li><a href="#org7b8dbfa">1. 引言</a></li>
+<li><a href="#orgb8e94d1">2. vector</a></li>
+<li><a href="#org9c5249a">3. list</a></li>
+<li><a href="#org9ecc944">4. map</a></li>
+<li><a href="#orgd4e570e">5. unordered_map</a></li>
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgd9e3164">
-<h2 id="orgd9e3164"><span class="section-number-2">1</span> 引言</h2>
+<div class="outline-2" id="outline-container-org7b8dbfa">
+<h2 id="org7b8dbfa"><span class="section-number-2">1.</span> 引言</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 如果一个类的主要目的是保存对象，那么通常称之为容器(container)。
@@ -312,8 +312,8 @@
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgc8296b3">
-<h2 id="orgc8296b3"><span class="section-number-2">2</span> vector</h2>
+<div class="outline-2" id="outline-container-orgb8e94d1">
+<h2 id="orgb8e94d1"><span class="section-number-2">2.</span> vector</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 一个vector就是一个给定类型元素的序列，元素在内存中是连续存储的。
@@ -350,8 +350,8 @@ vector足够灵活、高效，应该作为默认容器；尽量避免容器的�
 
 </div>
 </div>
-<div class="outline-2" id="outline-container-org08776d2">
-<h2 id="org08776d2"><span class="section-number-2">3</span> list</h2>
+<div class="outline-2" id="outline-container-org9c5249a">
+<h2 id="org9c5249a"><span class="section-number-2">3.</span> list</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 如果希望在一个序列中添加、删除元素而不需要移动其他元素，则选择list，它是双向链表。
@@ -397,8 +397,8 @@ vector无论在遍历(find,count)性能还是排序和搜索(sort,equal_range)�
 </p>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org3058299">
-<h2 id="org3058299"><span class="section-number-2">4</span> map</h2>
+<div class="outline-2" id="outline-container-org9ecc944">
+<h2 id="org9ecc944"><span class="section-number-2">4.</span> map</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 map又叫关联数组或字典，用平衡二叉树(红黑树)实现。
@@ -418,8 +418,8 @@ map又叫关联数组或字典，用平衡二叉树(红黑树)实现。
 </p>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org10b62d4">
-<h2 id="org10b62d4"><span class="section-number-2">5</span> unordered_map</h2>
+<div class="outline-2" id="outline-container-orgd4e570e">
+<h2 id="orgd4e570e"><span class="section-number-2">5.</span> unordered_map</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 标准库中哈希容器被叫做“无序”容器。
@@ -560,7 +560,7 @@ underorder_map的操作和map没太大区别，区别在于不是用一个有序
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>32</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>4</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>32</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/随笔札记.html">随笔札记<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>4</span></a></li>
         </ul>
         </div>
         

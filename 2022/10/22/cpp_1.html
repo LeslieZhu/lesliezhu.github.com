@@ -32,7 +32,7 @@
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
         <style>
- <!--/*--><![CDATA[/*><!--*/
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -53,8 +53,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -62,22 +63,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -212,8 +213,7 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
         </head>
         
@@ -281,22 +281,22 @@
         <i class="fa fa-heart"></i>
         标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id="content">
+        <div class="content" id="content">
 
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>目录</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org9b7aca5">1. 前言</a></li>
-<li><a href="#orgcc5d907">2. auto与列表初始化</a></li>
-<li><a href="#orgea99e77">3. 空指针: nullptr</a></li>
-<li><a href="#org8bf8e82">4. 尽量不直接使用union</a></li>
-<li><a href="#orgc2afa12">5. 枚举优先使用enum class</a></li>
+<li><a href="#org048f236">1. 前言</a></li>
+<li><a href="#org680d528">2. auto与列表初始化</a></li>
+<li><a href="#org88dce3f">3. 空指针: nullptr</a></li>
+<li><a href="#orgf3615fd">4. 尽量不直接使用union</a></li>
+<li><a href="#org91b520b">5. 枚举优先使用enum class</a></li>
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org9b7aca5">
-<h2 id="org9b7aca5"><span class="section-number-2">1</span> 前言</h2>
+<div class="outline-2" id="outline-container-org048f236">
+<h2 id="org048f236"><span class="section-number-2">1.</span> 前言</h2>
 <div class="outline-text-2" id="text-1">
 <blockquote>
 <p>
@@ -306,13 +306,13 @@
 <p>
 以C++17标准为最新定义，快速了解现代C++语言:
 </p>
-<pre class="example">
+<pre class="example" id="org9ab48f9">
 $ g++ -std=c++17 file.cpp
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgcc5d907">
-<h2 id="orgcc5d907"><span class="section-number-2">2</span> auto与列表初始化</h2>
+<div class="outline-2" id="outline-container-org680d528">
+<h2 id="org680d528"><span class="section-number-2">2.</span> auto与列表初始化</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 变量优先使用通用的列表初始化形式 <code>{}</code> ，以避免在类型转换中丢失信息:
@@ -342,8 +342,8 @@ $ g++ -std=c++17 file.cpp
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgea99e77">
-<h2 id="orgea99e77"><span class="section-number-2">3</span> 空指针: nullptr</h2>
+<div class="outline-2" id="outline-container-org88dce3f">
+<h2 id="org88dce3f"><span class="section-number-2">3.</span> 空指针: nullptr</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 不再使用 <code>0</code> 或 <code>NULL</code> 表示空指针，使用 <code>nullptr</code> ，所有指针类型都共享同一个 <code>nullptr</code>.
@@ -372,8 +372,8 @@ $ g++ -std=c++17 file.cpp
 
 </div>
 </div>
-<div class="outline-2" id="outline-container-org8bf8e82">
-<h2 id="org8bf8e82"><span class="section-number-2">4</span> 尽量不直接使用union</h2>
+<div class="outline-2" id="outline-container-orgf3615fd">
+<h2 id="orgf3615fd"><span class="section-number-2">4.</span> 尽量不直接使用union</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 比如有这样一个联合的定义:
@@ -416,8 +416,8 @@ $ g++ -std=c++17 file.cpp
 
 </div>
 </div>
-<div class="outline-2" id="outline-container-orgc2afa12">
-<h2 id="orgc2afa12"><span class="section-number-2">5</span> 枚举优先使用enum class</h2>
+<div class="outline-2" id="outline-container-org91b520b">
+<h2 id="org91b520b"><span class="section-number-2">5.</span> 枚举优先使用enum class</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 以往的enum中枚举值作用域与enum作用域一致，隐式转换为int类型值:
@@ -525,7 +525,7 @@ $ g++ -std=c++17 file.cpp
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>32</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>4</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>32</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/随笔札记.html">随笔札记<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>4</span></a></li>
         </ul>
         </div>
         

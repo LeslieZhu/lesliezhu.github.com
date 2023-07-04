@@ -32,7 +32,7 @@
         <script type="text/javascript" src="/theme/freemind/js/jquery-2.0.3.min.js"></script>
         <script type="text/javascript" src="/theme/freemind/js/local-search.js?v=7.4.1"></script>
         <style>
- <!--/*--><![CDATA[/*><!--*/
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -53,8 +53,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -62,22 +63,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -212,8 +213,7 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-  /*]]>*/-->
+  .org-svg { }
 </style>
         </head>
         
@@ -281,23 +281,23 @@
         <i class="fa fa-heart"></i>
         标签: <a href="http://www.lesliezhu.com/tags/C++学习与实践.html"><i class="C++学习与实践"></i>C++学习与实践</a><span class='date'>文|<a href='http://www.lesliezhu.com/about.html'><i class='http://www.lesliezhu.com/about.html'></i>吴羽舒</a></span>
         </div>                                     <!-- slogan end -->
-        <div id="content">
+        <div class="content" id="content">
 
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>目录</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org4fecd5e">1. 引言</a></li>
-<li><a href="#org072f5ce">2. module例子: 头文件变成模块</a></li>
-<li><a href="#org28e4e67">3. module例子: 模块接口和实现在一起</a></li>
-<li><a href="#orge446160">4. module例子: 模块接口与实现分离</a></li>
-<li><a href="#org8df27a9">5. module例子：子模块</a></li>
-<li><a href="#org00b4a66">6. 资料</a></li>
+<li><a href="#orgb4b97a2">1. 引言</a></li>
+<li><a href="#org4fb494b">2. module例子: 头文件变成模块</a></li>
+<li><a href="#org2ffab81">3. module例子: 模块接口和实现在一起</a></li>
+<li><a href="#orgac08ce3">4. module例子: 模块接口与实现分离</a></li>
+<li><a href="#org3cd4133">5. module例子：子模块</a></li>
+<li><a href="#org15eda29">6. 资料</a></li>
 </ul>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org4fecd5e">
-<h2 id="org4fecd5e"><span class="section-number-2">1</span> 引言</h2>
+<div class="outline-2" id="outline-container-orgb4b97a2">
+<h2 id="orgb4b97a2"><span class="section-number-2">1.</span> 引言</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 程序组织的最佳方式是将程序看作依赖关系定义良好的一组模块，在逻辑上通过语言特性表达模块化，在物理上通过文件模块化实现高效的分别编译。
@@ -332,8 +332,8 @@ $ g++ -std=c++20 -fmodules-ts file.cpp
 </p>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org072f5ce">
-<h2 id="org072f5ce"><span class="section-number-2">2</span> module例子: 头文件变成模块</h2>
+<div class="outline-2" id="outline-container-org4fb494b">
+<h2 id="org4fb494b"><span class="section-number-2">2.</span> module例子: 头文件变成模块</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 hello.hpp:
@@ -350,14 +350,14 @@ run.cpp:
 <p>
 需要先将这个单独的头文件编译为模块后才能import使用:
 </p>
-<pre class="example">
+<pre class="example" id="orgf886d50">
 $ g++ -c -std=c++20 -fmodule-header hello.hpp  # 生成gcm.cache/,/hello.hpp.gcm
 $ g++ -c -std=c++20 -fmodules-ts run.cpp       # 生成run.o
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org28e4e67">
-<h2 id="org28e4e67"><span class="section-number-2">3</span> module例子: 模块接口和实现在一起</h2>
+<div class="outline-2" id="outline-container-org2ffab81">
+<h2 id="org2ffab81"><span class="section-number-2">3.</span> module例子: 模块接口和实现在一起</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Vector.cpp
@@ -428,7 +428,7 @@ main.cpp:
 <p>
 编译与执行:
 </p>
-<pre class="example">
+<pre class="example" id="orge5ffd28">
 $ g++ -c -std=c++20  -fmodules-ts Vector.cpp  # 创建Vector.o和gcm.cache/Vector.gcm
 $ g++ -c -std=c++20  -fmodules-ts main.cpp    # 创建main.o
 $ g++ main.o Vector.o -o main                 # 创建main
@@ -443,7 +443,7 @@ size: 5, sum: 6.14626
 <p>
 查看模块文件信息(<code>.gcm</code>):
 </p>
-<pre class="example">
+<pre class="example" id="orgc5e15d1">
 $ readelf -p.gnu.c++.README gcm.cache/Vector.gcm
 
 String dump of section '.gnu.c++.README':
@@ -457,8 +457,8 @@ String dump of section '.gnu.c++.README':
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-orge446160">
-<h2 id="orge446160"><span class="section-number-2">4</span> module例子: 模块接口与实现分离</h2>
+<div class="outline-2" id="outline-container-orgac08ce3">
+<h2 id="orgac08ce3"><span class="section-number-2">4.</span> module例子: 模块接口与实现分离</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 Vector.cpp:
@@ -541,7 +541,7 @@ main.cpp:
 <p>
 编译与执行:
 </p>
-<pre class="example">
+<pre class="example" id="org53203e6">
 $ g++ -c -std=c++20 -fmodules-ts Vector.cpp      # 生成Vector.o和gcm.cache/Vector.gcm
 $ g++ -c -std=c++20 -fmodules-ts Vector_impl.cpp # 生成Vector_impl.o
 $ g++ -c -std=c++20 -fmodules-ts main.cpp        # 生成main.o
@@ -554,7 +554,7 @@ $ g++ -std=c++20 -fmodules-ts Vector.cpp Vector_impl.cpp main.cpp -o main
 <p>
 注意, Vector.cpp如果文件名改成Vector.hpp则会认为是普通头文件，而不是模块的接口文件(cmi)，需加上 <code>-x c++</code> 选项: 
 </p>
-<pre class="example">
+<pre class="example" id="orgf66e7e0">
 $ g++ -c -std=c++20 -fmodules-ts Vector.hpp   # 会直接当做普通的头文件处理而报错
 Vector.hpp:1:1: error: module-declaration not permitted in header-unit
 
@@ -564,8 +564,8 @@ $ g++ -std=c++20 -fmodules-ts -x c++ Vector.hpp Vector_impl.cpp main.cpp -o main
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org8df27a9">
-<h2 id="org8df27a9"><span class="section-number-2">5</span> module例子：子模块</h2>
+<div class="outline-2" id="outline-container-org3cd4133">
+<h2 id="org3cd4133"><span class="section-number-2">5.</span> module例子：子模块</h2>
 <div class="outline-text-2" id="text-5">
 <ul class="org-ul">
 <li>子模块: TestMod.Vector</li>
@@ -696,7 +696,7 @@ TestMod.hpp:
 <p>
 编译:
 </p>
-<pre class="example">
+<pre class="example" id="orgb0fab2d">
 $ g++ -c -std=c++20 -fmodules-ts -x c++ Vector.hpp Vector.cpp
 $ g++ -c -std=c++20 -fmodules-ts -x c++ funcs.hpp funcs.cpp
 $ g++ -c -std=c++20 -fmodules-ts -x c++ TestMod.hpp
@@ -712,8 +712,8 @@ func2
 </pre>
 </div>
 </div>
-<div class="outline-2" id="outline-container-org00b4a66">
-<h2 id="org00b4a66"><span class="section-number-2">6</span> 资料</h2>
+<div class="outline-2" id="outline-container-org15eda29">
+<h2 id="org15eda29"><span class="section-number-2">6.</span> 资料</h2>
 <div class="outline-text-2" id="text-6">
 <ul class="org-ul">
 <li><a href="https://gcc.gnu.org/projects/cxx-status.html">C++ Standards Support in GCC</a></li>
@@ -801,7 +801,7 @@ func2
         <div class="widget">
         <h4>标签云</h4>
         <ul class="tag_box inline list-unstyled">
-        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>32</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/读书札记.html">读书札记<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>4</span></a></li>
+        <li><a href="http://www.lesliezhu.com/tags/C++学习与实践.html">C++学习与实践<span>32</span></a></li><li><a href="http://www.lesliezhu.com/tags/解释器与编译器.html">解释器与编译器<span>14</span></a></li><li><a href="http://www.lesliezhu.com/tags/Linux操作与管理.html">Linux操作与管理<span>9</span></a></li><li><a href="http://www.lesliezhu.com/tags/随笔札记.html">随笔札记<span>8</span></a></li><li><a href="http://www.lesliezhu.com/tags/南野集.html">南野集<span>6</span></a></li><li><a href="http://www.lesliezhu.com/tags/大数据与人工智能.html">大数据与人工智能<span>5</span></a></li><li><a href="http://www.lesliezhu.com/tags/日语学习.html">日语学习<span>4</span></a></li>
         </ul>
         </div>
         
