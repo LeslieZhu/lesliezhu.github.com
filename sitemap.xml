@@ -356,6 +356,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.lesliezhu.com/blog/2023/11/26/orgnote_to_mkdocs/</loc>
+         <lastmod>2023-11-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.lesliezhu.com/blog/archive/2023/</loc>
          <lastmod>2023-11-26</lastmod>
          <changefreq>daily</changefreq>
@@ -372,6 +377,11 @@
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2019/</loc>
+         <lastmod>2023-11-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.lesliezhu.com/blog/category/%E5%B7%A5%E5%85%B7%E8%BD%AF%E4%BB%B6/</loc>
          <lastmod>2023-11-26</lastmod>
          <changefreq>daily</changefreq>
     </url>
