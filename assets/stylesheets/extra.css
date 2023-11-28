@@ -16,3 +16,16 @@
     position: relative;
 }
 /* 图片放大end*/
+
+
+:root > * {
+  --md-code-hl-minyilife-color: #db1457;
+}
+
+.md-typeset p > code {
+  color: var(--md-code-hl-minyilife-color);
+}
+
+.md-typeset li > code {
+  color: var(--md-code-hl-minyilife-color);
+}
