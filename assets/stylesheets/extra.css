@@ -29,3 +29,8 @@
 .md-typeset li > code {
   color: var(--md-code-hl-minyilife-color);
 }
+
+.md-pay {
+	background-color: gold;
+        color: green;
+}

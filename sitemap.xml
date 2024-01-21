@@ -51,16 +51,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.lesliezhu.com/blog/template_mind/</loc>
-         <lastmod>2024-01-21</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.lesliezhu.com/blog/template_post/</loc>
-         <lastmod>2024-01-21</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://www.lesliezhu.com/blog/2023/03/16/faceswap_1/</loc>
          <lastmod>2024-01-21</lastmod>
          <changefreq>daily</changefreq>
@@ -272,16 +262,6 @@
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/13/learn_english_14_7_habits_of_highly_miserable_people/</loc>
-         <lastmod>2024-01-21</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.lesliezhu.com/blog/2024/01/17/learn_english_15_40-questions-to-ask-yourself-every-year/</loc>
-         <lastmod>2024-01-21</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.lesliezhu.com/blog/2024/01/18/learn_english_16_40-questions-to-ask-yourself-every-decade/</loc>
          <lastmod>2024-01-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -556,17 +536,17 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.lesliezhu.com/blog/category/Global_Languages/</loc>
-         <lastmod>2024-01-21</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://www.lesliezhu.com/blog/category/Programming_of_Frontend/</loc>
          <lastmod>2024-01-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/MIND_Practice_Weekly/</loc>
+         <lastmod>2024-01-21</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.lesliezhu.com/blog/category/Global_Languages/</loc>
          <lastmod>2024-01-21</lastmod>
          <changefreq>daily</changefreq>
     </url>
