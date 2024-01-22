@@ -441,6 +441,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.lesliezhu.com/blog/2024/01/22/mind_practice_weekly_5/</loc>
+         <lastmod>2024-01-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/04/introduction_to_ml_with_python_1/</loc>
          <lastmod>2024-01-22</lastmod>
          <changefreq>daily</changefreq>
@@ -536,12 +541,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.lesliezhu.com/blog/category/Programming_of_Frontend/</loc>
+         <loc>https://www.lesliezhu.com/blog/category/MIND_Practice_Weekly/</loc>
          <lastmod>2024-01-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.lesliezhu.com/blog/category/MIND_Practice_Weekly/</loc>
+         <loc>https://www.lesliezhu.com/blog/category/Programming_of_Frontend/</loc>
          <lastmod>2024-01-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
