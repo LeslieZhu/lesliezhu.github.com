@@ -391,6 +391,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.lesliezhu.com/blog/2024/04/20/learn_japanese_10/</loc>
+         <lastmod>2024-04-30</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/28/learn_japanese_2/</loc>
          <lastmod>2024-04-30</lastmod>
          <changefreq>daily</changefreq>
@@ -581,12 +586,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.lesliezhu.com/blog/category/Essay_Notes/</loc>
+         <loc>https://www.lesliezhu.com/blog/category/Global_Languages/</loc>
          <lastmod>2024-04-30</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.lesliezhu.com/blog/category/Global_Languages/</loc>
+         <loc>https://www.lesliezhu.com/blog/category/Essay_Notes/</loc>
          <lastmod>2024-04-30</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -716,22 +721,22 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.lesliezhu.com/blog/category/Essay_Notes/page/2/</loc>
-         <lastmod>2024-04-30</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.lesliezhu.com/blog/category/Essay_Notes/page/3/</loc>
-         <lastmod>2024-04-30</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://www.lesliezhu.com/blog/category/Global_Languages/page/2/</loc>
          <lastmod>2024-04-30</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Global_Languages/page/3/</loc>
+         <lastmod>2024-04-30</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.lesliezhu.com/blog/category/Essay_Notes/page/2/</loc>
+         <lastmod>2024-04-30</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.lesliezhu.com/blog/category/Essay_Notes/page/3/</loc>
          <lastmod>2024-04-30</lastmod>
          <changefreq>daily</changefreq>
     </url>
