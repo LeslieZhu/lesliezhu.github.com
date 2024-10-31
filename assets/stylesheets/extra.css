@@ -1,0 +1,41 @@
+/* 图片放大start */
+.shadow {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.zoom {
+    transition: transform ease-in-out 0.5s;
+    cursor: zoom-in;
+}
+
+.image-zoom-large {
+    transform: scale(1.9);
+    cursor: zoom-out;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    z-index: 100;
+    position: relative;
+}
+/* 图片放大end*/
+
+
+:root > * {
+  --md-code-hl-minyilife-color: #db1457;
+}
+
+.md-typeset p > code {
+  color: var(--md-code-hl-minyilife-color);
+}
+
+.md-typeset li > code {
+  color: var(--md-code-hl-minyilife-color);
+}
+
+.md-pay {
+	background-color: gold;
+        color: green;
+}
+
+.md-review {
+        background-color: pink;
+        color: blue;
+}
