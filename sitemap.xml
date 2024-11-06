@@ -2,842 +2,847 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://www.lesliezhu.com/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/about/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/03/16/faceswap_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/28/llm_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/02/02/tensorflow_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/02/03/tensorflow_2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/03/13/use_StableDiffusion_gen_photo/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/03/14/use_StableDiffusion_gen_photo_with_gpu_on_windows/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/03/20/what_is_ChatRTX/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/03/21/what_is_Grok-1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/03/02/about_CStdString/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/10/22/cpp_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/04/cpp_10/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/10/23/cpp_2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/10/24/cpp_3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/10/25/cpp_4/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/10/26/cpp_5/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/10/27/cpp_6/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/10/31/cpp_7/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/01/cpp_8/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/02/cpp_9/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/16/cpp_go_to_wrong_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/03/01/doxygen_work_with_cmake/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/12/20/git_clang_format/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/02/gnu_readline_in_repl/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/31/protobuf/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/03/best_practices_in_api_design/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/12/28/bytecode_serializer_deserializer/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/12/llvm_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/10/writing_an_interpreter_in_cpp_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/12/16/writing_an_interpreter_in_cpp_10/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/12/17/writing_an_interpreter_in_cpp_11/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/12/18/writing_an_interpreter_in_cpp_12/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/11/writing_an_interpreter_in_cpp_2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/23/writing_an_interpreter_in_cpp_3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/24/writing_an_interpreter_in_cpp_4/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/25/writing_an_interpreter_in_cpp_5/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/12/10/writing_an_interpreter_in_cpp_6/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/12/12/writing_an_interpreter_in_cpp_7/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/12/13/writing_an_interpreter_in_cpp_8/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/12/15/writing_an_interpreter_in_cpp_9/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/02/23/How-To-Become-A-Great-Software-Engineer/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/03/learn_english_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/26/learn_english_10/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/27/learn_english_11/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/29/learn_english_12/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/07/learn_english_13_useful_english_sentences_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/05/04/learn_english_14/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/13/learn_english_14_7_habits_of_highly_miserable_people/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/08/learn_english_2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/09/learn_english_3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/11/learn_english_4/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/14/learn_english_5/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/16/learn_english_6/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/20/learn_english_7/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/22/learn_english_8/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/25/learn_english_9/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/03/05/my-best-pieces-of-career-advice/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/24/the-moon-is-like-my-heart/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/03/27/the_movie_Johnny_Keep_Walking/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/05/19/CuiHao/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/16/Freud_Three_Essays_On_The_Theory_Of_Sexuality/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/06/20/LiZhong/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/10/18/NanChaoGuShiRenWu_01/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/06/19/TangChaoHuangDiJieShao/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/06/22/TangXuanZong/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/07/a_special_call_name_of_hakka/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/08/01/junzibaobian/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/03/02/the_book_FuShengLiuJi/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/03/16/the_book_Oliver_Twist/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/05/08/the_book_The_Birth_Of_Writing/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/05/27/the_book_a_child%27s_history_of_the_world/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/05/07/the_book_scarcity_why_having_tool_little_means_so_much/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/04/04/the_book_the_outsider/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/04/16/the_book_wagahaihanekodearu/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/02/24/the_great_gatsby/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/10/the_proses_of_zhuziqing/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/07/04/travel_202351/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/04/13/yin_keng/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/06/learn_japanese_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/04/20/learn_japanese_10/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/07/01/learn_japanese_13/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/07/02/learn_japanese_14/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/07/12/learn_japanese_17/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/28/learn_japanese_2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/29/learn_japanese_3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/29/learn_japanese_4/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/02/21/learn_japanese_5/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/03/28/learn_japanese_6/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/04/08/learn_japanese_7/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/04/09/learn_japanese_8/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/04/15/learn_japanese_9/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/02/26/the_japanese_song_furaibou/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/11/01/49/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/11/02/50/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/11/03/51/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/11/04/52/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/11/05/53/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/11/06/54/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.lesliezhu.com/blog/2024/11/07/55/</loc>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/21/PAM_in_linux/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/20/TMOUT_env_variable_in_liunux/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/02/28/delete_file_with_shred/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/05/dockerfile_for_ledge/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/22/man_pages_missing/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/10/18/unzip/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/30/yum_rpm/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/12/19/mind_practice_weekly_0/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/04/introduction_to_ml_with_python_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2020/05/10/I_want_a_dictionary/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/12/11/be_a_guest_tomorrow/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/01/23/field_under_the_sun/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/04/13/hu_bian_de_mo_chou_nv/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/02/08/torch_dragon/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2019/10/17/%E7%A7%AF%E9%9B%A8%E4%BA%91/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/01/summary_2023/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/12/four_useful_git_commands/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2022/11/17/git_subtree_and_submodule/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2023/11/26/orgnote_to_mkdocs/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/02/vuejs_1/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/02/29/vuejs_10/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/09/vuejs_2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/16/vuejs_3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/2024/01/23/vuejs_4/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2024/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2023/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2022/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2020/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2019/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Global_Languages/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Essay_Notes/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/AI/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Programming_of_Frontend/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Software_Tools/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Programming_of_Backend/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/MIND_Practice_Weekly/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Operating_System/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Compiler_and_Interpreter/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/4/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/5/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/6/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/7/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/8/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/9/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/10/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/11/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/12/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/page/13/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2024/page/2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2024/page/3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2024/page/4/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2024/page/5/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2023/page/2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2023/page/3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2023/page/4/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2022/page/2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2022/page/3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/archive/2022/page/4/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Global_Languages/page/2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Global_Languages/page/3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Global_Languages/page/4/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Essay_Notes/page/2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Essay_Notes/page/3/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Programming_of_Backend/page/2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/category/Compiler_and_Interpreter/page/2/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://www.lesliezhu.com/blog/tags/</loc>
-         <lastmod>2024-11-05</lastmod>
+         <lastmod>2024-11-06</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
